@@ -1,0 +1,381 @@
+{
+  "status": "passed",
+  "gpu_initialized": false,
+  "model_called": false,
+  "scanned_requests": 3285,
+  "source_runs": [
+    "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+    "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-02",
+    "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01",
+    "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-02",
+    "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+    "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-02",
+    "openai-decisions-rgbtarget-connectivity-20261009-01",
+    "openai-decisions-rgbtarget-extended-rgbgs-none-20261009-01",
+    "openai-decisions-rgbtarget-extended-rgbgs-none-20261009-02",
+    "openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-01",
+    "openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-02",
+    "openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-01",
+    "openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-02",
+    "openai-decisions-rgbtarget-simple-rgbgs-none-20261009-01",
+    "openai-decisions-rgbtarget-simple-rgbgs-none-20261009-02",
+    "openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-01",
+    "openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-02",
+    "openai-decisions-rgbtarget-simple-rgbgs-semantic-20261009-01",
+    "openai-decisions-rgbtarget-simple-rgbgs-semantic-20261009-02"
+  ],
+  "prompt_version": "qev-labels-v2",
+  "cases": [
+    {
+      "mode": "none",
+      "category": "arrival",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+      "step": 157,
+      "unexpanded_tokens": 2114,
+      "expanded_tokens": 2413,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "8567e9e421e99de7837280d15b5aec8ff4b3d04d0df4fc4d7f3b2eb4089f9fcf",
+      "image_sha256": "ccb3c173faad1f6ebdf593263d95f1c4c19682c37d42d1f11f8cf2af6f7cd2d6",
+      "request_archive": "archive-none-arrival-prepare.json"
+    },
+    {
+      "mode": "none",
+      "category": "longest",
+      "source_run": "openai-decisions-rgbtarget-extended-rgbgs-none-20261009-01",
+      "step": 7,
+      "unexpanded_tokens": 2761,
+      "expanded_tokens": 3060,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "d64a572cc02ea2f18aa3f7340d82a66a78697c2ae4aa4e1b767527404038a6b2",
+      "image_sha256": "d5faa0b46460bc103bbc2f2bcdb8d87eed004ad5df1bde44ba6bb4e2a291b89a",
+      "request_archive": "archive-none-longest-prepare.json"
+    },
+    {
+      "mode": "none",
+      "category": "ordinary",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+      "step": 0,
+      "unexpanded_tokens": 2030,
+      "expanded_tokens": 2329,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "27b840ac1513d57e9dd79480db4f65fae48cf816f408aba925a8f9e9d164c209",
+      "image_sha256": "906be479db72f2642f016377dafbaf96a134952e0eee12275bba51bee557b56d",
+      "request_archive": "archive-none-ordinary-prepare.json"
+    },
+    {
+      "mode": "none",
+      "category": "turn_or_blocked",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+      "step": 5,
+      "unexpanded_tokens": 2591,
+      "expanded_tokens": 2890,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "e8793217c11643a3968faa10db85f91dc744e738397ed0c3a17d9b88acf52499",
+      "image_sha256": "c50a1ef1a9fdba3ba40cc1d07b6ebe18f4ee9ece9ee8be659dbe3205f211abc5",
+      "request_archive": "archive-none-turn_or_blocked-prepare.json"
+    },
+    {
+      "mode": "numeric",
+      "category": "arrival",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01",
+      "step": 165,
+      "unexpanded_tokens": 3026,
+      "expanded_tokens": 3325,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "018d75249e689f806e4c8d2c94c16dad65c23aafd4c5f6e020a6dfcf9958d19e",
+      "image_sha256": "1192beec4c3dfc58b36f0a43220d80b93de13ba5acda506c28af94e4bdbe7339",
+      "request_archive": "archive-numeric-arrival-prepare.json"
+    },
+    {
+      "mode": "numeric",
+      "category": "longest",
+      "source_run": "openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-01",
+      "step": 315,
+      "unexpanded_tokens": 3680,
+      "expanded_tokens": 3979,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "d56de09d90b15c9be8552c198fd607c43fb0b9f13585986d52d05415041c2d0a",
+      "image_sha256": "2024bc6769e65159912aa117dc262a7f34176bca87ea537ce12cf1405fbd4ca9",
+      "request_archive": "archive-numeric-longest-prepare.json"
+    },
+    {
+      "mode": "numeric",
+      "category": "ordinary",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01",
+      "step": 0,
+      "unexpanded_tokens": 2931,
+      "expanded_tokens": 3230,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "cd6ad19eb3b99345354905d34fc7f637b569de4366f8726810d9d4e37ac8cee9",
+      "image_sha256": "906be479db72f2642f016377dafbaf96a134952e0eee12275bba51bee557b56d",
+      "request_archive": "archive-numeric-ordinary-prepare.json"
+    },
+    {
+      "mode": "numeric",
+      "category": "turn_or_blocked",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01",
+      "step": 3,
+      "unexpanded_tokens": 3218,
+      "expanded_tokens": 3517,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "b63ab87d68ab3b140a059b963f430d0a89220960f53727ae92cf96f57f6b9afc",
+      "image_sha256": "a8ecc9e6fac344a43b43ecd711233ef987d851afb80c9feebabc720e72fca374",
+      "request_archive": "archive-numeric-turn_or_blocked-prepare.json"
+    },
+    {
+      "mode": "semantic",
+      "category": "arrival",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+      "step": 93,
+      "unexpanded_tokens": 3123,
+      "expanded_tokens": 3422,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "d68890a3f04e6f16276d127c4bdaf11dfe14829f9b0101ba76c11fc7e0ecff5f",
+      "image_sha256": "92a22c9259660a213b3bd5c82cb5734ffe1a1d115ad5a9095fa8603fce667fd7",
+      "request_archive": "archive-semantic-arrival-prepare.json"
+    },
+    {
+      "mode": "semantic",
+      "category": "longest",
+      "source_run": "openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-01",
+      "step": 56,
+      "unexpanded_tokens": 3812,
+      "expanded_tokens": 4111,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "c066f04dc91e98de5912377167bfffef0dc87e8e66a34b1add0cce130769cd8f",
+      "image_sha256": "048a8f7188b00261828feb21d4c530ca39d622add44052e0b2342251d55d776f",
+      "request_archive": "archive-semantic-longest-prepare.json"
+    },
+    {
+      "mode": "semantic",
+      "category": "ordinary",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+      "step": 0,
+      "unexpanded_tokens": 3024,
+      "expanded_tokens": 3323,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "d5c39793f60ac8f64221d9be418aec9091e3b61d669822701b7b9a027efc9a2d",
+      "image_sha256": "906be479db72f2642f016377dafbaf96a134952e0eee12275bba51bee557b56d",
+      "request_archive": "archive-semantic-ordinary-prepare.json"
+    },
+    {
+      "mode": "semantic",
+      "category": "turn_or_blocked",
+      "source_run": "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+      "step": 4,
+      "unexpanded_tokens": 3486,
+      "expanded_tokens": 3785,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "image_dimensions": [
+        [
+          640,
+          480
+        ]
+      ],
+      "wire_sha256": "db1a55c9409b791f28ec1fb9f3a54ca4a4273eb82708a827958408ddb4f40e2f",
+      "image_sha256": "8d8e7530fe289a8ed891c58b0440f0f8b4966a11e9245008760568839c4839a5",
+      "request_archive": "archive-semantic-turn_or_blocked-prepare.json"
+    }
+  ],
+  "coverage": [
+    {
+      "mode": "numeric",
+      "category": "ordinary",
+      "status": "passed"
+    },
+    {
+      "mode": "numeric",
+      "category": "turn_or_blocked",
+      "status": "passed"
+    },
+    {
+      "mode": "numeric",
+      "category": "arrival",
+      "status": "passed"
+    },
+    {
+      "mode": "numeric",
+      "category": "longest",
+      "status": "passed"
+    },
+    {
+      "mode": "semantic",
+      "category": "ordinary",
+      "status": "passed"
+    },
+    {
+      "mode": "semantic",
+      "category": "turn_or_blocked",
+      "status": "passed"
+    },
+    {
+      "mode": "semantic",
+      "category": "arrival",
+      "status": "passed"
+    },
+    {
+      "mode": "semantic",
+      "category": "longest",
+      "status": "passed"
+    },
+    {
+      "mode": "none",
+      "category": "ordinary",
+      "status": "passed"
+    },
+    {
+      "mode": "none",
+      "category": "turn_or_blocked",
+      "status": "passed"
+    },
+    {
+      "mode": "none",
+      "category": "arrival",
+      "status": "passed"
+    },
+    {
+      "mode": "none",
+      "category": "longest",
+      "status": "passed"
+    }
+  ],
+  "note": "Exact processor checks for selected cases. Longest ranks unexpanded tokens; all selected grids must match before treating this as a fixed-size archive maximum. No decisions or robot motion."
+}

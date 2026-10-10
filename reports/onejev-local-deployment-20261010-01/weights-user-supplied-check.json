@@ -1,0 +1,55 @@
+{
+  "model": "OmniJev/OneJev-4B",
+  "revision": "c88e18653ceb7a8770716287f55fdefc79d6b588",
+  "files": {
+    "config.json": {
+      "bytes": 2936,
+      "sha256": "53aa95673d1fb0021348b82fbaed6041d7eccdde3712f741cd04eef1956bac68",
+      "upstream_lfs_sha256": null,
+      "upstream_git_blob_sha1": "99b84086bbd9506b7aaf9466de29b29f2b0b8ad1"
+    },
+    "generation_config.json": {
+      "bytes": 116,
+      "sha256": "62153eb6c69f2e1f426beaa8002b7186437e949c7588167085df14e10e9c0a73",
+      "upstream_lfs_sha256": null,
+      "upstream_git_blob_sha1": "31ec2a53cc9cde720b0a8fbc68b9c4e73ac5a18f"
+    },
+    "processor_config.json": {
+      "bytes": 1220,
+      "sha256": "bfbc24af59a3e73a9cd0653b8d4ae758dfaec4e3e6c15dfb1c6c8ee8d5683c85",
+      "upstream_lfs_sha256": null,
+      "upstream_git_blob_sha1": "43c4343ec493f200e452f87a7c6649ecdfcce1ac"
+    },
+    "tokenizer_config.json": {
+      "bytes": 1164,
+      "sha256": "7488550a894dcf741616126e322ea31d66cf9457b59ec5825f4c7efdced421f8",
+      "upstream_lfs_sha256": null,
+      "upstream_git_blob_sha1": "875b7b0a3aabbd4e5e2888802dfbd5624a4a2060"
+    },
+    "chat_template.jinja": {
+      "bytes": 7756,
+      "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+      "upstream_lfs_sha256": null,
+      "upstream_git_blob_sha1": "a585dec894e63da457d9440ec6aa7caa16d20860"
+    },
+    "tokenizer.json": {
+      "bytes": 19989493,
+      "sha256": "b6d27c11283798debbfbcb1bd3bbdbcebac6c9b20d0be0c5b79231c97de97501",
+      "upstream_lfs_sha256": "b6d27c11283798debbfbcb1bd3bbdbcebac6c9b20d0be0c5b79231c97de97501",
+      "upstream_git_blob_sha1": null
+    },
+    "model.safetensors": {
+      "bytes": 10350019328,
+      "sha256": "c725978346bb87ff598b04b6ffe7ea89461368e9b20a0081a3c6a85d377c8f91",
+      "upstream_lfs_sha256": "c725978346bb87ff598b04b6ffe7ea89461368e9b20a0081a3c6a85d377c8f91",
+      "upstream_git_blob_sha1": null
+    }
+  },
+  "safetensors_header_valid": true,
+  "tensor_count": 724,
+  "tensor_dtypes": [
+    "BF16"
+  ],
+  "weights_origin": "user supplied complete model.safetensors; no resumed partial used",
+  "gpu_initialized": false
+}

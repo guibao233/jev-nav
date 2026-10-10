@@ -1,3 +1,5 @@
+> 本地 Git 基线：`baseline-20261010-before-onejev`。新增 OneJev 本地模型入口与操作说明见 [OneJev 本地导航](docs/ONEJEV_LOCAL.md)，验证状态见 [部署报告](reports/onejev-local-deployment-20261010-01/README.md)。
+
 # Jev / OpenAI Decisions 路径辅助跟随与避障：shuyuan 最小实验
 
 目标：先在 NavMesh 上确定可达起终点及初始最短路径，参考路线默认采用最短路径，也可选用居中路线变体；每步把当前位置前方一段**有序路径采样点**转换成机器人相对位置，与当前 mesh 深度摘要、本体参数及最近动作结果一起交给所选决策模型（Jev 或 OpenAI Decisions），选择一个动作。此实验测量路径辅助下的跟随、局部避障、碰撞恢复和停止，不测独立全局寻路。

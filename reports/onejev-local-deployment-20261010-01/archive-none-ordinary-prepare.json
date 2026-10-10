@@ -1,0 +1,188 @@
+{
+  "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+  "source_step": 0,
+  "called_model": false,
+  "source_steps_sha256": "61432a0fd37128fa34844c37f47ec3accab58bd1ac919883f980a99374dcb36b",
+  "source_metadata_sha256": "16434faff0c285720c587a92fe2f5de54257a02c4bc4e3e90a4ec1d98320bd73",
+  "request": {
+    "model": "OmniJev/OneJev-4B",
+    "state": {
+      "task": {
+        "kind": "reference_path_following",
+        "stop_tolerance_m": 0.3,
+        "step": 1,
+        "steps_left": 250
+      },
+      "reference": {
+        "current_target": {
+          "forward_m": 0.708,
+          "left_m": -0.0,
+          "distance_m": 0.708,
+          "bearing_deg": -0.0,
+          "is_final": false
+        },
+        "ordered_preview": [
+          {
+            "forward_m": 0.5,
+            "left_m": -0.0,
+            "distance_m": 0.5,
+            "bearing_deg": -0.0,
+            "ahead_along_path_m": 0.5
+          },
+          {
+            "forward_m": 0.708,
+            "left_m": -0.0,
+            "distance_m": 0.708,
+            "bearing_deg": -0.0,
+            "ahead_along_path_m": 0.708
+          },
+          {
+            "forward_m": 0.913,
+            "left_m": 0.208,
+            "distance_m": 0.936,
+            "bearing_deg": 12.81,
+            "ahead_along_path_m": 1.0
+          },
+          {
+            "forward_m": 1.264,
+            "left_m": 0.564,
+            "distance_m": 1.384,
+            "bearing_deg": 24.02,
+            "ahead_along_path_m": 1.5
+          },
+          {
+            "forward_m": 1.404,
+            "left_m": 0.705,
+            "distance_m": 1.571,
+            "bearing_deg": 26.66,
+            "ahead_along_path_m": 1.698
+          },
+          {
+            "forward_m": 1.369,
+            "left_m": 1.004,
+            "distance_m": 1.698,
+            "bearing_deg": 36.27,
+            "ahead_along_path_m": 2.0
+          },
+          {
+            "forward_m": 1.311,
+            "left_m": 1.501,
+            "distance_m": 1.993,
+            "bearing_deg": 48.86,
+            "ahead_along_path_m": 2.5
+          },
+          {
+            "forward_m": 1.254,
+            "left_m": 1.998,
+            "distance_m": 2.359,
+            "bearing_deg": 57.89,
+            "ahead_along_path_m": 3.0
+          }
+        ],
+        "final_goal": {
+          "forward_m": -3.197,
+          "left_m": 6.161,
+          "distance_m": 6.941,
+          "bearing_deg": 117.43
+        },
+        "distance_from_local_reference_m": 0.0,
+        "remaining_reference_length_m": 11.711,
+        "tracking": {
+          "mode": "local",
+          "progress_m": 0.0,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "robot": {
+        "radius_m": 0.10000000149011612,
+        "height_m": 1.5,
+        "camera_pitch_deg": 0.0,
+        "pitch_limits_deg": [
+          -30,
+          45
+        ],
+        "previous_collided": false
+      },
+      "recent_actions": [],
+      "recent_motion": {
+        "source": "recent_own_action_outcomes_only",
+        "window_steps": 0,
+        "window_capacity": 5,
+        "status": "insufficient_history",
+        "net_translation_m": 0.0,
+        "travelled_m": 0.0,
+        "net_turn_deg": 0.0,
+        "absolute_turn_deg": 0.0,
+        "opposite_turn_pairs": 0,
+        "collision_count": 0,
+        "invalid_action_count": 0,
+        "execution_success_count": 0,
+        "low_net_motion": false,
+        "note": "Action success means execution succeeded, not navigation progress. No translation alone can be useful observation."
+      },
+      "visual": {
+        "source": "current_gs_rgb",
+        "marker": {
+          "projection_status": "outside_frame",
+          "pixel_xy": [
+            319.5,
+            917.4661016949154
+          ],
+          "target_height_above_agent_feet_m": 0.0,
+          "camera_forward_m": 0.708,
+          "occlusion_checked": false,
+          "version": "target_marked_rgb_v1",
+          "target_kind": "local_waypoint",
+          "marker_kind": "offscreen_arrow",
+          "marker_pixel_xy": [
+            319.5,
+            429.0
+          ]
+        }
+      }
+    },
+    "questions": {
+      "action": {
+        "type": "choice",
+        "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. No depth observations are provided. Use the current RGB image, supplied reference path and recent own-action outcomes. Camera tilts provide a new RGB observation. A current RGB image accompanies this text. The magenta virtual marker refers only to reference.current_target. A circle is its geometric projection; it does not prove visibility, free space, or a direct safe route. A border arrow explicitly means the target is outside the image or behind the camera, not a ground point at the arrow's pixel. It may be necessary to turn or look down to inspect it. Use image obstacles together with the available text and feedback. The marker is not an environmental object. It is an intermediate waypoint unless is_final is true. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints. recent_motion summarizes only recent_actions. Action success means the action executed, not that navigation advanced. If recent_motion.status is turn_oscillation, recent opposite turns have produced little net translation: avoid repeating that left-right pair and choose a different observation or recovery, such as inspecting farther in one turn direction or backing away when appropriate. A no_translation status alone can also mean useful observation. When reference.tracking.mode is reassociated, follow the updated current_target and ordered_preview.",
+        "criteria": {
+          "move_forward": "Translate forward 0.25 metres without changing body heading.",
+          "move_backward": "Translate backward 0.25 metres without changing body heading.",
+          "turn_left": "Rotate body left 15 degrees in place.",
+          "turn_right": "Rotate body right 15 degrees in place.",
+          "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+          "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+          "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+        }
+      }
+    }
+  },
+  "image_input": {
+    "path": "frames/00000-model-rgb.jpg",
+    "sha256": "906be479db72f2642f016377dafbaf96a134952e0eee12275bba51bee557b56d",
+    "bytes": 38960,
+    "mime_type": "image/jpeg",
+    "width": 640,
+    "height": 480,
+    "marker": {
+      "projection_status": "outside_frame",
+      "pixel_xy": [
+        319.5,
+        917.4661016949154
+      ],
+      "target_height_above_agent_feet_m": 0.0,
+      "camera_forward_m": 0.708,
+      "occlusion_checked": false,
+      "version": "target_marked_rgb_v1",
+      "target_kind": "local_waypoint",
+      "marker_kind": "offscreen_arrow",
+      "marker_pixel_xy": [
+        319.5,
+        429.0
+      ]
+    }
+  },
+  "wire_request_sha256": "27b840ac1513d57e9dd79480db4f65fae48cf816f408aba925a8f9e9d164c209",
+  "wire_request_bytes": 57970,
+  "decision": null
+}

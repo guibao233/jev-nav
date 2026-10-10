@@ -104,5 +104,32 @@ class AblationScriptTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse(self.calls.exists())
 
+    def test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key(self):
+        self.env.pop('OPENROUTER_API_KEY',None)
+        self.env['NAV_RGB_INPUT']='target_marked'
+        self.env['ONEJEV_BASE_URL']='http://127.0.0.1:9011'
+        dry=self.run_script('onejev','local-test','--dry-run')
+        self.assertEqual(dry.returncode,0,dry.stderr)
+        self.assertEqual(len(dry.stdout.splitlines()),9)
+        self.assertFalse(self.calls.exists())
+        live=self.run_script('onejev','local-test')
+        self.assertEqual(live.returncode,0,live.stderr)
+        calls=[json.loads(line) for line in self.calls.read_text().splitlines()]
+        self.assertEqual(len(calls),9)
+        for argv in calls:
+            flags=dict(zip(argv[4::2],argv[5::2]))
+            self.assertEqual(flags['--decision-model'],'onejev')
+            self.assertEqual(flags['--rgb-input'],'target_marked')
+            self.assertEqual(flags['--onejev-url'],'http://127.0.0.1:9011')
+            self.assertTrue(flags['--out'].startswith('runs/onejev-local-rgbtarget-'))
+
+    def test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive(self):
+        self.env.pop('CUDA_VISIBLE_DEVICES',None)
+        result=self.run_script('onejev','missing-gpu','--dry-run')
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('CUDA_VISIBLE_DEVICES',result.stderr)
+        legacy=self.run_script('openai','legacy-gpu','--dry-run')
+        self.assertEqual(legacy.returncode,0,legacy.stderr)
+
 
 if __name__ == "__main__":unittest.main()

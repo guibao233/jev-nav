@@ -253,3 +253,11 @@ HTML 与视频的地图 PNG 内容一致；HTML JavaScript 通过 `node --check`
 - **真实多模态 API 请求次数：0**。在线服务是否接收图像及导航性能尚待用户执行五步联调和九组实验；没有进行原生浏览器手工交互验收。
 
 [详细验证与命令](reports/rgb-target-input-20261009-01/README.md) · [脚本烟测回放](runs/smoke-rgb-target-20261009-01/visualizations/portable/index.html)
+
+## OneJev-4B 本地接入（2026-10-10）
+
+按用户要求，先在本目录建立本地 Git 基线 3589b10 / baseline-20261010-before-onejev，再在 feature/onejev-local 接入固定的 OmniJev/OneJev-4B。独立 Python 3.12.15、Torch 2.8.0+cu128、Transformers 5.19.0 和官方 qev 0.1.1 已安装，完整权重与官方 LFS SHA256 一致，依赖锁定保留。
+
+原版 103 项、接入后 124 项完整离线测试通过；独立复审 27 项聚焦测试通过。19 份历史归档的 3285 条输入通过尺寸/图片 SHA 检查；普通、受阻/转弯、到达及最长输入共 12 例通过官方 processor 的 CPU 检查，最长展开 4111 token（上限 8192）。核心导航、原配置、任务和 280 份历史日志记录与基线一致。
+
+**未执行 GPU 加载、真实 OneJev probe、五步 GS 联调或完整实验。** 按用户最新要求，由用户选择 GPU 启动服务和执行导航；本轮没有初始化 CUDA 或发送真实决策。当前状态是代码/环境/权重准备完成，实际推理兼容性、显存、速度与导航质量仍待验证。见 [完整证据和命令](reports/onejev-local-deployment-20261010-01/README.md)、[使用说明](docs/ONEJEV_LOCAL.md)。

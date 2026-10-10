@@ -1,0 +1,36 @@
+test_malformed_image_metadata_is_a_service_failure (test_onejev.ClientTests.test_malformed_image_metadata_is_a_service_failure) ... ERROR
+test_legacy_client_cannot_send_onejev_to_cloud_even_with_key (test_onejev.ClientTests.test_legacy_client_cannot_send_onejev_to_cloud_even_with_key) ... FAIL
+test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive (test_ablation_script.AblationScriptTests.test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive) ... FAIL
+
+======================================================================
+ERROR: test_malformed_image_metadata_is_a_service_failure (test_onejev.ClientTests.test_malformed_image_metadata_is_a_service_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_onejev.py", line 145, in test_malformed_image_metadata_is_a_service_failure
+    client.decide(jev.make_request({},cfg(rgb_input='target_marked')),b'jpeg')
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/onejev.py", line 132, in decide
+    if image_bytes is not None and result.get('qev',{}).get('media',{}).get('images')!=1:
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+======================================================================
+FAIL: test_legacy_client_cannot_send_onejev_to_cloud_even_with_key (test_onejev.ClientTests.test_legacy_client_cannot_send_onejev_to_cloud_even_with_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_onejev.py", line 149, in test_legacy_client_cannot_send_onejev_to_cloud_even_with_key
+    with self.assertRaises(ValueError):jev.DecisionsClient(cfg())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive (test_ablation_script.AblationScriptTests.test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_ablation_script.py", line 129, in test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive
+    self.assertNotEqual(result.returncode,0)
+AssertionError: 0 == 0
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.064s
+
+FAILED (failures=2, errors=1)

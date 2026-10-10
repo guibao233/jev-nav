@@ -1,0 +1,22 @@
+test_health_mismatch_or_unreachable_fails_before_renderer (test_onejev.ClientTests.test_health_mismatch_or_unreachable_fails_before_renderer) ... ok
+test_legacy_client_cannot_send_onejev_to_cloud_even_with_key (test_onejev.ClientTests.test_legacy_client_cannot_send_onejev_to_cloud_even_with_key) ... ok
+test_local_url_only_and_finite_positive_timeout (test_onejev.ClientTests.test_local_url_only_and_finite_positive_timeout) ... ok
+test_malformed_image_metadata_is_a_service_failure (test_onejev.ClientTests.test_malformed_image_metadata_is_a_service_failure) ... ok
+test_model_probability_shape_and_confidence_are_checked (test_onejev.ClientTests.test_model_probability_shape_and_confidence_are_checked) ... ok
+test_no_key_preflight_and_successful_local_choice (test_onejev.ClientTests.test_no_key_preflight_and_successful_local_choice) ... ok
+test_no_retry_on_bad_json_http_or_timeout (test_onejev.ClientTests.test_no_retry_on_bad_json_http_or_timeout) ... ok
+test_rgb_setting_must_match_actual_image_presence (test_onejev.ClientTests.test_rgb_setting_must_match_actual_image_presence) ... ok
+test_unknown_choice_is_preserved_for_invalid_action_accounting (test_onejev.ClientTests.test_unknown_choice_is_preserved_for_invalid_action_accounting) ... ok
+test_dry_run_prints_nine_commands_without_key_or_execution (test_ablation_script.AblationScriptTests.test_dry_run_prints_nine_commands_without_key_or_execution) ... ok
+test_execute_dispatches_each_route_and_input_with_correct_budget_and_model (test_ablation_script.AblationScriptTests.test_execute_dispatches_each_route_and_input_with_correct_budget_and_model) ... ok
+test_existing_later_output_prevents_all_dispatch_and_overwrite (test_ablation_script.AblationScriptTests.test_existing_later_output_prevents_all_dispatch_and_overwrite) ... ok
+test_missing_key_prevents_dispatch (test_ablation_script.AblationScriptTests.test_missing_key_prevents_dispatch) ... ok
+test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive (test_ablation_script.AblationScriptTests.test_onejev_requires_explicit_render_gpu_but_legacy_defaults_survive) ... ok
+test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key (test_ablation_script.AblationScriptTests.test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key) ... ok
+test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names (test_ablation_script.AblationScriptTests.test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names) ... ok
+test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch (test_ablation_script.AblationScriptTests.test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.563s
+
+OK

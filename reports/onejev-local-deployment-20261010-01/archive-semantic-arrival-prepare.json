@@ -1,0 +1,292 @@
+{
+  "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+  "source_step": 93,
+  "called_model": false,
+  "source_steps_sha256": "2c28d1824632dae21c96299b10ee042e6b1cdb322726e8423cbc1ff51817fcd7",
+  "source_metadata_sha256": "b2dff5bc25b74926801ed7ad15f13658d777e55400776f9af9338899301c70e3",
+  "request": {
+    "model": "OmniJev/OneJev-4B",
+    "state": {
+      "task": {
+        "kind": "reference_path_following",
+        "stop_tolerance_m": 0.3,
+        "step": 94,
+        "steps_left": 157
+      },
+      "reference": {
+        "current_target": {
+          "forward_m": 0.067,
+          "left_m": -0.225,
+          "distance_m": 0.235,
+          "bearing_deg": -73.47,
+          "is_final": true
+        },
+        "ordered_preview": [
+          {
+            "forward_m": 0.067,
+            "left_m": -0.225,
+            "distance_m": 0.235,
+            "bearing_deg": -73.47,
+            "ahead_along_path_m": 0.159
+          }
+        ],
+        "final_goal": {
+          "forward_m": 0.067,
+          "left_m": -0.225,
+          "distance_m": 0.235,
+          "bearing_deg": -73.47
+        },
+        "distance_from_local_reference_m": 0.173,
+        "remaining_reference_length_m": 0.159,
+        "tracking": {
+          "mode": "local",
+          "progress_m": 11.552,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "robot": {
+        "radius_m": 0.10000000149011612,
+        "height_m": 1.5,
+        "camera_pitch_deg": 45.0,
+        "pitch_limits_deg": [
+          -30,
+          45
+        ],
+        "previous_collided": false
+      },
+      "depth": {
+        "source": "current_mesh_depth_only",
+        "format": "semantic",
+        "valid_observation_coverage": "fully sampled",
+        "sectors": [
+          {
+            "direction": "right edge of forward view",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "moderately near",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "outer right-front",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "moderately near",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "right-front",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "moderately near",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "slightly right of ahead",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "moderately near",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "straight ahead",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "very far",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "slightly left of ahead",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "very far",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "left-front",
+            "observation": "obstacle_seen",
+            "distance_band": "close",
+            "description": "Observed obstacle is close.",
+            "observed_surface_range": "very far",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "outer left-front",
+            "observation": "obstacle_seen",
+            "distance_band": "very close",
+            "description": "Observed obstacle is very close.",
+            "observed_surface_range": "very far",
+            "near_floor": "nearby floor seen"
+          },
+          {
+            "direction": "left edge of forward view",
+            "observation": "obstacle_seen",
+            "distance_band": "very close",
+            "description": "Observed obstacle is very close.",
+            "observed_surface_range": "very far",
+            "near_floor": "nearby floor seen"
+          }
+        ],
+        "move_checks": {
+          "move_forward": {
+            "status": "unknown",
+            "description": "The movement volume is not fully observed; safety is unknown.",
+            "coverage": "partly observed"
+          },
+          "move_backward": {
+            "status": "unknown",
+            "description": "The movement volume is not fully observed; safety is unknown.",
+            "coverage": "not observed"
+          }
+        },
+        "note": "Directions refer only to the forward camera view, not the full surroundings. Distance bands describe observed obstacles, not traversable distance. Observed surface range is separate from obstacle distance. No obstacle detected and unknown never mean confirmed free space."
+      },
+      "recent_actions": [
+        {
+          "action": "turn_left",
+          "valid": true,
+          "success": true,
+          "collided": false,
+          "actual_translation_m": 0.0,
+          "actual_forward_m": 0.0,
+          "actual_left_m": 0.0,
+          "actual_yaw_deg": 15.0,
+          "actual_pitch_deg": 0.0,
+          "result": "executed"
+        },
+        {
+          "action": "look_down",
+          "valid": false,
+          "success": false,
+          "collided": false,
+          "actual_translation_m": 0.0,
+          "actual_forward_m": 0.0,
+          "actual_left_m": 0.0,
+          "actual_yaw_deg": 0.0,
+          "actual_pitch_deg": 0.0,
+          "result": "invalid_action_or_pitch_limit"
+        },
+        {
+          "action": "move_forward",
+          "valid": true,
+          "success": true,
+          "collided": false,
+          "actual_translation_m": 0.25,
+          "actual_forward_m": 0.25,
+          "actual_left_m": -0.0,
+          "actual_yaw_deg": 0.0,
+          "actual_pitch_deg": 0.0,
+          "result": "executed"
+        },
+        {
+          "action": "move_forward",
+          "valid": true,
+          "success": true,
+          "collided": false,
+          "actual_translation_m": 0.25,
+          "actual_forward_m": 0.25,
+          "actual_left_m": -0.0,
+          "actual_yaw_deg": 0.0,
+          "actual_pitch_deg": 0.0,
+          "result": "executed"
+        },
+        {
+          "action": "move_forward",
+          "valid": true,
+          "success": true,
+          "collided": false,
+          "actual_translation_m": 0.25,
+          "actual_forward_m": 0.25,
+          "actual_left_m": -0.0,
+          "actual_yaw_deg": 0.0,
+          "actual_pitch_deg": 0.0,
+          "result": "executed"
+        }
+      ],
+      "recent_motion": {
+        "source": "recent_own_action_outcomes_only",
+        "window_steps": 5,
+        "window_capacity": 5,
+        "status": "moving",
+        "net_translation_m": 0.75,
+        "travelled_m": 0.75,
+        "net_turn_deg": 15.0,
+        "absolute_turn_deg": 15.0,
+        "opposite_turn_pairs": 0,
+        "collision_count": 0,
+        "invalid_action_count": 1,
+        "execution_success_count": 4,
+        "low_net_motion": false,
+        "note": "Action success means execution succeeded, not navigation progress. No translation alone can be useful observation."
+      },
+      "visual": {
+        "source": "current_gs_rgb",
+        "marker": {
+          "projection_status": "outside_frame",
+          "pixel_xy": [
+            384.47981907521563,
+            532.1356094447991
+          ],
+          "target_height_above_agent_feet_m": 0.0,
+          "camera_forward_m": 1.1080363261193198,
+          "occlusion_checked": false,
+          "version": "target_marked_rgb_v1",
+          "target_kind": "final_goal",
+          "marker_kind": "offscreen_arrow",
+          "marker_pixel_xy": [
+            361.5785280988715,
+            429.0
+          ]
+        }
+      }
+    },
+    "questions": {
+      "action": {
+        "type": "choice",
+        "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Depth is described in words. Directions are ordered from the right edge through straight ahead to the left edge of the current forward view; side edges do not describe the body's full left or right surroundings. Obstacle distance bands, nearest to farthest, are very close, close, moderately near, far, very far. These are obstacle ranges, not guaranteed free movement distances. Unknown and no_obstacle_seen do not mean far or safe. Surface range describes observed surfaces, separately from obstacles. Nearby floor not confirmed visible indicates a blind region. A current RGB image accompanies this text. The magenta virtual marker refers only to reference.current_target. A circle is its geometric projection; it does not prove visibility, free space, or a direct safe route. A border arrow explicitly means the target is outside the image or behind the camera, not a ground point at the arrow's pixel. It may be necessary to turn or look down to inspect it. Use image obstacles together with the available text and feedback. The marker is not an environmental object. It is an intermediate waypoint unless is_final is true. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints. recent_motion summarizes only recent_actions. Action success means the action executed, not that navigation advanced. If recent_motion.status is turn_oscillation, recent opposite turns have produced little net translation: avoid repeating that left-right pair and choose a different observation or recovery, such as inspecting farther in one turn direction or backing away when appropriate. A no_translation status alone can also mean useful observation. When reference.tracking.mode is reassociated, follow the updated current_target and ordered_preview.",
+        "criteria": {
+          "move_forward": "Translate forward 0.25 metres without changing body heading.",
+          "move_backward": "Translate backward 0.25 metres without changing body heading.",
+          "turn_left": "Rotate body left 15 degrees in place.",
+          "turn_right": "Rotate body right 15 degrees in place.",
+          "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+          "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+          "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+        }
+      }
+    }
+  },
+  "image_input": {
+    "path": "frames/00093-model-rgb.jpg",
+    "sha256": "92a22c9259660a213b3bd5c82cb5734ffe1a1d115ad5a9095fa8603fce667fd7",
+    "bytes": 66392,
+    "mime_type": "image/jpeg",
+    "width": 640,
+    "height": 480,
+    "marker": {
+      "projection_status": "outside_frame",
+      "pixel_xy": [
+        384.47981907521563,
+        532.1356094447991
+      ],
+      "target_height_above_agent_feet_m": 0.0,
+      "camera_forward_m": 1.1080363261193198,
+      "occlusion_checked": false,
+      "version": "target_marked_rgb_v1",
+      "target_kind": "final_goal",
+      "marker_kind": "offscreen_arrow",
+      "marker_pixel_xy": [
+        361.5785280988715,
+        429.0
+      ]
+    }
+  },
+  "wire_request_sha256": "d68890a3f04e6f16276d127c4bdaf11dfe14829f9b0101ba76c11fc7e0ecff5f",
+  "wire_request_bytes": 98365,
+  "decision": null
+}

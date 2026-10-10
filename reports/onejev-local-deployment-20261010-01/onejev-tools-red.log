@@ -1,0 +1,23 @@
+test_probe_prepares_verified_archive_without_network (test_onejev.ToolTests.test_probe_prepares_verified_archive_without_network) ... FAIL
+test_service_script_requires_gpu_and_has_nonexecuting_help (test_onejev.ToolTests.test_service_script_requires_gpu_and_has_nonexecuting_help) ... FAIL
+
+======================================================================
+FAIL: test_probe_prepares_verified_archive_without_network (test_onejev.ToolTests.test_probe_prepares_verified_archive_without_network)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_onejev.py", line 205, in test_probe_prepares_verified_archive_without_network
+    self.assertTrue(script.is_file())
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_service_script_requires_gpu_and_has_nonexecuting_help (test_onejev.ToolTests.test_service_script_requires_gpu_and_has_nonexecuting_help)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_onejev.py", line 192, in test_service_script_requires_gpu_and_has_nonexecuting_help
+    self.assertTrue(script.is_file())
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+FAILED (failures=2)

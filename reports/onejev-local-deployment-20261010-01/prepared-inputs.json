@@ -1,0 +1,20 @@
+[
+  {
+    "mode": "numeric",
+    "source": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-01",
+    "wire_sha256": "5aa9e3b910f31cee26ffa9a78774528bef9603c41ce426dd08dd73fdb22f3acf",
+    "image_sha256": "73ce5cb4a99d385c5d99bb3286199a272ae5806fce8c1e699e38adc0e7ef8ecf"
+  },
+  {
+    "mode": "semantic",
+    "source": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-rgbtarget-simple-rgbgs-semantic-20261009-01",
+    "wire_sha256": "8ef149a09b1050ad4407ed145c2303a178f4e8433523d57fcd2d51313989108c",
+    "image_sha256": "73ce5cb4a99d385c5d99bb3286199a272ae5806fce8c1e699e38adc0e7ef8ecf"
+  },
+  {
+    "mode": "none",
+    "source": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-rgbtarget-simple-rgbgs-none-20261009-01",
+    "wire_sha256": "2edc9c96624faaa995da60594226c294458547740c541d28f65191a9d4570c91",
+    "image_sha256": "73ce5cb4a99d385c5d99bb3286199a272ae5806fce8c1e699e38adc0e7ef8ecf"
+  }
+]

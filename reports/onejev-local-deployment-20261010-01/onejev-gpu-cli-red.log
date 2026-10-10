@@ -1,0 +1,15 @@
+test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer (test_onejev.IntegrationTests.test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer) ... FAIL
+
+======================================================================
+FAIL: test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer (test_onejev.IntegrationTests.test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_onejev.py", line 169, in test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer
+    with patch.dict(os.environ,{},clear=True),patch('sys.argv',argv),patch('run.run_episode') as runner,self.assertRaises(SystemExit):
+                                                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SystemExit not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)

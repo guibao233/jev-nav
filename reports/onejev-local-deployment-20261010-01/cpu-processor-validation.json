@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "gpu_initialized": false,
+  "cases": [
+    {
+      "archive": "archive-none-step0-prepare.json",
+      "expanded_tokens": 2208,
+      "images_loaded": 1,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "wire_sha256": "2edc9c96624faaa995da60594226c294458547740c541d28f65191a9d4570c91",
+      "qev_prompt_version": "qev-labels-v2"
+    },
+    {
+      "archive": "archive-numeric-step0-prepare.json",
+      "expanded_tokens": 3108,
+      "images_loaded": 1,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "wire_sha256": "5aa9e3b910f31cee26ffa9a78774528bef9603c41ce426dd08dd73fdb22f3acf",
+      "qev_prompt_version": "qev-labels-v2"
+    },
+    {
+      "archive": "archive-semantic-step0-prepare.json",
+      "expanded_tokens": 3231,
+      "images_loaded": 1,
+      "image_grid_thw": [
+        [
+          1,
+          30,
+          40
+        ]
+      ],
+      "wire_sha256": "8ef149a09b1050ad4407ed145c2303a178f4e8433523d57fcd2d51313989108c",
+      "qev_prompt_version": "qev-labels-v2"
+    }
+  ]
+}

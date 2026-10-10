@@ -1,0 +1,12 @@
+test_dry_run_prints_nine_commands_without_key_or_execution (test_ablation_script.AblationScriptTests.test_dry_run_prints_nine_commands_without_key_or_execution) ... ok
+test_execute_dispatches_each_route_and_input_with_correct_budget_and_model (test_ablation_script.AblationScriptTests.test_execute_dispatches_each_route_and_input_with_correct_budget_and_model) ... ok
+test_existing_later_output_prevents_all_dispatch_and_overwrite (test_ablation_script.AblationScriptTests.test_existing_later_output_prevents_all_dispatch_and_overwrite) ... ok
+test_missing_key_prevents_dispatch (test_ablation_script.AblationScriptTests.test_missing_key_prevents_dispatch) ... ok
+test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key (test_ablation_script.AblationScriptTests.test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key) ... ok
+test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names (test_ablation_script.AblationScriptTests.test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names) ... ok
+test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch (test_ablation_script.AblationScriptTests.test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.157s
+
+OK

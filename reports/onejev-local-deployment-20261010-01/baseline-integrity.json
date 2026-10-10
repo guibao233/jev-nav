@@ -1,0 +1,196 @@
+{
+  "status": "passed",
+  "baseline_commit": "3589b100ae56d05a8f5179b673aced26745d58a0",
+  "historical_run_records_checked": 280,
+  "historical_records_unchanged": true,
+  "protected_files": [
+    {
+      "path": "clearance.py",
+      "sha256": "a6a01efb42352883282e35c5708088e0e90a3cd11451fbf186c6ebd911f73b93"
+    },
+    {
+      "path": "config.json",
+      "sha256": "97ce26960aa44582aa4ca3dc11beef9ee1306e1f74dee5fc76ab3c8b4687d2bf"
+    },
+    {
+      "path": "config.single-gpu.json",
+      "sha256": "f7ba3ef72dec626e883b9f15a58bc8d6c541b044632449bd67891d471dd2b2f5"
+    },
+    {
+      "path": "core.py",
+      "sha256": "8d32fdc9f591554f49588df581285484949fceb6d94a92c63badea1fb3b5d794"
+    },
+    {
+      "path": "depth_language.py",
+      "sha256": "c50e808734cf10e914c3d92cc2d650fd1161d97f5cba6e85f467f09b74396131"
+    },
+    {
+      "path": "environment.py",
+      "sha256": "cff79b81f3b76f9600b7f6ebb28347ad979ef6339bf373173983d37f548039a6"
+    },
+    {
+      "path": "replay.py",
+      "sha256": "260b5ea05cb98f5f7235b89857666951eff4c5f25306b32e4588644c98aebd2a"
+    },
+    {
+      "path": "tasks/arrival-fixture.json",
+      "sha256": "c5ec3b391a8809e7092859a10a28b288fa4e391ee531f0c168779a213370e099"
+    },
+    {
+      "path": "tasks/challenge-clearance-20260929-01/README.md",
+      "sha256": "761996e0f086c0be571a935956568ee925f59e840a42c79f14af38625c2aea4e"
+    },
+    {
+      "path": "tasks/challenge-clearance-20260929-01/index.html",
+      "sha256": "e134649dbf45a5f2efdbcd98fc5bf72c51a15244da080076775fe21c2537b4c0"
+    },
+    {
+      "path": "tasks/challenge-clearance-20260929-01/maps/turn-000.png",
+      "sha256": "9940b62ca3698f0e78df96f6d2313fde0d7e5cfc7124ad628e5488ca4688b8bc"
+    },
+    {
+      "path": "tasks/challenge-clearance-20260929-01/tasks.json",
+      "sha256": "1542372c34bd4f497b3a75c43beb1750ff6db56af5977c6f4b0a8b37803b12a7"
+    },
+    {
+      "path": "tasks/challenge-clearance-aligned-20260930-01/README.md",
+      "sha256": "73dbf636be549266ec01fa5937641b1a8039a4b6e8ce8ff0768da21a77dd4de4"
+    },
+    {
+      "path": "tasks/challenge-clearance-aligned-20260930-01/tasks.json",
+      "sha256": "4703482f4d7f15e114020fcb4e96a94917afb710563b94f06980b973b0fe6ba1"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/README.md",
+      "sha256": "d96f303a788778c8677f4c6aa3f407391f7ca4c91c97f12eef21be54d6a85535"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/index.html",
+      "sha256": "e773db7bba0cb8ee61d7dd90b1d9bd71a88759f6596c4fdf06b926d8b74be058"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/control-000.png",
+      "sha256": "4ae7c045b69c468f6c5a9e0a4a595d4c4fee9facef40b4799eba966a3713e1b7"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/control-001.png",
+      "sha256": "6e653eb201de9699469bf5547b4e0f92d89169448056a218706a784f0fe8807d"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/control-002.png",
+      "sha256": "cacdc2b1781030f0989443157fef1444024ae83cd63c5fab8094c5238a6ebb32"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/extended-000.png",
+      "sha256": "9df3667050e0c67946f6cd4ce79622494279d1e34e080331a8a163e1fc1182e0"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/extended-001.png",
+      "sha256": "1d85a43b130740efbd4cad4cd6369c68df1fb6206e57750c763c63f3b9dd17b5"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/extended-002.png",
+      "sha256": "3fdf37d46c8bd3bd291acb1fff70e5a95340c1cbb64cdfd22218aa8d449bd0f2"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/long-000.png",
+      "sha256": "aea441f5c56e7a02ea435bf2a6f481078190d44ee7d9a8f38b29c022bc4d133f"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/long-001.png",
+      "sha256": "ec63409d7255b320024a5aabb140dfb0a8b67f440b31ab1d0aa1453f1f311529"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/long-002.png",
+      "sha256": "bb4d5be4f57069118a4d8cee1621b6a4adc57dd669847c0f6fb1e925f668f2a5"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/turn-000.png",
+      "sha256": "d3337c48ef27906d4b863c2dbcb7260b2ae17d04c2c1e00eef6c350b852f0229"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/turn-001.png",
+      "sha256": "26cd81aaf619f6d39309a73c973fb23dfae855df05ed6147550459c2502a74b5"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/maps/turn-002.png",
+      "sha256": "917a758b5c219055eae8b58d4b9139aa1d7b9680b5e8b749e544107775cce167"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/overview.png",
+      "sha256": "8f4fa2b68381e8f249719d76b4c31dfc0776fbf51b5ae65fdffe048479e831de"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/tasks.json",
+      "sha256": "0742ca0a5a7ee501ae81e7dd2f2fae0a113becb46e500728e3159a428430de1c"
+    },
+    {
+      "path": "tasks/challenge-v1-20260928/verification.json",
+      "sha256": "c740e767c34af91ad9ae4804eaf1b6a4e15ab0e65148a5af7bbd682156d91e8a"
+    },
+    {
+      "path": "tasks/collision-fixture.json",
+      "sha256": "1f502fbea573eba8bc18474a9420f6fff4637d982a70e9b46559fd05289b01a7"
+    },
+    {
+      "path": "tasks/debug-10.json",
+      "sha256": "3af3341724ef3cb3536a44bd63c01e16e472bdb128047a4097c29bbff1b5195b"
+    },
+    {
+      "path": "tasks/eval-50.json",
+      "sha256": "b5615670fd18a1236fc7e6f9d43cb459d8eac53a818b499b81d439a9ef9ca4fc"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/README.md",
+      "sha256": "45f7aae63d5b7e4a2e3a2a15a554d63a3b48fa625ce6afaa042ebeba499162ae"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/commands.sh",
+      "sha256": "a130cfec5267d902e7497c6eda5c1ba268b5b3f8c810e41fab2e718fc02e0a24"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/index.html",
+      "sha256": "5d6ee63e580a7cf10cfd6b7780e875d43f21edd4fb4841c8c39597b9c0c8a980"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/route-comparison.png",
+      "sha256": "992099c4a34c3f7add9833d51d350bb9337e6b99f84646bf1e3debf6fb07eebe"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/route.png",
+      "sha256": "ca1c9a790090a1625ed584f06f21e9ebc74933ab757a2fcd97edc00b57163d69"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/tasks.json",
+      "sha256": "13bf10a071bccde7287b3ef75c6114080638072decf3c809aef7dd167bca4aad"
+    },
+    {
+      "path": "tasks/extended-clearance-aligned-20261008-01/validation.json",
+      "sha256": "4e5044904ad63308347e07d71bea7cdcbc111c0a48a77602bcac62d7443efbe6"
+    },
+    {
+      "path": "tasks/extended-v1-20261008-01/README.md",
+      "sha256": "1d4153849bfc74113a9200c70a8e4b9533d97def88fe473f8a8f19c93319a4d6"
+    },
+    {
+      "path": "tasks/extended-v1-20261008-01/tasks.json",
+      "sha256": "cb88b806feaf8bd0ab1112872924dffb33b163362b29c354ed44bfe1b8399a23"
+    },
+    {
+      "path": "tasks/extended-v2-20261008-01/README.md",
+      "sha256": "ff2efec501b630e950eef8c4996e7e661c780693fb4e536238424e082da801ea"
+    },
+    {
+      "path": "tasks/extended-v2-20261008-01/clearance/tasks.json",
+      "sha256": "603e14008cfa1143978b0210f9fb4795dd978b3d2f61c859f331db748e850f2e"
+    },
+    {
+      "path": "tasks/extended-v2-20261008-01/select_route.py",
+      "sha256": "416f7bcf1db78a0f4cdb35ab8c32d78acbb514c29c3ff2b2687148fda49a5aad"
+    },
+    {
+      "path": "tasks/extended-v2-20261008-01/tasks.json",
+      "sha256": "fe7f674aab5ee61dcd8e586dca566b2e441e800ea8f7267d45a688df16f802b9"
+    }
+  ]
+}

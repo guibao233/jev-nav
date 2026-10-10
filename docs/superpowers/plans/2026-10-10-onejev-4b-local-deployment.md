@@ -150,10 +150,10 @@ summary 沿用成功、零碰撞成功、动作数、碰撞数、无效动作数
 **Files:** `local_models/onejev-4b/`、`scripts/serve_onejev.sh`、部署说明。
 
 - [ ] 审批后再次检查 GPU 分配、可用显存、磁盘、端口和现有目录；不覆盖已有部署目录。
-- [ ] 记录导航源码/配置/三任务哈希，并为将修改文件创建单独备份。当前目录不是 Git 仓库，不要求创建提交或清理用户文件。
-- [ ] 获取并记录完整上游 commit/HF revision，在独立前缀创建 Python 3.12 环境，安装适配 CUDA 的依赖与固定源码，导出依赖锁定。
-- [ ] 下载所需模型文件到 weights，检查 config、processor、tokenizer 和权重完整性及哈希；记录 calibration.json 是否存在，若不存在则记录官方默认校准，不能自行训练或伪造校准文件。
-- [ ] 实现显式 GPU 的服务启动脚本；缺少 GPU、权重、锁文件或端口被占用时，在模型加载前报错。
+- [x] 记录导航源码/配置/三任务哈希并固定备份。按用户最新要求建立本地 Git，baseline-20261010-before-onejev 保存原版；旧计划“不要求创建提交”已由本次明确授权取代。
+- [x] 获取并记录完整上游 commit/HF revision，在独立前缀创建 Python 3.12 环境，安装适配 CUDA 的依赖与固定源码，导出依赖锁定。
+- [x] 下载所需模型文件到 weights，检查 config、processor、tokenizer 和权重完整性及哈希；记录 calibration.json 是否存在，若不存在则记录官方默认校准，不能自行训练或伪造校准文件。
+- [x] 实现显式 GPU 的服务启动脚本；缺少 GPU、权重、锁文件或端口被占用时，在模型加载前报错。
 - [ ] 在用户分配 GPU 上启动，检查 `/health` 和 `/v1/models` 的模型名；验证固定七候选的文字/图片请求、概率与图片计数。
 - [ ] 用当前实际最长归档请求验证 8192 上限，测暖启动延迟与显存；超限/OOM 时保留日志，提出明确参数调整再继续，不能静默裁剪。
 
@@ -163,12 +163,12 @@ summary 沿用成功、零碰撞成功、动作数、碰撞数、无效动作数
 
 **Interfaces:** `onejev.encode_local_request(payload, image_bytes=None) -> bytes`；`OneJevClient(cfg).decide(payload, image_bytes=None) -> dict`；`jev.create_decision_client(cfg)` 返回对应客户端。结果继续满足 runner 的 choice/provider/response/latency_s/attempts 合同，失败使用现有 ServiceFailure。
 
-- [ ] 先添加并运行失败用例：七候选、一次图片占位符、原 JPEG 字节哈希、三深度模式、输入对象不被修改、本地调用不需要 OPENROUTER_API_KEY。
-- [ ] 添加健康检查、模型不匹配、拒绝非本机 URL、超时、HTTP 422/500、损坏 JSON/概率、未知动作保留和不自动回退用例。
-- [ ] 实现本地标准库客户端与身份分发；显式将 local endpoint 和 OpenRouter endpoint 分开。健康检查在渲染初始化前执行，检查不发决策请求。
-- [ ] 在 run.py 接入参数、客户端、日志、协议对应 hash。非 onejev 情况若误传本地专用参数则明确拒绝，不悄悄忽略。
-- [ ] 扩展 rgb_input 的模型允许条件；原 JPEG 投影/保存函数不改。
-- [ ] 在 habitat-gs 中运行离线相关测试和完整 unittest discover，测试只用 fake HTTP，不请求任何真实云端模型。
+- [x] 先添加并运行失败用例：七候选、一次图片占位符、原 JPEG 字节哈希、三深度模式、输入对象不被修改、本地调用不需要 OPENROUTER_API_KEY。
+- [x] 添加健康检查、模型不匹配、拒绝非本机 URL、超时、HTTP 422/500、损坏 JSON/概率、未知动作保留和不自动回退用例。
+- [x] 实现本地标准库客户端与身份分发；显式将 local endpoint 和 OpenRouter endpoint 分开。健康检查在渲染初始化前执行，检查不发决策请求。
+- [x] 在 run.py 接入参数、客户端、日志、协议对应 hash。非 onejev 情况若误传本地专用参数则明确拒绝，不悄悄忽略。
+- [x] 扩展 rgb_input 的模型允许条件；原 JPEG 投影/保存函数不改。
+- [x] 在 habitat-gs 中运行离线相关测试和完整 unittest discover，测试只用 fake HTTP，不请求任何真实云端模型。
 
 **验收：** 既有 Jev/OpenAI 文字与图像请求在原条件下保持；OneJev 身份正确、三种文字条件和图片输入无泄漏；失败不执行替代动作。
 
@@ -176,7 +176,7 @@ summary 沿用成功、零碰撞成功、动作数、碰撞数、无效动作数
 
 **Files:** `scripts/probe_onejev.py`、独立 `runs/onejev-*` 和 `reports/onejev-local-validation-*`。
 
-- [ ] 实现 probe，从历史运行读取指定 before_action 帧，校验图像 SHA256 后转换模型与本地传输形式；输出新的 JSON，不改历史 steps。
+- [x] 实现 probe，从历史运行读取指定 before_action 帧，校验图像 SHA256 后转换模型与本地传输形式；输出新的 JSON，不改历史 steps。
 - [ ] 至少核查普通行走、转弯/受阻、最终到达三类归档状态；各深度条件均检查对应真实输入。归档动作不是标签，不要求 OneJev 与旧模型选同一动作。
 - [ ] 对原地/目标画面外帧检查 media 数量、占位符和 qev 模板 hash；核实服务确实处理一张图。此验证只证明输入链路，不证明有效利用视觉。
 - [ ] 在没有 API key 的子进程执行 scripted smoke，验证新身份和回放；通过后执行简单路线最多 5 步真实 OneJev 闭环联调，保留 action_budget/early_stop 等真实状态。
@@ -187,10 +187,10 @@ summary 沿用成功、零碰撞成功、动作数、碰撞数、无效动作数
 
 ## Task 4：交付固定三路线的用户运行命令
 
-- [ ] 扩展现有脚本的 onejev 分支，确保本地模式不检查 OpenRouter key；图文模式允许 openai 或 onejev。脚本仍串行执行，输出目录冲突则开始前整体拒绝。
-- [ ] dry-run 用例检查三路线、预算、输入模式、模型和图片标志；对已有 jev/openai 分支做回归，不改默认行为。
-- [ ] 交付 9 个组合的 dry-run/实跑入口、单轮例子和第二轮不同 batch ID。完整批次由用户执行，不自动增加样本或重跑失败轮。
-- [ ] README/VALIDATION 记录具体已验证安装版本、GPU、部署清单、运行命令和资源限制，并复查本文各项验收状态。
+- [x] 扩展现有脚本的 onejev 分支，确保本地模式不检查 OpenRouter key；图文模式允许 openai 或 onejev。脚本仍串行执行，输出目录冲突则开始前整体拒绝。
+- [x] dry-run 用例检查三路线、预算、输入模式、模型和图片标志；对已有 jev/openai 分支做回归，不改默认行为。
+- [x] 交付 9 个组合的 dry-run/实跑入口、单轮例子和第二轮不同 batch ID。完整批次由用户执行，不自动增加样本或重跑失败轮。
+- [x] README/VALIDATION 记录具体已验证安装版本、GPU、部署清单、运行命令和资源限制，并复查本文各项验收状态。
 
 **固定实验矩阵：**
 
@@ -254,3 +254,15 @@ CUDA_VISIBLE_DEVICES="$NAV_GPU" \
 - 已核对官方 HTTP 路由、模型名检查、Choice schema、图片占位符及部署 CLI；尚未验证本机推理兼容性、显存和速度。
 - 路线/深度/执行策略保持，仅扩展模型和输入传输；没有把服务重试、恢复控制器或量化偷偷纳入方案。
 - 本轮只新增这份计划，实施任务均保持未勾选，等待用户审批。
+
+## 2026-10-10 实施记录
+
+用户已批准实施并要求先固定本地 Git 原版本；在指定目录创建 main 基线及 feature/onejev-local 开发分支。103 项原版测试通过；新增适配、错误处理及脚本回归后 124 项通过。没有修改环境执行层、路径/深度算法、任务或原配置。
+
+OneJev 独立 Python 3.12.15 / Torch 2.8.0+cu128 / Transformers 5.19.0 / qev 0.1.1 已安装，pip check 通过。GPU 分配已询问，未收到答复，因此未初始化 CUDA 或启动服务、渲染器。
+
+CPU 核查：19 份既有 OpenAI 图文归档（18 份固定矩阵及 1 份连通性记录），3285 条输入；普通、转弯/受阻、到达三类状态及最长请求共 12 例使用官方 processor 检查。无深度/数值/语义最长展开 token 为 3060/3979/4111，原始 JPEG 哈希及 640×480 尺寸逐一校验。尚未发送 OneJev 决策，不能据此认定模型有效使用视觉或完成路线。
+
+测试集中在新增 test_onejev.py 和原 test_ablation_script.py，原模型/图像测试文件无需改动；原有用例全部保留并通过。验证报告、命令和未执行项见 reports/onejev-local-deployment-20261010-01/README.md 与 docs/ONEJEV_LOCAL.md。
+
+权重已全部下载：10,350,019,328 bytes model.safetensors 与官方 LFS SHA256 一致，processor/tokenizer/config Git blob 或 LFS 校验通过。Task 1 的 GPU 服务/延迟/显存和 Task 3 的真实模型/渲染步骤继续保持未勾选，交由用户选择 GPU 启动执行；具体完成度见部署验证报告。

@@ -14,7 +14,7 @@ from depth_language import DEPTH_FORMATS, SEMANTIC_VERSION, DISTANCE_BANDS, dept
 from clearance import validate_reference_path
 from environment import ACTIONS, Environment, direct_navmesh_connection, load_pathfinder, sample_tasks, shortest
 from jev import (ENDPOINT, DEPTH_INPUT_MODES, DECISION_MODELS, DecisionsClient,
-                 ServiceFailure, depth_input_mode, make_request, prompt_version, evaluation_identity, encode_request)
+                 ServiceFailure, depth_input_mode, make_request, prompt_version, evaluation_identity, encode_request, create_decision_client)
 from rgb_input import RGB_INPUT_MODES, VERSION as RGB_INPUT_VERSION, rgb_input_mode, validate_rgb_input, save_model_image
 from replay import save_frame, save_map, write_replay
 
@@ -70,7 +70,7 @@ def run_episode(args, cfg):
         raise ValueError("semantic depth requires nine sectors")
     # Fail before renderer initialization if the user has not configured the API.
     identity = evaluation_identity(cfg,live=args.command == "run")
-    client = DecisionsClient(cfg) if args.command == "run" else None
+    client = create_decision_client(cfg) if args.command == "run" else None
     provider = identity["provider"]
     dataset = json.loads(Path(args.tasks).read_text())
     task = next((t for t in dataset["tasks"] if t["id"] == args.episode),None)
@@ -108,7 +108,9 @@ def run_episode(args, cfg):
         "rgb_input":rgb_mode, "rgb_provided_to_model":use_rgb and client is not None,
         "model_input_image_version":RGB_INPUT_VERSION if use_rgb else None,
         "request_representation":"readable_text_state_plus_image_manifest" if use_rgb else "wire_json",
-        "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+        "api_provider":getattr(client,"api_provider","openrouter") if client else None,
+        "api_endpoint":getattr(client,"endpoint",ENDPOINT) if client else None,
+        **({"onejev_service_health":client.health,"onejev_deployment":client.deployment} if client and provider == "onejev_local" else {}),
         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
         "route_policy":"fixed supplied reference polyline; checked reassociation to nearby later segments; no replanning or controller substitution",
@@ -156,12 +158,12 @@ def run_episode(args, cfg):
             if use_rgb:
                 record.update(image_input=image_input,
                     wire_request_sha256=hashlib.sha256(encode_request(request,image_bytes)).hexdigest(),
-                    wire_state_encoding='array_of_text_string_and_image_url')
+                    wire_state_encoding='object_plus_media_image_placeholder' if cfg['model']==DECISION_MODELS['onejev'] else 'array_of_text_string_and_image_url')
             if representation == "semantic":
                 record["depth_numeric_debug"] = state["depth"]
             try:
                 if client:
-                    print(f"[{provider}] Requesting action {index+1}/{cfg['max_steps']} via OpenRouter ({cfg['model']})...",flush=True)
+                    print(f"[{provider}] Requesting action {index+1}/{cfg['max_steps']} via {metadata['api_provider']} ({cfg['model']})...",flush=True)
                     decision = client.decide(request,image_bytes=image_bytes) if use_rgb else client.decide(request)
                 else:
                     if index >= len(scripts):
@@ -255,10 +257,12 @@ def main():
         sub.add_argument("--out",required=True)
         sub.add_argument("--rgb",choices=["gs","mesh","none"],default="gs")
         sub.add_argument("--rgb-input",choices=RGB_INPUT_MODES,
-                         help="none (default): replay RGB only; target_marked: send waypoint-marked RGB to OpenAI")
+                         help="none (default): replay RGB only; target_marked: send waypoint-marked RGB to OpenAI or local OneJev")
         sub.add_argument("--max-steps",type=int)
         sub.add_argument("--decision-model",choices=DECISION_MODELS,
-                         help="jev or openai (GPT-6 Luna Decisions), via OpenRouter; default uses config.model")
+                         help="jev/openai via OpenRouter or onejev locally; default uses config.model")
+        sub.add_argument("--onejev-url",help="local qev HTTP origin (onejev only; default localhost:8011)")
+        sub.add_argument("--onejev-timeout-s",type=float,help="local request timeout, default 30 seconds")
         sub.add_argument("--depth-format",choices=DEPTH_FORMATS,
                          help="numeric (default) or nine-sector semantic depth facts; depth-input none takes precedence")
         sub.add_argument("--depth-input",choices=DEPTH_INPUT_MODES,
@@ -283,6 +287,13 @@ def main():
         cfg["rgb_input"] = args.rgb_input
     if args.decision_model is not None:
         cfg["model"] = DECISION_MODELS[args.decision_model]
+    if args.onejev_url is not None or args.onejev_timeout_s is not None:
+        if cfg["model"] != DECISION_MODELS["onejev"]:
+            p.error("--onejev-url/--onejev-timeout-s require --decision-model onejev")
+        if args.onejev_url is not None: cfg["onejev_url"] = args.onejev_url
+        if args.onejev_timeout_s is not None: cfg["onejev_timeout_s"] = args.onejev_timeout_s
+    if cfg["model"] == DECISION_MODELS["onejev"] and args.command == "run" and not os.environ.get("CUDA_VISIBLE_DEVICES"):
+        p.error("Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU for OneJev")
     if args.depth_input is not None:
         cfg["depth_input"] = args.depth_input
     if args.max_steps is not None:

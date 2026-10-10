@@ -22,8 +22,8 @@ def rgb_input_mode(cfg):
 def validate_rgb_input(cfg, renderer):
     if rgb_input_mode(cfg) == 'none':
         return
-    if cfg['model'] != 'openai/gpt-6-luna-decisions':
-        raise ValueError('RGB input currently requires --decision-model openai')
+    if cfg['model'] not in ('openai/gpt-6-luna-decisions', 'OmniJev/OneJev-4B'):
+        raise ValueError('RGB input currently requires --decision-model openai or onejev')
     if renderer not in ('gs', 'mesh'):
         raise ValueError('RGB input requires --rgb gs or mesh')
 

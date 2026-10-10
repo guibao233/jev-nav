@@ -1,0 +1,15 @@
+test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key (test_ablation_script.LocalAblationScriptTests.test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key) ... FAIL
+
+======================================================================
+FAIL: test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key (test_ablation_script.LocalAblationScriptTests.test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_ablation_script.py", line 114, in test_onejev_rgb_dry_run_and_dispatch_require_no_cloud_key
+    self.assertEqual(dry.returncode,0,dry.stderr)
+AssertionError: 2 != 0 : Model must be openai or jev.
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.071s
+
+FAILED (failures=1)

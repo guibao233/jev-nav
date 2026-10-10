@@ -1,0 +1,25 @@
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-none-arrival-prepare.json PREPARED
+none arrival openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01 157 2413
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-none-longest-prepare.json PREPARED
+none longest openai-decisions-rgbtarget-extended-rgbgs-none-20261009-01 7 3060
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-none-ordinary-prepare.json PREPARED
+none ordinary openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01 0 2329
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-none-turn_or_blocked-prepare.json PREPARED
+none turn_or_blocked openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01 5 2890
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-numeric-arrival-prepare.json PREPARED
+numeric arrival openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01 165 3325
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-numeric-longest-prepare.json PREPARED
+numeric longest openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-01 315 3979
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-numeric-ordinary-prepare.json PREPARED
+numeric ordinary openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01 0 3230
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-numeric-turn_or_blocked-prepare.json PREPARED
+numeric turn_or_blocked openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01 3 3517
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-semantic-arrival-prepare.json PREPARED
+semantic arrival openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01 93 3422
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-semantic-longest-prepare.json PREPARED
+semantic longest openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-01 56 4111
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-semantic-ordinary-prepare.json PREPARED
+semantic ordinary openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01 0 3323
+PROBE /share/guiyuanze/code/habitat-gs/jev_nav/reports/onejev-local-deployment-20261010-01/archive-semantic-turn_or_blocked-prepare.json PREPARED
+semantic turn_or_blocked openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01 4 3785
+CPU_ARCHIVE_AUDIT 3285 requests 12 cases 4111 max tokens

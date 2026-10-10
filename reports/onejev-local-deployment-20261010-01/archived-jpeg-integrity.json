@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "images_checked": 3285,
+  "sizes": {
+    "640x480": 3285
+  },
+  "all_saved_jpeg_hashes_match": true,
+  "note": "Read each source JPEG; verify byte count, SHA256, JPEG format and actual dimensions against image_input. No files modified."
+}

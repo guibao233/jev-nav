@@ -1,0 +1,13 @@
+test_identity_rgb_and_cli (test_onejev.IntegrationTests.test_identity_rgb_and_cli) ... usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: --onejev-url/--onejev-timeout-s require --decision-model onejev
+ok
+test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer (test_onejev.IntegrationTests.test_live_cli_requires_explicit_render_gpu_before_any_client_or_renderer) ... usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU for OneJev
+ok
+test_runner_records_local_wire_images_and_model_identity (test_onejev.IntegrationTests.test_runner_records_local_wire_images_and_model_identity) ... ok
+test_service_failure_never_executes_a_robot_action (test_onejev.IntegrationTests.test_service_failure_never_executes_a_robot_action) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.701s
+
+OK

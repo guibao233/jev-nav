@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "gpu_initialized": false,
+  "source_clean": true,
+  "qev_commit": "de0c1125855e3f496f65a79f9aab2fbbc08e55ba",
+  "locked_packages_checked": 64,
+  "qev_source_files_checked": 13,
+  "python": "3.12.15",
+  "torch": "2.8.0+cu128",
+  "torch_cuda_runtime": "12.8",
+  "transformers": "5.19.0",
+  "qev": "0.1.1",
+  "pip_check": "No broken requirements found.",
+  "requirements_lock_sha256": "8ec0e8c62f3fe0f64a49040c5b16c3563b05198909b8a14e8e820a122e593564",
+  "official_small_files_checked": [
+    {
+      "file": "README.md",
+      "git_blob_sha1": "8cd32d0c5a54f53ba7def7896499b7c563de9545",
+      "sha256": "1853cf34474e8587fb709bc73134201558fe7d6af39d1a69ed81c9e30a340636"
+    },
+    {
+      "file": "chat_template.jinja",
+      "git_blob_sha1": "a585dec894e63da457d9440ec6aa7caa16d20860",
+      "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+    },
+    {
+      "file": "config.json",
+      "git_blob_sha1": "99b84086bbd9506b7aaf9466de29b29f2b0b8ad1",
+      "sha256": "53aa95673d1fb0021348b82fbaed6041d7eccdde3712f741cd04eef1956bac68"
+    },
+    {
+      "file": "generation_config.json",
+      "git_blob_sha1": "31ec2a53cc9cde720b0a8fbc68b9c4e73ac5a18f",
+      "sha256": "62153eb6c69f2e1f426beaa8002b7186437e949c7588167085df14e10e9c0a73"
+    },
+    {
+      "file": "processor_config.json",
+      "git_blob_sha1": "43c4343ec493f200e452f87a7c6649ecdfcce1ac",
+      "sha256": "bfbc24af59a3e73a9cd0653b8d4ae758dfaec4e3e6c15dfb1c6c8ee8d5683c85"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "git_blob_sha1": "875b7b0a3aabbd4e5e2888802dfbd5624a4a2060",
+      "sha256": "7488550a894dcf741616126e322ea31d66cf9457b59ec5825f4c7efdced421f8"
+    }
+  ],
+  "note": "CPU import/provenance only; CUDA availability, model loading and forward execution not checked."
+}

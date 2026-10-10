@@ -1,0 +1,7 @@
+test_probe_prepares_verified_archive_without_network (test_onejev.ToolTests.test_probe_prepares_verified_archive_without_network) ... ok
+test_service_script_requires_gpu_and_has_nonexecuting_help (test_onejev.ToolTests.test_service_script_requires_gpu_and_has_nonexecuting_help) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.611s
+
+OK

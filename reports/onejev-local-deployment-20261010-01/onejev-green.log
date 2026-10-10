@@ -1,0 +1,21 @@
+test_health_mismatch_or_unreachable_fails_before_renderer (test_onejev.ClientTests.test_health_mismatch_or_unreachable_fails_before_renderer) ... ok
+test_local_url_only_and_finite_positive_timeout (test_onejev.ClientTests.test_local_url_only_and_finite_positive_timeout) ... ok
+test_model_probability_shape_and_confidence_are_checked (test_onejev.ClientTests.test_model_probability_shape_and_confidence_are_checked) ... ok
+test_no_key_preflight_and_successful_local_choice (test_onejev.ClientTests.test_no_key_preflight_and_successful_local_choice) ... ok
+test_no_retry_on_bad_json_http_or_timeout (test_onejev.ClientTests.test_no_retry_on_bad_json_http_or_timeout) ... ok
+test_rgb_setting_must_match_actual_image_presence (test_onejev.ClientTests.test_rgb_setting_must_match_actual_image_presence) ... ok
+test_unknown_choice_is_preserved_for_invalid_action_accounting (test_onejev.ClientTests.test_unknown_choice_is_preserved_for_invalid_action_accounting) ... ok
+test_all_depth_conditions_preserve_questions_and_jpeg_bytes (test_onejev.EncodingTests.test_all_depth_conditions_preserve_questions_and_jpeg_bytes) ... ok
+test_openai_and_onejev_have_identical_semantic_prompts (test_onejev.EncodingTests.test_openai_and_onejev_have_identical_semantic_prompts) ... ok
+test_text_only_has_no_media_or_reference (test_onejev.EncodingTests.test_text_only_has_no_media_or_reference) ... ok
+test_wrong_model_missing_bytes_or_existing_placeholder_are_rejected (test_onejev.EncodingTests.test_wrong_model_missing_bytes_or_existing_placeholder_are_rejected) ... ok
+test_identity_rgb_and_cli (test_onejev.IntegrationTests.test_identity_rgb_and_cli) ... usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: --onejev-url/--onejev-timeout-s require --decision-model onejev
+ok
+test_runner_records_local_wire_images_and_model_identity (test_onejev.IntegrationTests.test_runner_records_local_wire_images_and_model_identity) ... ok
+test_service_failure_never_executes_a_robot_action (test_onejev.IntegrationTests.test_service_failure_never_executes_a_robot_action) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.510s
+
+OK
