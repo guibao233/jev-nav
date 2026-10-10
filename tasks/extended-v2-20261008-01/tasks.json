@@ -1,0 +1,184 @@
+{
+  "schema": 1,
+  "seed": 20261008,
+  "sampling_attempts": 165,
+  "sampling_policy": "first pair on largest NavMesh island passing geometry AND clearance planning; geodesic 16-20m, >=3 bends >=30deg, detour ratio >=1.35, flat <=0.02m, endpoint extra clearance >=0.25m; default 0.10m grid centered reference must have minimum extra clearance >=0.10m; no model-based selection",
+  "rejected_geometric_candidates": [
+    {
+      "attempt": 42,
+      "geodesic_m": 17.757165908813477,
+      "reason": "no grid route found; original NavMesh was not changed; try finer grid or wider padding"
+    }
+  ],
+  "suggested_max_steps": 500,
+  "budget_note": "run.py requires --max-steps 500 explicitly",
+  "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+  "config_at_generation": {
+    "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+    "gpu_id": 0,
+    "allow_sliding": true,
+    "resolution": [
+      480,
+      640
+    ],
+    "hfov_deg": 90,
+    "camera_height_m": 1.5,
+    "near_m": 0.05,
+    "far_m": 20.0,
+    "move_m": 0.25,
+    "turn_deg": 15,
+    "pitch_deg": 15,
+    "pitch_min_deg": -30,
+    "pitch_max_deg": 45,
+    "preview_m": 3.0,
+    "sample_spacing_m": 0.5,
+    "target_lookahead_m": 0.75,
+    "success_m": 0.3,
+    "max_steps": 100,
+    "history_steps": 5,
+    "sectors": 9,
+    "obstacle_min_height_m": 0.08,
+    "geometry_margin_m": 0.03,
+    "task_min_m": 2.0,
+    "task_max_m": 5.0,
+    "model": "typesafe/jev-1.13",
+    "api_timeout_s": 15,
+    "api_retries": 2,
+    "depth_input": "mesh",
+    "depth_format": "numeric",
+    "agent_radius_m": 0.10000000149011612,
+    "agent_height_m": 1.5
+  },
+  "assets": {
+    "shuyuan.navmesh": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.navmesh",
+      "bytes": 129388,
+      "mtime_ns": 1788163942085373455,
+      "sha256": "4c21f2de21173be05e19bb592f967393ac95baabc20f303ad27cda9249294c49"
+    },
+    "shuyuan.mesh.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+      "bytes": 93062608,
+      "mtime_ns": 1788163075561382114
+    },
+    "shuyuan.gs.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.gs.ply",
+      "bytes": 996739998,
+      "mtime_ns": 1788833822105634981
+    }
+  },
+  "tasks": [
+    {
+      "id": "extended-000",
+      "category": "extended",
+      "start": [
+        4.764145374298096,
+        -0.125,
+        8.730498313903809
+      ],
+      "goal": [
+        -2.4024908542633057,
+        -0.125,
+        3.816352605819702
+      ],
+      "yaw_deg": 0.0,
+      "pitch_deg": 0,
+      "geodesic_m": 16.32259750366211,
+      "path": [
+        [
+          4.764145374298096,
+          -0.125,
+          8.730498313903809
+        ],
+        [
+          5.847194671630859,
+          -0.125,
+          8.988052368164062
+        ],
+        [
+          5.9971923828125,
+          -0.125,
+          9.18804931640625
+        ],
+        [
+          6.147193908691406,
+          -0.125,
+          10.238052368164062
+        ],
+        [
+          6.197193145751953,
+          -0.125,
+          10.78805160522461
+        ],
+        [
+          6.197193145751953,
+          -0.125,
+          10.988052368164062
+        ],
+        [
+          6.047191619873047,
+          -0.125,
+          11.088050842285156
+        ],
+        [
+          5.397193908691406,
+          -0.125,
+          11.138050079345703
+        ],
+        [
+          2.0471935272216797,
+          -0.125,
+          10.888050079345703
+        ],
+        [
+          1.4971923828125,
+          -0.125,
+          10.43804931640625
+        ],
+        [
+          -0.5528068542480469,
+          -0.125,
+          4.538051605224609
+        ],
+        [
+          -0.6528072357177734,
+          -0.125,
+          4.43804931640625
+        ],
+        [
+          -2.4024908542633057,
+          -0.125,
+          3.816352605819702
+        ]
+      ],
+      "geometry": {
+        "euclidean_m": 8.689620410168112,
+        "geodesic_to_euclidean_ratio": 1.8784016715577483,
+        "significant_turns": 4,
+        "turn_threshold_deg": 30.0,
+        "turn_angles_deg": [
+          39.753367139826715,
+          28.73973700758499,
+          2.935803391633024,
+          5.194357246626144,
+          56.31060498337512,
+          29.29074108912067,
+          8.666546743599048,
+          35.02150322632462,
+          31.550430555475987,
+          25.839280190057245,
+          25.439428469089002
+        ],
+        "total_abs_turn_deg": 288.7418000427126,
+        "path_vertices": 13,
+        "path_height_span_m": 0.0
+      },
+      "geodesic_to_euclidean_ratio": 1.8784016715577483,
+      "endpoint_extra_navmesh_clearance_m": [
+        0.2575540542602539,
+        1.2628878355026245
+      ]
+    }
+  ],
+  "selection_generator_sha256": "416f7bcf1db78a0f4cdb35ab8c32d78acbb514c29c3ff2b2687148fda49a5aad"
+}

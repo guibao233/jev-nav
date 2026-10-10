@@ -1,0 +1,27 @@
+{
+  "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-semantic-complex-semantic-20261008-01",
+  "source_sha256": {
+    "metadata.json": "fd536afd10b72b31a834f6189e0fd3853eb3dfe8be659fb794ac7fa3ea61d85b",
+    "summary.json": "0e44f28abd842b74e6506b6394b83bd656e1971233eaf17e543c165aa684384e",
+    "steps.jsonl": "5578bd7818d6613b42559abafe0333d8cb2bf51030d41b9ffef9fb915c64df29",
+    "navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+    "frames/00000-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00000-depth.png": "1743647f8777044574ef1495c92a3c9b35d3b7de167dbd284713901113856165",
+    "frames/00001-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00001-depth.png": "9b93d69cd038a2a5d7758496b04a7ce474c1d42482969b2f7e72cc3d67c4e5bf",
+    "frames/00002-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00002-depth.png": "73cae505587bb1835f1f4ea5b6e52c1c8a311acd4c80628601625ab017b34059",
+    "frames/00003-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00003-depth.png": "9c83bca732a3a5999d58507056cb3c9ee419d522b0286697fb4d4a0e896cd4d6",
+    "frames/00004-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00004-depth.png": "9c83bca732a3a5999d58507056cb3c9ee419d522b0286697fb4d4a0e896cd4d6"
+  },
+  "observations": 5,
+  "media_exported": true,
+  "entry": "index.html",
+  "portable": true,
+  "reran_simulator": false,
+  "called_jev": false,
+  "event_timing": "Previous completed action, displayed on the following observation (including terminal); never the current pending action.",
+  "target_source": "actual logged requests transformed by each observation's body pose"
+}

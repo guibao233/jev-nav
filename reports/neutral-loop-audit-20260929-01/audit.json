@@ -1,0 +1,284 @@
+{
+  "run": "runs/jev-challenge-turn-000-neutral-02",
+  "step_numbering": "one-based; steps.jsonl step + 1",
+  "summary": {
+    "provider": "jev",
+    "is_jev_evaluation": true,
+    "status": "action_budget",
+    "success": false,
+    "collision_free_success": false,
+    "steps": 250,
+    "collisions": 1,
+    "invalid_actions": 1,
+    "path_length_m": 12.439928621053696,
+    "initial_geodesic_m": 9.797690391540527,
+    "final_geodesic_m": 5.0425190925598145,
+    "ever_within_goal_tolerance": false,
+    "reached_but_not_successful_stop": false,
+    "spl": 0.0,
+    "jev_request_latency": {
+      "p50_s": 0.5891559310257435,
+      "p95_s": 1.6160361467860636
+    },
+    "cycle_including_render_and_logging": {
+      "p50_s": 0.8651451840996742,
+      "p95_s": 1.8690094017423688
+    },
+    "elapsed_s": 293.71877158619463
+  },
+  "prompt_version": "seven_actions_neutral_v4",
+  "actual_models": [
+    "typesafe/jev-1.13-20260917"
+  ],
+  "action_counts": {
+    "move_backward": 25,
+    "turn_right": 87,
+    "move_forward": 25,
+    "turn_left": 109,
+    "look_down": 4
+  },
+  "events": [
+    {
+      "step": 59,
+      "outcome": {
+        "action": "move_backward",
+        "valid": true,
+        "success": false,
+        "collided": true,
+        "actual_translation_m": 0.1899,
+        "actual_forward_m": -0.189,
+        "actual_left_m": -0.014,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "collision"
+      }
+    },
+    {
+      "step": 109,
+      "outcome": {
+        "action": "look_down",
+        "valid": false,
+        "success": false,
+        "collided": false,
+        "actual_translation_m": 0.0,
+        "actual_forward_m": 0.0,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "invalid_action_or_pitch_limit"
+      }
+    }
+  ],
+  "last_translation_step": 85,
+  "stationary_start_step": 86,
+  "stationary_end_step": 250,
+  "stationary_steps": 165,
+  "stationary_position": [
+    -7.702047348022461,
+    -0.125,
+    -10.575712203979492
+  ],
+  "stationary_action_counts": {
+    "turn_right": 81,
+    "turn_left": 80,
+    "look_down": 4
+  },
+  "adjacent_opposite_turn_pairs_in_stationary_tail": 147,
+  "longest_strict_alternating_turn_span": {
+    "start": 198,
+    "end": 250,
+    "steps": 53
+  },
+  "stationary_yaw_counts_deg": {
+    "97.7": 76,
+    "82.7": 56,
+    "112.7": 26,
+    "127.7": 7
+  },
+  "stationary_forward_status_counts": {
+    "blocked": 165
+  },
+  "stationary_backward_status_counts": {
+    "unknown": 165
+  },
+  "stationary_backward_probability_min_median_max": [
+    0.06,
+    0.1,
+    0.18
+  ],
+  "stationary_confidence_min_median_max": [
+    0.14,
+    0.23,
+    0.37
+  ],
+  "route_progress_final_m": 2.5455410174142257,
+  "route_progress_frozen_from_step": 62,
+  "final_logged_local_reference_distance_m": 1.812,
+  "nearest_whole_path_distance_m": 0.04684126973052958,
+  "nearest_whole_path_arc_m": 4.757432548177259,
+  "nearest_whole_path_world": [
+    -7.655431036640318,
+    -0.125,
+    -10.580297404421279
+  ],
+  "current_target_world": [
+    -7.512329328867219,
+    -0.125,
+    -9.125426706060388
+  ],
+  "current_target_distance_m": 1.4626417716811773,
+  "navmesh_position_navigable": true,
+  "navmesh_boundary_clearance_m": 0.18265385925769806,
+  "nearest_path_connector": [
+    0.04684104397892952,
+    [
+      [
+        -7.702047348022461,
+        -0.125,
+        -10.575712203979492
+      ],
+      [
+        -7.655431270599365,
+        -0.125,
+        -10.580297470092773
+      ]
+    ]
+  ],
+  "current_target_connector": [
+    1.4626421928405762,
+    [
+      [
+        -7.702047348022461,
+        -0.125,
+        -10.575712203979492
+      ],
+      [
+        -7.5123291015625,
+        -0.125,
+        -9.125426292419434
+      ]
+    ]
+  ],
+  "cpu_navmesh_probes": [
+    {
+      "yaw_deg": 82.70431,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.18269026458634788,
+      "endpoint_error_m": 0.0673195004356145,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.0541887283325195
+    },
+    {
+      "yaw_deg": 82.70431,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.24999986871667906,
+      "endpoint_error_m": 3.6338194513086276e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.122321128845215
+    },
+    {
+      "yaw_deg": 82.70432,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.18269026458634788,
+      "endpoint_error_m": 0.06731949980033947,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.0541887283325195
+    },
+    {
+      "yaw_deg": 82.70432,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.24999986871667906,
+      "endpoint_error_m": 4.043754118579539e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.122321128845215
+    },
+    {
+      "yaw_deg": 97.70431,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.19497586464893174,
+      "endpoint_error_m": 0.05785978479108787,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.117265701293945
+    },
+    {
+      "yaw_deg": 97.70431,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.2499998239567793,
+      "endpoint_error_m": 2.547768084225327e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.060178756713867
+    },
+    {
+      "yaw_deg": 97.70432,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.19497586464893174,
+      "endpoint_error_m": 0.05785977288563052,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.117265701293945
+    },
+    {
+      "yaw_deg": 97.70432,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.2499998239567793,
+      "endpoint_error_m": 2.8790150093912826e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.060178756713867
+    },
+    {
+      "yaw_deg": 112.70431,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.22311935995174703,
+      "endpoint_error_m": 0.03200919697486326,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.176077842712402
+    },
+    {
+      "yaw_deg": 112.70431,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.24999975793786794,
+      "endpoint_error_m": 2.469389231028343e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 4.99501895904541
+    },
+    {
+      "yaw_deg": 127.70431,
+      "action": "move_forward",
+      "requested_m": 0.25,
+      "actual_m": 0.25000019144174024,
+      "endpoint_error_m": 2.4798982053849465e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 5.22509765625
+    },
+    {
+      "yaw_deg": 127.70431,
+      "action": "move_backward",
+      "requested_m": 0.25,
+      "actual_m": 0.25000019144174024,
+      "endpoint_error_m": 2.4798982053849465e-07,
+      "end_navigable": true,
+      "geodesic_to_goal_m": 4.931175231933594
+    }
+  ],
+  "probe_limit": "NavMesh movement filtering only; no new mesh rendering, model calls or full recovery rollout",
+  "saved_request_and_route_exact_matches": 250,
+  "depth_facts_exact_matches_steps": [
+    85,
+    86,
+    150,
+    151
+  ],
+  "retrying_requests": 0,
+  "api_calls_in_audit": 0,
+  "gpu_runs_in_audit": 0,
+  "protected_files_unchanged": 20
+}

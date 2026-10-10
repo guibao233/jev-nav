@@ -1,0 +1,4 @@
+[visualize] 已读取 7 幅观察，正在生成：/share/guiyuanze/code/habitat-gs/jev_nav/reports/no-depth-ablation-20260930-01/viewer-none
+[visualize] 正在导出 MP4 / GIF / 静态总览（不调用 Jev）...
+{"output": "/share/guiyuanze/code/habitat-gs/jev_nav/reports/no-depth-ablation-20260930-01/viewer-none/media", "observations": 7, "duration_s": 10.5, "verified": true}
+[visualize] 回放入口：/share/guiyuanze/code/habitat-gs/jev_nav/reports/no-depth-ablation-20260930-01/viewer-none/index.html

@@ -1,0 +1,44 @@
+test_removed_actions_are_invalid_and_never_reach_simulator (test_core.ActionRestrictionTests.test_removed_actions_are_invalid_and_never_reach_simulator) ... ok
+test_stop_does_not_invoke_a_movement (test_core.ActionRestrictionTests.test_stop_does_not_invoke_a_movement) ... ok
+test_auth_failure_not_retried_or_logged_with_secret (test_core.ApiTests.test_auth_failure_not_retried_or_logged_with_secret) ... ok
+test_malformed_answer_is_service_failure (test_core.ApiTests.test_malformed_answer_is_service_failure) ... ok
+test_no_key_fails_without_network (test_core.ApiTests.test_no_key_fails_without_network) ... ok
+test_six_actions_payload_does_not_include_key_or_removed_actions (test_core.ApiTests.test_six_actions_payload_does_not_include_key_or_removed_actions) ... ok
+test_stop_prompt_prioritizes_inclusive_final_tolerance (test_core.ApiTests.test_stop_prompt_prioritizes_inclusive_final_tolerance) ... ok
+test_successful_http_contract (test_core.ApiTests.test_successful_http_contract) ... ok
+test_transient_failure_retries_are_bounded (test_core.ApiTests.test_transient_failure_retries_are_bounded) ... ok
+test_body_bearings_and_rotation (test_core.GeometryTests.test_body_bearings_and_rotation) ... ok
+test_close_wall_blocks_only_available_translation (test_core.GeometryTests.test_close_wall_blocks_only_available_translation) ... ok
+test_corner_is_current_target_and_preserved_in_preview (test_core.GeometryTests.test_corner_is_current_target_and_preserved_in_preview) ... ok
+test_far_wall_does_not_prove_unseen_floor_clear (test_core.GeometryTests.test_far_wall_does_not_prove_unseen_floor_clear) ... ok
+test_floor_removed_after_pitch_alignment (test_core.GeometryTests.test_floor_removed_after_pitch_alignment) ... ok
+test_forward_progress_never_rewinds (test_core.GeometryTests.test_forward_progress_never_rewinds) ... ok
+test_missing_depth_never_means_clear (test_core.GeometryTests.test_missing_depth_never_means_clear) ... ok
+test_nearby_future_branch_does_not_skip_route (test_core.GeometryTests.test_nearby_future_branch_does_not_skip_route) ... ok
+test_stop_is_required_and_checked_at_final_goal (test_core.GeometryTests.test_stop_is_required_and_checked_at_final_goal) ... ok
+test_ambiguous_sliding_values_rejected (test_core.SlidingConfigTests.test_ambiguous_sliding_values_rejected) ... ok
+test_explicit_boolean_and_legacy_default (test_core.SlidingConfigTests.test_explicit_boolean_and_legacy_default) ... ok
+test_constructor_error_preserved_and_handler_restored (test_core.StartupTests.test_constructor_error_preserved_and_handler_restored) ... ok
+test_interrupt_waits_until_constructor_result_is_owned (test_core.StartupTests.test_interrupt_waits_until_constructor_result_is_owned) ... ok
+test_inverse_body_coordinates_at_known_headings (test_map_view.MapViewTests.test_inverse_body_coordinates_at_known_headings) ... ok
+test_map_axes_and_crop_contain_endpoints (test_map_view.MapViewTests.test_map_axes_and_crop_contain_endpoints) ... ok
+test_terminal_observation_has_no_invented_target (test_map_view.MapViewTests.test_terminal_observation_has_no_invented_target) ... ok
+test_uses_logged_targets_and_observation_pose (test_map_view.MapViewTests.test_uses_logged_targets_and_observation_pose) ... ok
+test_default_output_skips_existing_timestamp (test_visualize.VisualizeTests.test_default_output_skips_existing_timestamp) ... ok
+test_existing_output_is_never_overwritten (test_visualize.VisualizeTests.test_existing_output_is_never_overwritten) ... ok
+test_missing_frame_fails_before_creating_output (test_visualize.VisualizeTests.test_missing_frame_fails_before_creating_output) ... ok
+test_no_observations_has_clear_error (test_visualize.VisualizeTests.test_no_observations_has_clear_error) ... ok
+test_portable_bundle_preserves_request_and_sources (test_visualize.VisualizeTests.test_portable_bundle_preserves_request_and_sources) ... [visualize] 已读取 1 幅观察，正在生成：/tmp/tmpaka66zsq/viewer
+[visualize] 回放入口：/tmp/tmpaka66zsq/viewer/index.html
+ok
+test_bad_or_vertical_only_paths_rejected (test_challenges.ChallengeGeometryTests.test_bad_or_vertical_only_paths_rejected) ... ok
+test_duplicates_do_not_create_bends_or_change_path (test_challenges.ChallengeGeometryTests.test_duplicates_do_not_create_bends_or_change_path) ... ok
+test_existing_bundle_is_never_overwritten (test_challenges.ChallengeGeometryTests.test_existing_bundle_is_never_overwritten) ... ok
+test_l_bend_count_and_detour (test_challenges.ChallengeGeometryTests.test_l_bend_count_and_detour) ... ok
+test_long_straight_does_not_qualify_as_complex (test_challenges.ChallengeGeometryTests.test_long_straight_does_not_qualify_as_complex) ... ok
+test_u_turn_counts_two_bends (test_challenges.ChallengeGeometryTests.test_u_turn_counts_two_bends) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.114s
+
+OK

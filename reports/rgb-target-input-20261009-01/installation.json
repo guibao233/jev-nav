@@ -1,0 +1,60 @@
+{
+  "source_files": {
+    "core.py": {
+      "before_sha256": "4a04aed1238c2d674d348475bd2608b608c2641f940d40f3e91b3a05f8ee5fd1",
+      "after_sha256": "8d32fdc9f591554f49588df581285484949fceb6d94a92c63badea1fb3b5d794"
+    },
+    "environment.py": {
+      "before_sha256": "57a2d27f86237d5fbae1fa103c2ca6f86f7b53dc0aee88afb22de7e95bed724f",
+      "after_sha256": "cff79b81f3b76f9600b7f6ebb28347ad979ef6339bf373173983d37f548039a6"
+    },
+    "jev.py": {
+      "before_sha256": "8ea1666b617f2fa189f4a2071c7f27d87d4fb906d18c91318fb16caa32ca0cee",
+      "after_sha256": "0c9fd5284aced13377d2e26c92d041f4207fba73d58304bab3754f5c182bbddd"
+    },
+    "run.py": {
+      "before_sha256": "f8a76fad7ce1cca068b6007827f60c7c26cf24c3c042bb751576bcc2798342e0",
+      "after_sha256": "2f15f24a681bf086bd1b90349249a6fcf5dc2ce405e16f84fea09592499a8c36"
+    },
+    "replay.py": {
+      "before_sha256": "6b186ecf91da962e3e826a87af3bbf84194468e425a81e70c41fec994ef7f0d3",
+      "after_sha256": "260b5ea05cb98f5f7235b89857666951eff4c5f25306b32e4588644c98aebd2a"
+    },
+    "visualize.py": {
+      "before_sha256": "9f05b5c109e74a8943d84eb038e8ded50c8ce040a8506a6abc661b4547e7806f",
+      "after_sha256": "1852da02022f4a91671887d1c1b352cbd48f9a21c40731ac6f70af50c67cad5c"
+    },
+    "export_replay.py": {
+      "before_sha256": "547bfd0c75e700871e3385d390759b2118076e8ffb3a323a76c6379b19f529a3",
+      "after_sha256": "a384c034dc4581a6426afc5a22c8603184f48ee903cd684cbaab7d6229eb956c"
+    },
+    "scripts/run_model_ablation.sh": {
+      "before_sha256": "4b05c9d6f90d9ade31f9deba885de0f96661da72c40c77fdf8ec58e8ff31cd8b",
+      "after_sha256": "37b3b86d0a27d69bf0e620343f1ccee985f616ecb4119b1875dc58a4976a3ed4"
+    },
+    "README.md": {
+      "before_sha256": "9196c1a7be1b231540c657e0285b6cefdcdb69faea14bbdcd531c215fc94a57a",
+      "after_sha256": "495c6af14d0c6b9c738bfbf84d0cb6428811128b55cf122bc0d940901ddb973a"
+    },
+    "test_ablation_script.py": {
+      "before_sha256": "11ec93dedc085356864c23271186bbdebddfced3a4e229b61cfacdcec86387cb",
+      "after_sha256": "1c6eef1f99637f8f5369594381f9465bd19ba35cc3b0cd0bf123b76aebc425c7"
+    },
+    "rgb_input.py": {
+      "before_sha256": null,
+      "after_sha256": "fb2a3d4981d4882d911c05ae55fc636660258eaa262f79ed6027eeb2cb81dfa7"
+    },
+    "test_rgb_input.py": {
+      "before_sha256": null,
+      "after_sha256": "04a9e6c01cce3b03a1bb41a9a150254000096f27e347fb6c5763e42d05eb20b1"
+    },
+    "VALIDATION.md": {
+      "before_sha256": "5ebd60e1f865a07bdba8c618f0fb2153db23fbcc39a85b5b4791edebbe4d70bc",
+      "after_sha256": "09b1137d1008d5a2b5f6226521592d8178da4d04bf009b5e718cfccbe2423fc4"
+    }
+  },
+  "protected_historical_files_unchanged": 229,
+  "smoke_original_location": "/tmp/jev-nav-rgb-target-20261009/smoke-rgb-target-verified",
+  "smoke_installed_location": "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-rgb-target-20261009-01",
+  "real_api_calls": 0
+}

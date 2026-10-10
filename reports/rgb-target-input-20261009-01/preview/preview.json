@@ -1,0 +1,66 @@
+[
+  {
+    "source_run": "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-simple-rgbgs-semantic-20261009-01",
+    "source_frame": "frames/00000-rgb.png",
+    "source_step": 0,
+    "pitch_deg": 0.0,
+    "image": {
+      "path": "frames/00000-model-rgb.jpg",
+      "sha256": "73ce5cb4a99d385c5d99bb3286199a272ae5806fce8c1e699e38adc0e7ef8ecf",
+      "bytes": 65366,
+      "mime_type": "image/jpeg",
+      "width": 640,
+      "height": 480,
+      "marker": {
+        "projection_status": "outside_frame",
+        "pixel_xy": [
+          391.1939890710383,
+          895.2377049180329
+        ],
+        "target_height_above_agent_feet_m": 0.0,
+        "camera_forward_m": 0.732,
+        "occlusion_checked": false,
+        "version": "target_marked_rgb_v1",
+        "target_kind": "local_waypoint",
+        "marker_kind": "offscreen_arrow",
+        "marker_pixel_xy": [
+          340.21866666666665,
+          429.0
+        ]
+      }
+    },
+    "kind": "offline_existing_rgb_preview_not_a_new_model_experiment"
+  },
+  {
+    "source_run": "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/openai-decisions-simple-rgbgs-semantic-20261009-01",
+    "source_frame": "frames/00003-rgb.png",
+    "source_step": 3,
+    "pitch_deg": 45.0,
+    "image": {
+      "path": "frames/00003-model-rgb.jpg",
+      "sha256": "2207073f515ddf14386745c1490eb4cbc78011d6e25302b505e6dbbfc9645fab",
+      "bytes": 53296,
+      "mime_type": "image/jpeg",
+      "width": 640,
+      "height": 480,
+      "marker": {
+        "projection_status": "in_frame",
+        "pixel_xy": [
+          352.7517597461201,
+          349.6075268817205
+        ],
+        "target_height_above_agent_feet_m": 0.0,
+        "camera_forward_m": 1.578262335608374,
+        "occlusion_checked": false,
+        "version": "target_marked_rgb_v1",
+        "target_kind": "local_waypoint",
+        "marker_kind": "projected_point",
+        "marker_pixel_xy": [
+          352.7517597461201,
+          349.6075268817205
+        ]
+      }
+    },
+    "kind": "offline_existing_rgb_preview_not_a_new_model_experiment"
+  }
+]

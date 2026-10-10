@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/data/guiyuanze/miniconda3/envs/habitat-gs/bin/python",
+    "-B",
+    "run.py",
+    "--config",
+    "config.single-gpu.json",
+    "smoke",
+    "--tasks",
+    "tasks/challenge-v1-20260928/tasks.json",
+    "--episode",
+    "turn-000",
+    "--out",
+    "runs/smoke-reassociate-motion-20260929-01",
+    "--rgb",
+    "mesh",
+    "--max-steps",
+    "6",
+    "--actions",
+    "turn_left,turn_right,turn_left,turn_right,turn_left,stop"
+  ],
+  "CUDA_VISIBLE_DEVICES": "7",
+  "api_keys_removed": true,
+  "exit_code": 0,
+  "elapsed_s": 8.515691524371505
+}

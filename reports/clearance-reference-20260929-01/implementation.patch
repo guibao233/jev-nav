@@ -1,0 +1,548 @@
+--- before/run.py
++++ run.py
+@@ -10,6 +10,7 @@
+ import numpy as np
+ 
+ from core import RoutePreview, depth_facts, recent_motion_summary
++from clearance import validate_reference_path
+ from environment import ACTIONS, Environment, direct_navmesh_connection, load_pathfinder, sample_tasks, shortest
+ from jev import ENDPOINT, PROMPT_VERSION, JevClient, ServiceFailure, make_request
+ from replay import save_frame, save_map, write_replay
+@@ -72,6 +73,8 @@
+     check = shortest(pf,task["start"],task["goal"])
+     if check is None or not math.isclose(check[0],task["geodesic_m"],abs_tol=.02):
+         raise ValueError("task path is unreachable or inconsistent")
++    if task.get("reference_path_kind") == "clearance_weighted":
++        validate_reference_path(pf, task["path"], task["start"], task["goal"])
+     route = RoutePreview(task["path"], reconnect=lambda start, end: direct_navmesh_connection(pf, start, end))
+     if not np.allclose(route.points[0],task["start"],atol=.03) or not np.allclose(route.points[-1],task["goal"],atol=.03):
+         raise ValueError("reference path endpoints differ from task")
+@@ -88,7 +91,10 @@
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
+         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
+-        "route_policy":"fixed initial shortest polyline; checked reassociation to nearby later segments; no replanning or controller substitution",
++        "route_policy":"fixed supplied reference polyline; checked reassociation to nearby later segments; no replanning or controller substitution",
++        "reference_path_kind":task.get("reference_path_kind","navmesh_shortest"),
++        "reference_path_length_m":route.total,
++        "reference_planner":task.get("reference_planner"),
+         "route_policy_version":RoutePreview.VERSION,
+         "reassociation":{"max_distance_m":RoutePreview.MAX_REFERENCE_DISTANCE_M,
+                          "connector_sample_m":.05,"connector_endpoint_tolerance_m":1e-4},
+--- before/map_view.py
++++ map_view.py
+@@ -10,7 +10,7 @@
+                            completed_events, draw_event_marker, observation_event)
+ 
+ 
+-COLORS = {"path":"#2974ee", "trajectory":"#ef9024", "start":"#0eaa50",
++COLORS = {"shortest":"#ab6ae0", "path":"#2974ee", "trajectory":"#ef9024", "start":"#0eaa50",
+           "goal":"#ed394e", "target":"#d81b97", "preview":"#00acb8", "robot":"#ffffff"}
+ FONT_PATH = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+ PANEL_SIZE = (640,480)
+@@ -44,7 +44,7 @@
+ def map_view(metadata, records):
+     """One fixed crop per episode, covering start/goal, path and all observations."""
+     task = metadata["task"]
+-    points = [task["start"],task["goal"],*task["path"]]
++    points = [task["start"],task["goal"],*task["path"],*task.get("shortest_path",[])]
+     for record in records:
+         points.append(record["pose"]["position"])
+         if record.get("after_position") is not None:
+@@ -100,6 +100,7 @@
+         draw.ellipse((x-radius,y-radius,x+radius,y+radius),fill=color,outline="#131923",width=2)
+         return x,y
+ 
++    line(metadata["task"].get("shortest_path",[]),COLORS["shortest"],2)
+     line(metadata["task"]["path"],COLORS["path"],4)
+     line([row["pose"]["position"] for row in records[:index+1]],COLORS["trajectory"],4)
+     for i,p in enumerate(targets["ordered_preview_world"],1):
+@@ -143,8 +144,11 @@
+     draw.text((450,18),"+X →    +Z ↓",font=font,fill="white",stroke_width=1,stroke_fill="#131923")
+     legends = [("S 起点","start",16,418),("G 终点","goal",120,418),
+                ("机器人朝向","robot",224,418),("◆ 当前目标","target",390,418),
+-               ("━ 初始最短路径","path",16,448),("━ 已执行轨迹","trajectory",210,448),
++               ("━ 本轮参考路线","path",16,448),("━ 已执行轨迹","trajectory",210,448),
+                ("● 1…n 前方采样","preview",390,448)]
++    if metadata["task"].get("shortest_path"):
++        legends = legends[:4] + [("━ 参考路线","path",16,448),("━ 原最短","shortest",150,448),
++                                 ("━ 实际轨迹","trajectory",280,448),("● 前方采样","preview",430,448)]
+     for text,color,x,y in legends:
+         draw.text((x,y),text,font=font,fill=COLORS[color])
+     draw.rounded_rectangle((315,370,620,399),radius=4,fill="#131923")
+--- before/replay.py
++++ replay.py
+@@ -66,7 +66,7 @@
+ <p><input id="slider" type="range" min="0" step="1"><span id="counter"></span></p>
+ <p class="caption">红色圈叉：碰撞；黄色方框叹号：无效动作。标识对应上一动作完成后的当前观察；地图保留已发生事件的机器人位置，不表示精确接触点。</p><p id="event" role="status"></p>
+ <div class="grid"><div><p class="caption" id="rgbTitle"></p><img id="rgb"><p class="caption">Mesh 深度：黄色近、紫色远，显示范围 0–6 m；原始米制深度另存 NPZ。</p><img id="depth"></div>
+-<div><p class="caption">NavMesh 局部俯视图：蓝线为初始最短路径，橙线为已执行轨迹；绿色 S 起点、红色 G 终点、白色机器人朝向。粉色 T 为当前目标，青色编号点为实际交给 Jev 的前方路径点。</p><img id="map" width="640" height="480"><p class="caption">下方记录为本帧观察之后选择的动作及结果；画面标识为上一动作反馈。</p><pre id="decision"></pre></div></div>
++<div><p class="caption">NavMesh 局部俯视图：蓝线为本轮参考路线，紫线为另存的原最短路径（如有），橙线为已执行轨迹；绿色 S 起点、红色 G 终点、白色机器人朝向。粉色 T 为当前目标，青色编号点为实际交给 Jev 的前方路径点。</p><img id="map" width="640" height="480"><p class="caption">下方记录为本帧观察之后选择的动作及结果；画面标识为上一动作反馈。</p><pre id="decision"></pre></div></div>
+ <details open><summary>本帧 Jev 输入状态（执行动作之前）</summary><pre id="state"></pre></details>
+ <details><summary>配置与结果</summary><pre id="all"></pre></details>
+ <script id="data" type="application/json">__PAYLOAD__</script><script>
+--- before/README.md
++++ README.md
+@@ -1,10 +1,38 @@
+ # Jev 路径辅助跟随与避障：shuyuan 最小实验
+ 
+-目标：先在 NavMesh 上确定可达起终点及初始最短路径，每步把当前位置前方一段**有序路径采样点**转换成机器人相对位置，与当前 mesh 深度摘要、本体参数及最近动作结果一起交给 Jev，选择一个动作。此实验测量路径辅助下的跟随、局部避障、碰撞恢复和停止，不测独立全局寻路。
++目标：先在 NavMesh 上确定可达起终点及初始最短路径，参考路线默认采用最短路径，也可选用居中路线变体；每步把当前位置前方一段**有序路径采样点**转换成机器人相对位置，与当前 mesh 深度摘要、本体参数及最近动作结果一起交给 Jev，选择一个动作。此实验测量路径辅助下的跟随、局部避障、碰撞恢复和停止，不测独立全局寻路。
+ 
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-09-29 更新：可选的居中参考路线
++
++已生成与原 turn-000 **相同起点、终点和初始朝向**的 [居中路线任务](tasks/challenge-clearance-20260929-01/tasks.json) 和 [新旧路线对照图](tasks/challenge-clearance-20260929-01/index.html)。必须在运行时选用新 tasks 文件才会采用这条路线，原任务文件继续使用原参考路径。
++
++采用“路程 + 靠近 NavMesh 边界的连续软惩罚”的网格 A*，并逐段检查可通行性。新参考长度 **11.71 m**，原最短距离 **9.80 m**；1 cm 密集采样下，新路线最小额外 NavMesh 余量约 **0.41 m**、中位余量 **0.60 m**。这些余量是原 NavMesh 已计入约 0.10 m 机器人半径之后的额外空间；不代表模型实际运动保证无碰撞。
++
++```bash
++CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++  --tasks tasks/challenge-clearance-20260929-01/tasks.json --episode turn-000 \
++  --out runs/jev-challenge-turn-000-clearance-01 --rgb gs --max-steps 250
++python visualize.py --run runs/jev-challenge-turn-000-clearance-01 --serve --port 8765
++```
++
++显存紧张可用 `--rgb mesh`。本次保持 v5 提示词、七动作、停滞摘要和重新关联策略，便于单独比较参考路线效果。
++
++任务中的 `path` 为新参考路线，`shortest_path` 保存原路线，`geodesic_m` 保持原最短距离；SPL 和成功判定继续使用原 NavMesh 最短距离。回放中蓝线为本轮参考路线，紫线为另存的原最短路径，橙线为实际轨迹。
++
++以后可复用离线生成工具；不需要 GPU 或 API key，不覆盖既有目录：
++
++```bash
++python prepare_clearance.py --tasks tasks/challenge-v1-20260928/tasks.json \
++  --episode turn-000 --out tasks/my-clearance-variant
++```
++
++可重复 `--episode` 选择多条，省略则处理全部。默认网格 0.10 m、代价衰减尺度 0.20 m、权重 4；可用 `--grid-m`、`--clearance-m`、`--weight`、`--padding-m` 调整。衰减尺度是软偏好，不是硬最小余量，不额外侵蚀 NavMesh。当前工具支持高度跨度 ≤0.02 m 的平面路线；网格找不到路时明确报错，可尝试更细网格或更大搜索范围，不自动退回贴边路线。
++
++57 项回归与实际 mesh 初始化通过；没有运行新的真实 Jev 任务。详细证据见 [居中参考路线验证](reports/clearance-reference-20260929-01/README.md)。
+ 
+ ## 2026-09-29 更新：路径重新关联与五步停滞摘要
+ 
+@@ -104,7 +132,7 @@
+ 
+ - 环境：`config.json` 指定 shuyuan 资产目录。`shuyuan.mesh.ply` 提供深度，原 `shuyuan.navmesh` 约束运动；可选同位姿的 `shuyuan.gs.ply` RGB 仅供回放，不送给模型。
+ - 机器人半径和高度读取 NavMesh 保存的参数。本场景为约 0.10 m / 1.50 m，`config.json` 当前设置 `allow_sliding=true`，允许碰壁后沿 NavMesh 边界滑动。运动为 Habitat 离散运动学动作，无 Bullet 动力学。
+-- 每轮固定初始最短路径，不自动重规划。每步提供沿路径前方 3 m 的预览，每 0.5 m 采样并额外保留拐角；“前方”指路径进度方向，不要求位于当前相机视野内。局部目标前视 0.75 m，在下一拐角截断；预览可能包含拐角之后的点，不能直接抄近路。
++- 每轮固定任务文件中的参考路线（默认最短路径，也可选用居中变体），不自动重规划。每步提供沿路径前方 3 m 的预览，每 0.5 m 采样并额外保留拐角；“前方”指路径进度方向，不要求位于当前相机视野内。局部目标前视 0.75 m，在下一拐角截断；预览可能包含拐角之后的点，不能直接抄近路。
+ - 路径正常投影采用局部、单调进度。偏离局部窗口超过 0.5 m 后，仅当附近后续路线点通过 NavMesh 直连检查才重新关联；否则保持原进度。重关联不会重规划路线。只保留路线管理状态，不记忆历史障碍。
+ - 所有目标转换成**当前身体坐标系**：前方/左方为正，方位角向左为正。相机低头不改变目标的水平相对坐标。
+ - 短期记忆仅最近 5 个自身动作的有效性、执行成功、碰撞、实际局部平移及角度变化，并计算这些动作的净位移、相反转向等摘要；不保存跨帧地图、历史深度或模型思考文本。
+@@ -218,12 +246,12 @@
+ frames/*-depth.png    0–6 m 固定色标深度预览
+ frames/*-rgb.png      同位姿 RGB（可选）
+ navmap.png            仅供回放/评估，不送入 Jev
+-index.html            离线回放：观察、原路线、实际轨迹、输入和决策
++index.html            离线回放：观察、参考路线及原最短路线（如另存）、实际轨迹、输入和决策
+ ```
+ 
+ 直接打开 `index.html` 即可。每帧观察与输入是执行动作**之前**的状态，结果字段是执行之后的反馈；最后另存一帧终态。脚本运行在页面上明确提示“没有调用 Jev”。
+ 
+-NavMesh 视图会放大本轮任务所在区域：绿色 S 起点、红色 G 终点、蓝色初始最短路径、橙色已执行轨迹、白色机器人朝向；粉色菱形 T 为 `current_target`，青色编号点为 `ordered_preview`。目标点使用实际请求内的 `forward_m / left_m` 和当帧身体位姿反算到世界 X/Z 平面，不重新规划或产生新的目标；精度受原日志 0.001 m 舍入影响。终态没有模型请求，不显示新的目标点。底图是已保存的 NavMesh 可通行区域投影，裁剪仅影响展示。
++NavMesh 视图会放大本轮任务所在区域：绿色 S 起点、红色 G 终点、蓝色本轮参考路线、紫色另存的原最短路径（如有）、橙色已执行轨迹、白色机器人朝向；粉色菱形 T 为 `current_target`，青色编号点为 `ordered_preview`。目标点使用实际请求内的 `forward_m / left_m` 和当帧身体位姿反算到世界 X/Z 平面，不重新规划或产生新的目标；精度受原日志 0.001 m 舍入影响。终态没有模型请求，不显示新的目标点。底图是已保存的 NavMesh 可通行区域投影，裁剪仅影响展示。
+ 
+ ### 可复用的可视化工具
+ 
+--- before/VALIDATION.md
++++ VALIDATION.md
+@@ -181,3 +181,16 @@
+ - 在用户所选 7 号 GPU 上运行 `runs/smoke-reassociate-motion-20260929-01`，只加载 mesh、无 API。脚本五次左右交替后 stop，6 步、0 碰撞、0 无效、early_stop 符合预期；第六份实际请求已包含 turn_oscillation，所有脚本选择与实际执行动作一致。
+ - 七项动作 criteria 和明确停止前缀保持；深度算法、模拟器动作适配器及 API 客户端 AST 保持。90 个配置、任务、历史记录及受保护源码文件哈希不变，未修改 Habitat-GS 源码。
+ - 离线重放沿用旧轨迹，不能代表新模型会采取这些动作或完成任务；没有调用真实 Jev。报告保存全部验证、请求样例及复测命令：[实现与验证报告](reports/reassociate-motion-20260929-01/README.md)。
++
++
++## 2026-09-29：带额外 NavMesh 余量的居中参考路线
++
++新增独立 `clearance.py` 与 `prepare_clearance.py`，在原 NavMesh 上以连续距离惩罚执行 CPU 网格 A*，按相同代价与最低余量限制简化路径，生成新任务变体。原 tasks、NavMesh 和场景不覆盖。运行器在初始化前检查新参考路径每段直连；回放同时显示新参考与原最短路线。
++
++- 新任务 `tasks/challenge-clearance-20260929-01/tasks.json` 只包含原 turn-000，起终点、初始朝向、geodesic_m 等原字段保持，path 替换，shortest_path 保留原路径。原 9.79769 m 最短距离仍作 SPL 基准，新参考长 11.71097 m（增加 19.53%）。
++- 原最短路径 2.5 cm 采样下最小额外余量 0 m，中位数 0.177 m，42.2% 采样点小于 0.10 m。新参考按 1 cm 验证 1,173 个样本，最小 0.410 m、中位数 0.599 m，低于 0.20 m 的样本为 0；原 NavMesh 已考虑机器人半径，该量不等于实际 mesh 全身安全保证。
++- 8 个顶点、7 个线段全部通过原生 NavMesh 直连验证；最短线段 0.550 m。沿新参考的 119 个理想位置检查进度单调、当前目标可直连，无多余重新关联。最终源码重生成得到完全一致的路径。
++- 57 项测试通过（此前 50 项 + 7 项新测试），包含窄通道不被软惩罚封死、不可达报错、简化不切穿障碍、零权重长度行为及输出保护。
++- `runs/smoke-clearance-reference-20260929-01`：GPU 7、mesh、脚本 stop，正常退出，early_stop 符合预期；实际请求的参考剩余长度为 11.711 m，而 summary.initial_geodesic_m 仍为 9.79769 m。实际回放包含蓝色新路线和紫色原最短路径。
++- 提示词仍为 seven_actions_reassociate_motion_v5；core.py、environment.py、jev.py、配置、原任务和历史主要日志等 94 个受保护文件哈希保持。未调用 Jev，模型跟随效果待用户复测。
++- [验证报告、命令、对照图与可复用生成器说明](reports/clearance-reference-20260929-01/README.md)。
+--- /dev/null
++++ clearance.py
+@@ -0,0 +1,173 @@
++"""CPU-only clearance-weighted reference paths on the existing flat NavMesh.
++
++The NavMesh already accounts for the agent radius. Clearance here is additional
++centre-to-NavMesh-boundary room, not a new collision radius or a mesh guarantee.
++"""
++import heapq
++import math
++import numpy as np
++from core import RoutePreview
++from environment import direct_navmesh_connection
++
++
++VERSION = 'clearance_grid_v1'
++
++
++def path_statistics(pf, points, sample_m=.025):
++    route = RoutePreview(points)
++    samples = np.array([route.at(s) for s in np.r_[np.arange(0, route.total, sample_m), route.total]])
++    clearance = np.array([pf.distance_to_closest_obstacle(p, 2.) for p in samples])
++    return {'length_m': route.total, 'vertices': len(route.points), 'sample_spacing_m': sample_m,
++            'samples': len(samples), 'clearance_query_cap_m': 2.,
++            'extra_navmesh_clearance_min_m': float(clearance.min()),
++            'extra_navmesh_clearance_p10_m': float(np.percentile(clearance, 10)),
++            'extra_navmesh_clearance_median_m': float(np.median(clearance)),
++            'fraction_below_0_10_m': float(np.mean(clearance < .1)),
++            'fraction_below_0_20_m': float(np.mean(clearance < .2))}
++
++
++def validate_reference_path(pf, points, start, goal):
++    route = RoutePreview(points)
++    if not np.allclose(route.points[0], start, atol=1e-4, rtol=0) or not np.allclose(route.points[-1], goal, atol=1e-4, rtol=0):
++        raise ValueError('clearance reference endpoints must match the task')
++    for i, (a, b) in enumerate(zip(route.points, route.points[1:])):
++        if not direct_navmesh_connection(pf, a, b):
++            raise ValueError(f'clearance reference segment {i} is not directly navigable')
++    return route.total
++
++
++class ClearancePlanner:
++    """Eight-neighbour A* with native-checked edges and exact endpoint links.
++
++    Integral cost: length * (1 + weight * exp(-clearance / scale)). It is a
++    soft preference: tight passages remain usable, without a hard erosion.
++    Only a flat floor around the supplied shortest route is searched.
++    """
++    def __init__(self, pf, seed_path, grid_m=.1, clearance_m=.2, weight=4., padding_m=2.):
++        values = [grid_m, clearance_m, padding_m]
++        if any(not math.isfinite(x) or x <= 0 for x in values) or not math.isfinite(weight) or weight < 0:
++            raise ValueError('grid, clearance scale and padding must be positive; weight must be nonnegative')
++        self.pf, self.grid_m, self.scale, self.weight = pf, grid_m, clearance_m, weight
++        route = RoutePreview(seed_path)
++        if np.ptp(route.points[:, 1]) > .02:
++            raise ValueError('this planner supports flat reference paths only (height span <= 0.02 m)')
++        self.start, self.goal = route.points[0], route.points[-1]
++        self.y = float(self.start[1])
++        self.low = np.floor((route.points[:, [0, 2]].min(axis=0)-padding_m)/grid_m)*grid_m
++        high = np.ceil((route.points[:, [0, 2]].max(axis=0)+padding_m)/grid_m)*grid_m
++        self.shape = np.rint((high-self.low)/grid_m).astype(int)+1
++        if int(np.prod(self.shape)) > 500000:
++            raise ValueError('search grid too large; increase grid spacing or reduce padding')
++        self.points, self._clearances, self._lines = {}, {}, {}
++        for ix in range(self.shape[0]):
++            for iz in range(self.shape[1]):
++                p = np.array([self.low[0]+ix*grid_m, self.y, self.low[1]+iz*grid_m])
++                if pf.is_navigable(p, .02):
++                    self.points[(ix, iz)] = p
++        self.parameters = {'version': VERSION, 'grid_m': grid_m, 'clearance_scale_m': clearance_m,
++                           'weight': weight, 'padding_m': padding_m, 'height_span_limit_m': .02,
++                           'edge_validation_spacing_m': .05, 'clearance_query_cap_m': 2.,
++                           'cost': 'integral(1 + weight * exp(-extra_navmesh_clearance / clearance_scale_m)) ds',
++                           'clearance_is_soft_preference': True}
++
++    @staticmethod
++    def _key(point):
++        return tuple(np.round(point, 7))
++
++    def clearance(self, point):
++        key = self._key(point)
++        if key not in self._clearances:
++            self._clearances[key] = float(self.pf.distance_to_closest_obstacle(point, 2.))
++        return self._clearances[key]
++
++    def line(self, a, b):
++        key = (self._key(a), self._key(b))
++        if key in self._lines:
++            return self._lines[key]
++        if not direct_navmesh_connection(self.pf, a, b):
++            self._lines[key] = None
++            return None
++        length = float(np.linalg.norm(b-a))
++        count = max(1, int(math.ceil(length/.05)))
++        distances = np.array([self.clearance(a+t*(b-a)) for t in np.linspace(0, 1, count+1)])
++        density = 1 + self.weight*np.exp(-distances/self.scale)
++        cost = length/count * float(np.sum((density[:-1]+density[1:])*.5))
++        result = (length, cost, float(distances.min()))
++        self._lines[key] = result
++        return result
++
++    def endpoint_links(self, position):
++        nearby = sorted((float(np.linalg.norm(p-position)), node) for node, p in self.points.items()
++                        if np.linalg.norm(p-position) <= max(.25, 2*self.grid_m))
++        links = {}
++        for _, node in nearby:
++            edge = self.line(position, self.points[node])
++            if edge is not None:
++                links[node] = edge[1]
++        if not links:
++            raise ValueError('endpoint cannot connect to the grid; try finer --grid-m')
++        return links
++
++    def plan(self):
++        start_id, goal_id = (-1, 0), (-2, 0)
++        start_links = self.endpoint_links(self.start)
++        # Goal links are checked in their actual traversal direction.
++        goal_links = {node: edge[1] for node in self.endpoint_links(self.goal)
++                      if (edge := self.line(self.points[node], self.goal)) is not None}
++        if not goal_links:
++            raise ValueError('no directly navigable goal connector')
++        points = dict(self.points)
++        points[start_id], points[goal_id] = self.start, self.goal
++        scores, parents = {start_id: 0.}, {}
++        queue = [(float(np.linalg.norm(self.goal-self.start)), 0., start_id)]
++        expanded = 0
++        while queue:
++            _, cost, node = heapq.heappop(queue)
++            if cost > scores[node]+1e-10:
++                continue
++            if node == goal_id:
++                break
++            expanded += 1
++            if node == start_id:
++                neighbors = start_links.items()
++            else:
++                neighbors = []
++                for dx,dz in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
++                    other = (node[0]+dx, node[1]+dz)
++                    if other not in self.points:
++                        continue
++                    edge = self.line(points[node], points[other])
++                    if edge is not None:
++                        neighbors.append((other, edge[1]))
++                if node in goal_links:
++                    neighbors.append((goal_id, goal_links[node]))
++            for other, edge_cost in neighbors:
++                candidate = cost+edge_cost
++                if candidate+1e-10 < scores.get(other, math.inf):
++                    scores[other], parents[other] = candidate, node
++                    heapq.heappush(queue, (candidate+float(np.linalg.norm(points[other]-self.goal)), candidate, other))
++        if goal_id not in parents:
++            raise ValueError('no grid route found; original NavMesh was not changed; try finer grid or wider padding')
++        ids = [goal_id]
++        while ids[-1] != start_id:
++            ids.append(parents[ids[-1]])
++        raw = np.array([points[node] for node in reversed(ids)])
++        raw = raw[np.r_[True, np.linalg.norm(np.diff(raw, axis=0), axis=1)>1e-7]]
++        edges = [self.line(a,b) for a,b in zip(raw,raw[1:])]
++        prefix = np.r_[0., np.cumsum([e[1] for e in edges])]
++        # Simplify only when native connectivity, weighted cost and the minimum
++        # clearance of the replaced section are retained (<=5 mm clearance loss).
++        selected, i = [raw[0]], 0
++        while i < len(raw)-1:
++            for j in range(len(raw)-1, i, -1):
++                edge = self.line(raw[i], raw[j])
++                if edge is not None and edge[1] <= (prefix[j]-prefix[i])*1.01+1e-8 and edge[2] >= min(e[2] for e in edges[i:j])-.005:
++                    break
++            selected.append(raw[j]);i=j
++        path = np.array(selected)
++        validate_reference_path(self.pf, path, self.start, self.goal)
++        stats = {'grid_shape': self.shape.tolist(), 'navigable_grid_points': len(self.points),
++                 'expanded_nodes': expanded, 'raw_vertices': len(raw), 'reference_vertices': len(path),
++                 'raw_grid_weighted_cost': scores[goal_id],
++                 'reference_weighted_cost': sum(self.line(a,b)[1] for a,b in zip(path,path[1:]))}
++        return path.tolist(), stats
+--- /dev/null
++++ prepare_clearance.py
+@@ -0,0 +1,110 @@
++#!/usr/bin/env python3
++"""Create independent clearance-weighted tasks and previews; CPU only, no API."""
++import argparse
++import copy
++import hashlib
++from html import escape
++import json
++from pathlib import Path
++
++import numpy as np
++from clearance import ClearancePlanner, VERSION, path_statistics
++from environment import load_pathfinder, shortest
++from run import ROOT, load_config
++
++
++def route_preview(pf, task, destination):
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    from matplotlib.colors import ListedColormap
++    nav = pf.get_topdown_view(.05, float(task['start'][1]))
++    low,_ = pf.get_bounds()
++    fig,ax = plt.subplots(figsize=(9,8), constrained_layout=True)
++    ax.imshow(nav, cmap=ListedColormap(['#343b45','#e5e8ed']), vmin=0, vmax=1,
++              extent=[low[0],low[0]+nav.shape[1]*.05,low[2]+nav.shape[0]*.05,low[2]])
++    old,new = np.asarray(task['shortest_path']),np.asarray(task['path'])
++    ax.plot(old[:,0],old[:,2],color='#ab6ae0',lw=2,ls='--',label='Original shortest path')
++    ax.plot(new[:,0],new[:,2],color='#2875ed',lw=2.5,marker='.',ms=5,label='Clearance-weighted reference')
++    for name,color,label in [('start','#16a154','S'),('goal','#d32a34','G')]:
++        p=task[name];ax.scatter(p[0],p[2],s=70,color=color,zorder=5);ax.annotate(label,(p[0],p[2]),xytext=(8,6),textcoords='offset points')
++    all_points=np.concatenate([old,new])
++    ax.set_xlim(all_points[:,0].min()-.8,all_points[:,0].max()+.8)
++    ax.set_ylim(all_points[:,2].max()+.8,all_points[:,2].min()-.8)
++    ax.set_aspect('equal');ax.set_xlabel('World X (m)');ax.set_ylabel('World Z (m)')
++    ax.set_title(f"{task['id']}: shortest {task['geodesic_m']:.2f} m / reference {task['reference_path_length_m']:.2f} m")
++    ax.legend(loc='upper right',fontsize=8);ax.grid(alpha=.15)
++    fig.savefig(destination,dpi=140);plt.close(fig)
++
++
++def build_dataset(dataset, pf, selected, grid_m=.1, clearance_m=.2, weight=4., padding_m=2.):
++    result=copy.deepcopy(dataset)
++    result['tasks']=[]
++    for original in dataset['tasks']:
++        if original['id'] not in selected:continue
++        task=copy.deepcopy(original)
++        seed=task.get('shortest_path',task['path'])
++        path=shortest(pf,task['start'],task['goal'])
++        if path is None or abs(path[0]-task['geodesic_m'])>.02:
++            raise ValueError('task shortest-distance baseline does not match current NavMesh')
++        print(f"[plan] {task['id']}: clearance-weighted grid search",flush=True)
++        planner=ClearancePlanner(pf,seed,grid_m,clearance_m,weight,padding_m)
++        reference,stats=planner.plan()
++        task['shortest_path']=copy.deepcopy(seed)
++        task['path']=reference
++        task['reference_path_kind']='clearance_weighted'
++        task['reference_planner']=dict(planner.parameters,search=stats)
++        task['reference_statistics']={'original_shortest':path_statistics(pf,seed),
++                                      'clearance_weighted':path_statistics(pf,reference)}
++        task['reference_path_length_m']=task['reference_statistics']['clearance_weighted']['length_m']
++        result['tasks'].append(task)
++        print('[verified]',task['id'],json.dumps(task['reference_statistics']),flush=True)
++    if len(result['tasks'])!=len(selected):
++        raise ValueError('unknown or duplicate task selection')
++    result['reference_path_kind']='clearance_weighted'
++    result['reference_planner_version']=VERSION
++    result['evaluation_baseline']='geodesic_m and shortest_path remain the original NavMesh shortest path; path is the supplied reference'
++    return result
++
++
++def main():
++    parser=argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--config',default=str(ROOT/'config.json'))
++    parser.add_argument('--tasks',required=True)
++    parser.add_argument('--episode',action='append',help='repeat to select several; omit for all tasks')
++    parser.add_argument('--out',required=True)
++    parser.add_argument('--grid-m',type=float,default=.1)
++    parser.add_argument('--clearance-m',type=float,default=.2,help='soft cost decay scale, not a guaranteed minimum')
++    parser.add_argument('--weight',type=float,default=4.)
++    parser.add_argument('--padding-m',type=float,default=2.)
++    args=parser.parse_args()
++    out=Path(args.out)
++    if out.exists():raise FileExistsError(out)
++    source=Path(args.tasks);dataset=json.loads(source.read_text())
++    cfg=load_config(args.config);pf=load_pathfinder(cfg)
++    nav=Path(cfg['scene_dir'])/'shuyuan.navmesh'
++    digest=hashlib.sha256(nav.read_bytes()).hexdigest()
++    expected=dataset.get('assets',{}).get(nav.name,{}).get('sha256')
++    if expected and expected!=digest:raise ValueError('NavMesh differs from source tasks')
++    ids={t['id'] for t in dataset['tasks']}
++    selected=set(args.episode) if args.episode else ids
++    if not selected<=ids:raise ValueError(f'unknown task IDs: {sorted(selected-ids)}')
++    result=build_dataset(dataset,pf,selected,args.grid_m,args.clearance_m,args.weight,args.padding_m)
++    result['source_tasks']={'path':str(source.resolve()),'sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
++    result['reference_generator_sha256']={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in ('prepare_clearance.py','clearance.py')}
++    out.mkdir(parents=True,exist_ok=False)
++    (out/'maps').mkdir()
++    (out/'tasks.json').write_text(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
++    cards=[];table=['| 任务 | 原最短长度 m | 新参考长度 m | 原/新最小额外余量 m |','|---|---:|---:|---:|']
++    for task in result['tasks']:
++        route_preview(pf,task,out/'maps'/f"{task['id']}.png")
++        old,new=task['reference_statistics']['original_shortest'],task['reference_statistics']['clearance_weighted']
++        table.append(f"| {task['id']} | {task['geodesic_m']:.3f} | {task['reference_path_length_m']:.3f} | {old['extra_navmesh_clearance_min_m']:.3f} / {new['extra_navmesh_clearance_min_m']:.3f} |")
++        cards.append(f'<h2>{escape(task["id"])}</h2><img src="maps/{escape(task["id"])}.png" style="max-width:100%;width:900px">')
++    (out/'index.html').write_text('<!doctype html><html lang="zh"><meta charset="utf-8"><title>居中参考路线</title><body style="font:16px system-ui;margin:24px"><h1>居中参考路线计划预览</h1><p>蓝线：新参考路线；紫虚线：原最短路径。尚未运行 Jev，不能视为导航成功。余量指原 NavMesh 边界外的额外留白，原 NavMesh 已计入机器人半径。</p>'+''.join(cards)+'</body></html>')
++    (out/'README.md').write_text('# 居中参考路线任务变体\n\n相同起终点、初始朝向与最短距离基准，仅替换任务的 path 参考路线。原路线另存 shortest_path，SPL 仍使用原 geodesic_m。geometry 字段仍描述原最短路径。\n\n'+ '\n'.join(table)+'\n\n[计划对照图](index.html)。这是 CPU 规划与 NavMesh 几何验证结果，没有调用模型。\n\n代价为距离乘以 1 + weight × exp(-额外 NavMesh 余量 / clearance_scale_m)，默认网格 0.10 m、衰减尺度 0.20 m、权重 4。尺度为软偏好，不是所有地方都保证 0.20 m 留白。网格边和简化后直连都经过原 NavMesh 验证；简化限制代价增加不超过 1%，最低余量下降不超过 0.005 m。仅支持近似平面路径，失败会明确报错，不偷偷回退到旧路线。\n')
++    print('OUTPUT',out,flush=True)
++    return 0
++
++
++if __name__=='__main__':raise SystemExit(main())
+--- /dev/null
++++ test_clearance.py
+@@ -0,0 +1,88 @@
++"""Meaningful geometry/planning regressions; synthetic CPU NavMesh, no API/GPU."""
++import math
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import numpy as np
++from clearance import ClearancePlanner, validate_reference_path
++from prepare_clearance import main
++
++
++class RectangleNavMesh:
++    def __init__(self, width=4., height=2., block=None):
++        self.width,self.height,self.block=width,height,block
++
++    def is_navigable(self,p,max_y_delta=.5):
++        x,y,z=p
++        if abs(y)>max_y_delta or not (-1e-9<=x<=self.width+1e-9 and -1e-9<=z<=self.height+1e-9):return False
++        return not (self.block and self.block[0]<=x<=self.block[1] and self.block[2]<=z<=self.block[3])
++
++    def try_step(self,a,b):
++        for t in np.linspace(0,1,20):
++            if not self.is_navigable(np.asarray(a)+t*(np.asarray(b)-a)):return np.asarray(a)
++        return np.asarray(b)
++
++    def distance_to_closest_obstacle(self,p,cap):
++        x,_,z=p
++        distance=min(x,self.width-x,z,self.height-z,cap)
++        if self.block:
++            a,b,c,d=self.block
++            distance=min(distance,math.hypot(max(a-x,0,x-b),max(c-z,0,z-d)))
++        return max(0,distance)
++
++
++class ClearanceTests(unittest.TestCase):
++    def test_soft_cost_prefers_corridor_interior_and_keeps_exact_endpoints(self):
++        pf=RectangleNavMesh()
++        seed=[[.17,0,.15],[3.83,0,.15]]
++        path,stats=ClearancePlanner(pf,seed,grid_m=.2,padding_m=.2).plan()
++        self.assertEqual(path[0],seed[0]);self.assertEqual(path[-1],seed[-1])
++        self.assertGreater(max(p[2] for p in path),.4)
++        length=validate_reference_path(pf,path,*seed)
++        self.assertGreater(length,np.linalg.norm(np.array(seed[1])-seed[0]))
++        self.assertLess(stats['reference_vertices'],stats['raw_vertices'])
++
++    def test_soft_clearance_does_not_close_narrow_passage(self):
++        pf=RectangleNavMesh(height=.18)
++        seed=[[.1,0,.09],[3.9,0,.09]]
++        path,_=ClearancePlanner(pf,seed,grid_m=.05,clearance_m=.2,padding_m=.1).plan()
++        self.assertGreater(validate_reference_path(pf,path,*seed),3.7)
++        self.assertTrue(all(pf.distance_to_closest_obstacle(p,2)<.2 for p in path))
++
++    def test_final_shortcuts_cannot_cross_obstacle(self):
++        pf=RectangleNavMesh(height=3.,block=(1.5,2.5,0.,2.))
++        seed=[[.5,0,.5],[1.3,0,2.3],[2.7,0,2.3],[3.5,0,.5]]
++        path,_=ClearancePlanner(pf,seed,grid_m=.2,padding_m=.1).plan()
++        self.assertGreater(max(p[2] for p in path),2.)
++        validate_reference_path(pf,path,seed[0],seed[-1])
++        with self.assertRaisesRegex(ValueError,'not directly navigable'):
++            validate_reference_path(pf,[seed[0],seed[-1]],seed[0],seed[-1])
++
++    def test_disconnected_map_reports_failure_instead_of_old_path_fallback(self):
++        pf=RectangleNavMesh(block=(1.5,2.5,0.,2.))
++        with self.assertRaisesRegex(ValueError,'no grid route'):
++            ClearancePlanner(pf,[[.5,0,1.],[3.5,0,1.]],grid_m=.2,padding_m=.1).plan()
++
++    def test_zero_weight_keeps_shortest_straight_reference(self):
++        pf=RectangleNavMesh()
++        seed=[[.2,0,.2],[3.8,0,.2]]
++        path,_=ClearancePlanner(pf,seed,grid_m=.2,weight=0.,padding_m=.1).plan()
++        self.assertAlmostEqual(validate_reference_path(pf,path,*seed),3.6)
++
++    def test_invalid_parameters_and_nonflat_reference_rejected(self):
++        for parameters in ({'grid_m':0},{'clearance_m':-1},{'weight':-1},{'padding_m':float('nan')}):
++            with self.subTest(parameters=parameters),self.assertRaises(ValueError):
++                ClearancePlanner(RectangleNavMesh(),[[0,0,0],[1,0,0]],**parameters)
++        with self.assertRaisesRegex(ValueError,'flat'):
++            ClearancePlanner(RectangleNavMesh(),[[0,0,0],[1,1,0]])
++
++    def test_existing_output_is_not_overwritten(self):
++        with tempfile.TemporaryDirectory() as folder:
++            path=Path(folder)/'tasks.json';path.write_text('preserve')
++            with patch('sys.argv',['prepare_clearance.py','--tasks','unused.json','--out',folder]),self.assertRaises(FileExistsError):
++                main()
++            self.assertEqual(path.read_text(),'preserve')
++
++
++if __name__=='__main__':unittest.main()

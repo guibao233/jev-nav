@@ -1,0 +1,83 @@
+{
+  "source_run": "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-first-5steps-03",
+  "source_sha256": {
+    "runs/jev-first-5steps-03/metadata.json": "5662b746a87530d57e8b4130fdffabce190ac5f85b13db3f3d3f314517e66761",
+    "runs/jev-first-5steps-03/steps.jsonl": "55e4342a20386b69c80a9773cbfbdb692c147e2fcc5d6501d6884d4e893a8a31",
+    "runs/jev-first-5steps-03/summary.json": "5ca8bb00908ca3b4094419e708759dea25f7191239baa7408fd1f4c4de4f5134",
+    "config.json": "05334b685287cea3e8f02f03dc913a9b09266f5c7a1663273c8ac99952186a01",
+    "tasks/debug-10.json": "3af3341724ef3cb3536a44bd63c01e16e472bdb128047a4097c29bbff1b5195b",
+    "tasks/eval-50.json": "b5615670fd18a1236fc7e6f9d43cb459d8eac53a818b499b81d439a9ef9ca4fc",
+    "core.py": "b7dff4d50b8a85befa1335dc0672e67321d39d515d42ef0921c5991013a63ed5",
+    "environment.py": "9a4ff5b1a54456c5fc26da9f25687a38a3cfd99d22dca5e48e4cb00644f2caa0",
+    "run.py": "d079bf1afc8ddf783f04f448ca37c412174dff421687d7bbd2c97ccb350ea4eb",
+    "jev.py": "123906f374551522f03ea4c2a6c0e66c806d219e9ed60311444e852dbc640dd3"
+  },
+  "checks_passed": [
+    "NavMesh SHA256",
+    "all 36 stored raw depths reproduce input depth facts exactly",
+    "all 36 reference inputs reproduce from fixed initial path",
+    "all 36 choices equal API answer and executed action",
+    "all 36 histories contain only previous own local outcomes",
+    "all 36 after poses match next observations",
+    "all 36 geodesic distances independently recalculated",
+    "travel, SPL, collision and invalid counts independently recalculated",
+    "explicit final stop within tolerance"
+  ],
+  "summary": {
+    "provider": "jev",
+    "is_jev_evaluation": true,
+    "status": "success",
+    "success": true,
+    "collision_free_success": true,
+    "steps": 36,
+    "collisions": 0,
+    "invalid_actions": 3,
+    "path_length_m": 4.249996662139893,
+    "initial_geodesic_m": 4.196040153503418,
+    "final_geodesic_m": 0.023340662941336632,
+    "ever_within_goal_tolerance": true,
+    "reached_but_not_successful_stop": false,
+    "spl": 0.9873043409381627,
+    "jev_request_latency": {
+      "p50_s": 0.8091542162001133,
+      "p95_s": 2.882931925356388
+    },
+    "cycle_including_render_and_logging": {
+      "p50_s": 1.097975899465382,
+      "p95_s": 3.168462628033012
+    },
+    "elapsed_s": 86.931690428406
+  },
+  "max_steps": 500,
+  "reference_vertices": 2,
+  "reference_has_bends": false,
+  "action_counts": {
+    "move_forward": 17,
+    "turn_left": 5,
+    "turn_right": 7,
+    "look_down": 6,
+    "stop": 1
+  },
+  "invalid_steps_1based": [
+    14,
+    15,
+    16
+  ],
+  "first_within_goal_tolerance_step_1based": 31,
+  "extra_decisions_after_first_reach": 5,
+  "max_local_reference_distance_m": 0.218,
+  "forward_depth_status_counts": {
+    "unknown": 21,
+    "blocked": 15
+  },
+  "moving_with_forward_depth_status": {
+    "unknown": 17
+  },
+  "actual_models": [
+    "typesafe/jev-1.13-20260917"
+  ],
+  "api_attempts": 36,
+  "logged_usage_cost_usd": 0.003703644,
+  "decision_cycle_sum_s": 52.205359380692244,
+  "max_distance_check_error_m": 0.0
+}

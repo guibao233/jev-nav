@@ -1,0 +1,22 @@
+{
+  "prepare_challenges.py": "0671564b8f617138ed7925fe1ed03d49300a513f52e5ede97d7c4064bc6d19c6",
+  "visualize.py": "7e9e8b60691794dd1dee3e618c1dab705b3fe37d8d191a983ce98935e3180360",
+  "replay_events.py": "d3dc283f70bc37376963fb1a939c1d48c43a8fdfd827e2f4eab8eca0e9325cf0",
+  "map_view.py": "fc1cf38dec4a8aca0f6c5a9ecae5fe78fdb8145b3c3bd627846341aeff2a54df",
+  "run.py": "7828c7b64cd247ef5fd178b91083305a8a7b764a5863f1e5648dc1839114d409",
+  "replay.py": "b271c6ec8ec70e503bf2a73d93f31aa43fd1df2b8ce52426aa106b87001c661e",
+  "test_challenges.py": "cc1281581639539aa113727632eb9345c85cc9a0fbe7f1a08c8d21d4b20713b3",
+  "test_core.py": "47c39776a2b0db8cb58d56016e65b61950323de95fa972344a5d5eb5d8deb0bc",
+  "export_replay.py": "da858ad77c1b2484612228623f32b40b9a114c7dbc7d06d29e072d3d47e8c5c0",
+  "core.py": "b6abbbb3d15f75b02e5227410e4d2d8fbbe44ad216e23731e6242e6d7b97db1f",
+  "environment.py": "82be8831d058e8214b0b00715ea22b50b4b5e9fc6a43f68bdccfeb830e690ee4",
+  "test_map_view.py": "4f7ede238d054b02c18b0355e83ee9780f57a223a33830eb4794a941450a94fe",
+  "jev.py": "25ee9cec0cfbb07f21204982283f278d25b3ef3cd0d2f48bb2e0f55adbd14b67",
+  "test_visualize.py": "749bb376bd46de33702684cec80e8f7ae22a9b9fce90a1769e43a2dc6c3e16c6",
+  "config.json": "5b5c006a891208ae59b3897ed8f9fca552f6e7893b9f0f858545014715b7708b",
+  "config.single-gpu.json": "f7ba3ef72dec626e883b9f15a58bc8d6c541b044632449bd67891d471dd2b2f5",
+  "runs/jev-challenge-turn-000-neutral-02/metadata.json": "404a9496bf8795992a3022a02f5575d492bfa767e76f9b34b833fbbc6d2f48ee",
+  "runs/jev-challenge-turn-000-neutral-02/steps.jsonl": "b4c9491cc333e00eaa369340dcbe19be7d8f2f44f6340e4b70962a2405257669",
+  "runs/jev-challenge-turn-000-neutral-02/summary.json": "95551cdf4c3c03e1478c86b787b278372a15eab347eecbd86e35e33f8a8fb12e",
+  "runs/jev-challenge-turn-000-neutral-02/index.html": "12104654970ee47fca0d866e30775e6a1a28f63f7bd98d6c0e29062d5cf54d8d"
+}

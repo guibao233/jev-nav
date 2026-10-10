@@ -1,0 +1,50 @@
+--- before/jev.py
++++ jev.py
+@@ -13,7 +13,7 @@
+ 
+ 
+ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+-PROMPT_VERSION = "seven_actions_backward_v3"
++PROMPT_VERSION = "seven_actions_neutral_v4"
+ 
+ 
+ def make_request(state, cfg):
+@@ -27,8 +27,7 @@
+         "Reaching an intermediate path point is not arrival at the final destination. ")
+     criteria = {
+         "move_forward": f"Translate forward {step} metres without changing body heading.",
+-        "move_backward": (f"Translate backward {step} metres without changing body heading. "
+-                          "Can be used for recovery; current front depth does not confirm rear clearance."),
++        "move_backward": f"Translate backward {step} metres without changing body heading.",
+         "turn_left": f"Rotate body left {turn} degrees in place.",
+         "turn_right": f"Rotate body right {turn} degrees in place.",
+         "look_up": f"Tilt camera up {pitch} degrees; does not move the body or change goal bearing.",
+@@ -38,17 +37,17 @@
+                  "Do not stop at an intermediate target or outside the final-goal tolerance.")}
+     instructions = (
+         stop_rule +
+-        "Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. "
+-        "The complete action set is move_forward, move_backward, turn_left, turn_right, look_up, look_down, stop. "
+-        "All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. "
+-        "The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. "
+-        "Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. "
+-        "Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. "
+-        "Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. "
+-        "Avoid repeating ineffective actions or oscillating between turns without progress. "
+-        "If forward motion is blocked, turn to inspect another direction before moving forward. "
+-        "Use camera tilts to inspect unseen nearby floor when useful, and respect pitch limits. "
+-        "There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.")
++        "Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding "
++        "collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; "
++        "metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered "
++        "path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to "
++        "choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not "
++        "clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera "
++        "pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without "
++        "progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen "
++        "nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise "
++        "continue. There is no automatic recovery controller and no action safety override; your selected action is executed "
++        "subject to the simulator's physical constraints.")
+     return {"model": cfg["model"], "state": state,
+             "questions": {"action": {"type": "choice", "instructions": instructions, "criteria": criteria}}}
+ 

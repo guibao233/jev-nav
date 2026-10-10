@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "prompt_version": "seven_actions_backward_v3",
+  "actions": [
+    "move_forward",
+    "move_backward",
+    "turn_left",
+    "turn_right",
+    "look_up",
+    "look_down",
+    "stop"
+  ],
+  "open_space_checks": [
+    {
+      "move_m": 0.25,
+      "yaw_deg": 17.0,
+      "actuation_amounts": {
+        "move_forward": 0.25,
+        "move_backward": 0.25
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.25,
+      "yaw_deg": 107.0,
+      "actuation_amounts": {
+        "move_forward": 0.25,
+        "move_backward": 0.25
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.4,
+      "yaw_deg": 17.0,
+      "actuation_amounts": {
+        "move_forward": 0.4,
+        "move_backward": 0.4
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": 0.4,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": -0.4,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.4,
+      "yaw_deg": 107.0,
+      "actuation_amounts": {
+        "move_forward": 0.4,
+        "move_backward": 0.4
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": 0.4,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": -0.4,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 1.1920928955078125e-07
+    }
+  ],
+  "recorded_collision_backward_check": {
+    "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01",
+    "after_action_1based": 14,
+    "outcome": {
+      "action": "move_backward",
+      "valid": true,
+      "success": true,
+      "collided": false,
+      "actual_translation_m": 0.25,
+      "actual_forward_m": -0.25,
+      "actual_left_m": 0.0,
+      "actual_yaw_deg": 0.0,
+      "actual_pitch_deg": 0.0,
+      "result": "executed"
+    },
+    "desired_error_m": 2.502363690894138e-07
+  },
+  "configuration_on_disk_unchanged": true,
+  "called_jev": false
+}

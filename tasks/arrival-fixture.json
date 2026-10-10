@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "seed": 20260928,
+  "sampling_attempts": 182,
+  "category_definition": "geodesic/euclidean ratio: straight<1.05; corner<1.2; detour>=1.2 (geometric proxies, not semantic labels)",
+  "scene_dir": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+  "agent_radius_m": 0.10000000149011612,
+  "agent_height_m": 1.5,
+  "tasks": [
+    {
+      "start": [
+        -3.205312490463257,
+        -0.125,
+        -21.250774383544922
+      ],
+      "goal": [
+        -3.084859848022461,
+        -0.125,
+        -25.445085525512695
+      ],
+      "yaw_deg": -1.6449737461169034,
+      "pitch_deg": 0,
+      "geodesic_m": 4.196040153503418,
+      "path": [
+        [
+          -3.205312490463257,
+          -0.125,
+          -21.250774383544922
+        ],
+        [
+          -3.084859848022461,
+          -0.125,
+          -25.445085525512695
+        ]
+      ],
+      "category": "straight",
+      "geodesic_to_euclidean_ratio": 1.0,
+      "id": "arrival-fixture"
+    }
+  ],
+  "assets": {
+    "shuyuan.navmesh": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.navmesh",
+      "bytes": 129388,
+      "mtime_ns": 1788163942085373455,
+      "sha256": "4c21f2de21173be05e19bb592f967393ac95baabc20f303ad27cda9249294c49"
+    },
+    "shuyuan.mesh.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+      "bytes": 93062608,
+      "mtime_ns": 1788163075561382114
+    },
+    "shuyuan.gs.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.gs.ply",
+      "bytes": 996739998,
+      "mtime_ns": 1788833822105634981
+    }
+  },
+  "purpose": "scripted integration fixture, not Jev evaluation"
+}

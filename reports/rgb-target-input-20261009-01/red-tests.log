@@ -1,0 +1,167 @@
+test_behind_camera_is_not_fabricated_as_a_visible_target (test_rgb_input.ProjectionTests.test_behind_camera_is_not_fabricated_as_a_visible_target) ... FAIL
+test_center_and_left_target_follow_pinhole_geometry (test_rgb_input.ProjectionTests.test_center_and_left_target_follow_pinhole_geometry) ... FAIL
+test_height_difference_and_route_target_are_retained (test_rgb_input.ProjectionTests.test_height_difference_and_route_target_are_retained) ... FAIL
+test_marker_changes_copy_only_and_arrow_is_distinct (test_rgb_input.ProjectionTests.test_marker_changes_copy_only_and_arrow_is_distinct) ... FAIL
+test_near_ground_target_is_outside_frame_until_camera_looks_down (test_rgb_input.ProjectionTests.test_near_ground_target_is_outside_frame_until_camera_looks_down) ... FAIL
+test_cli_accepts_rgb_input_without_changing_model_or_depth (test_rgb_input.RgbRequestTests.test_cli_accepts_rgb_input_without_changing_model_or_depth) ... usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: unrecognized arguments: --rgb-input target_marked
+FAIL
+test_enabled_mode_cannot_silently_send_text_only (test_rgb_input.RgbRequestTests.test_enabled_mode_cannot_silently_send_text_only) ... ERROR
+test_invalid_combinations_fail_before_any_output_or_api_initialization (test_rgb_input.RgbRequestTests.test_invalid_combinations_fail_before_any_output_or_api_initialization) ... 
+  test_invalid_combinations_fail_before_any_output_or_api_initialization (test_rgb_input.RgbRequestTests.test_invalid_combinations_fail_before_any_output_or_api_initialization) (model='typesafe/jev-1.13', renderer='gs') ... ERROR
+  test_invalid_combinations_fail_before_any_output_or_api_initialization (test_rgb_input.RgbRequestTests.test_invalid_combinations_fail_before_any_output_or_api_initialization) (model='openai/gpt-6-luna-decisions', renderer='none') ... ERROR
+test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent (test_rgb_input.RgbRequestTests.test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent) ... FAIL
+test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay (test_rgb_input.RgbRequestTests.test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay) ... ERROR
+test_dry_run_prints_nine_commands_without_key_or_execution (test_ablation_script.AblationScriptTests.test_dry_run_prints_nine_commands_without_key_or_execution) ... ok
+test_execute_dispatches_each_route_and_input_with_correct_budget_and_model (test_ablation_script.AblationScriptTests.test_execute_dispatches_each_route_and_input_with_correct_budget_and_model) ... ok
+test_existing_later_output_prevents_all_dispatch_and_overwrite (test_ablation_script.AblationScriptTests.test_existing_later_output_prevents_all_dispatch_and_overwrite) ... ok
+test_missing_key_prevents_dispatch (test_ablation_script.AblationScriptTests.test_missing_key_prevents_dispatch) ... ok
+test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names (test_ablation_script.AblationScriptTests.test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names) ... FAIL
+test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch (test_ablation_script.AblationScriptTests.test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch) ... FAIL
+
+======================================================================
+ERROR: test_enabled_mode_cannot_silently_send_text_only (test_rgb_input.RgbRequestTests.test_enabled_mode_cannot_silently_send_text_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 110, in test_enabled_mode_cannot_silently_send_text_only
+    client.decide(make_request({'recent_actions': []}, cfg))
+  File "/tmp/jev-nav-rgb-target-20261009/jev.py", line 159, in decide
+    raise ServiceFailure("OpenRouter Decisions request failed: "+", ".join(errors),len(errors),time.perf_counter()-started)
+jev.ServiceFailure: OpenRouter Decisions request failed: invalid_response:TypeError
+
+======================================================================
+ERROR: test_invalid_combinations_fail_before_any_output_or_api_initialization (test_rgb_input.RgbRequestTests.test_invalid_combinations_fail_before_any_output_or_api_initialization) (model='typesafe/jev-1.13', renderer='gs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 94, in test_invalid_combinations_fail_before_any_output_or_api_initialization
+    run_episode(args, cfg)
+  File "/tmp/jev-nav-rgb-target-20261009/run.py", line 71, in run_episode
+    dataset = json.loads(Path(args.tasks).read_text())
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'missing'
+
+======================================================================
+ERROR: test_invalid_combinations_fail_before_any_output_or_api_initialization (test_rgb_input.RgbRequestTests.test_invalid_combinations_fail_before_any_output_or_api_initialization) (model='openai/gpt-6-luna-decisions', renderer='none')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 94, in test_invalid_combinations_fail_before_any_output_or_api_initialization
+    run_episode(args, cfg)
+  File "/tmp/jev-nav-rgb-target-20261009/run.py", line 71, in run_episode
+    dataset = json.loads(Path(args.tasks).read_text())
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'missing'
+
+======================================================================
+ERROR: test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay (test_rgb_input.RgbRequestTests.test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 133, in test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay
+    self.assertIsInstance(sent['state'][0], str)
+                          ~~~~~~~~~~~~~^^^
+KeyError: 0
+
+======================================================================
+FAIL: test_behind_camera_is_not_fabricated_as_a_visible_target (test_rgb_input.ProjectionTests.test_behind_camera_is_not_fabricated_as_a_visible_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 32, in setUp
+    self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
+AssertionError: unexpectedly None : RGB target annotation feature is missing
+
+======================================================================
+FAIL: test_center_and_left_target_follow_pinhole_geometry (test_rgb_input.ProjectionTests.test_center_and_left_target_follow_pinhole_geometry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 32, in setUp
+    self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
+AssertionError: unexpectedly None : RGB target annotation feature is missing
+
+======================================================================
+FAIL: test_height_difference_and_route_target_are_retained (test_rgb_input.ProjectionTests.test_height_difference_and_route_target_are_retained)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 32, in setUp
+    self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
+AssertionError: unexpectedly None : RGB target annotation feature is missing
+
+======================================================================
+FAIL: test_marker_changes_copy_only_and_arrow_is_distinct (test_rgb_input.ProjectionTests.test_marker_changes_copy_only_and_arrow_is_distinct)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 32, in setUp
+    self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
+AssertionError: unexpectedly None : RGB target annotation feature is missing
+
+======================================================================
+FAIL: test_near_ground_target_is_outside_frame_until_camera_looks_down (test_rgb_input.ProjectionTests.test_near_ground_target_is_outside_frame_until_camera_looks_down)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 32, in setUp
+    self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
+AssertionError: unexpectedly None : RGB target annotation feature is missing
+
+======================================================================
+FAIL: test_cli_accepts_rgb_input_without_changing_model_or_depth (test_rgb_input.RgbRequestTests.test_cli_accepts_rgb_input_without_changing_model_or_depth)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 82, in test_cli_accepts_rgb_input_without_changing_model_or_depth
+    self.assertEqual(main(), 0)
+                     ^^^^^^
+  File "/tmp/jev-nav-rgb-target-20261009/run.py", line 247, in main
+    args = p.parse_args()
+           ^^^^^^^^^^^^^^
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/argparse.py", line 1908, in parse_args
+    self.error(msg)
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/argparse.py", line 2650, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "/data/guiyuanze/miniconda3/envs/habitat-gs/lib/python3.12/argparse.py", line 2637, in exit
+    _sys.exit(status)
+SystemExit: 2
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 84, in test_cli_accepts_rgb_input_without_changing_model_or_depth
+    self.fail('CLI must accept --rgb-input target_marked')
+AssertionError: CLI must accept --rgb-input target_marked
+
+======================================================================
+FAIL: test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent (test_rgb_input.RgbRequestTests.test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 101, in test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent
+    self.assertNotIn('No depth or image observations', text)
+AssertionError: 'No depth or image observations' unexpectedly found in "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. No depth or image observations are provided. Use the supplied reference path and recent own-action outcomes. Camera tilts do not reveal environmental observations in this condition. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints. recent_motion summarizes only recent_actions. Action success means the action executed, not that navigation advanced. If recent_motion.status is turn_oscillation, recent opposite turns have produced little net translation: avoid repeating that left-right pair and choose a different observation or recovery, such as inspecting farther in one turn direction or backing away when appropriate. A no_translation status alone can also mean useful observation. When reference.tracking.mode is reassociated, follow the updated current_target and ordered_preview."
+
+======================================================================
+FAIL: test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names (test_ablation_script.AblationScriptTests.test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_ablation_script.py", line 96, in test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names
+    self.assertEqual(flags.get('--rgb-input'), 'target_marked')
+AssertionError: None != 'target_marked'
+
+======================================================================
+FAIL: test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch (test_ablation_script.AblationScriptTests.test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_ablation_script.py", line 104, in test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+----------------------------------------------------------------------
+Ran 16 tests in 1.580s
+
+FAILED (failures=9, errors=4)

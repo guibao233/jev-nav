@@ -1,0 +1,31 @@
+{
+  "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-depth-ablation-none-20260930-01",
+  "source_sha256": {
+    "metadata.json": "cee099e9345226df5cec5f167a8fe1ef3c94318a0a671526bb1079da179822bb",
+    "summary.json": "c134efa4e4258dc9f8facc5d724355aef978317dcd4375efab25655ebd958e28",
+    "steps.jsonl": "8fb94a00017d6e8b79876378749e41a251fd149fb843a696955cf2bb11a99fc0",
+    "navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+    "frames/00000-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00000-depth.png": "1743647f8777044574ef1495c92a3c9b35d3b7de167dbd284713901113856165",
+    "frames/00001-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00001-depth.png": "9b93d69cd038a2a5d7758496b04a7ce474c1d42482969b2f7e72cc3d67c4e5bf",
+    "frames/00002-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00002-depth.png": "73cae505587bb1835f1f4ea5b6e52c1c8a311acd4c80628601625ab017b34059",
+    "frames/00003-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00003-depth.png": "9c83bca732a3a5999d58507056cb3c9ee419d522b0286697fb4d4a0e896cd4d6",
+    "frames/00004-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00004-depth.png": "6880f9d9c1160991fee2d5a4a4b1a53a563da7cbeb62fe6d8b1541f3a4143b99",
+    "frames/00005-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00005-depth.png": "9c83bca732a3a5999d58507056cb3c9ee419d522b0286697fb4d4a0e896cd4d6",
+    "frames/00006-rgb.png": "e1944ecedda25a101544abab2657004a79bf7f6b2afefdc267fc281e72db1973",
+    "frames/00006-depth.png": "9c83bca732a3a5999d58507056cb3c9ee419d522b0286697fb4d4a0e896cd4d6"
+  },
+  "observations": 7,
+  "media_exported": true,
+  "entry": "index.html",
+  "portable": true,
+  "reran_simulator": false,
+  "called_jev": false,
+  "event_timing": "Previous completed action, displayed on the following observation (including terminal); never the current pending action.",
+  "target_source": "actual logged requests transformed by each observation's body pose"
+}

@@ -1,0 +1,10 @@
+route,input,runs,successes,collision_free_successes,total_collisions,total_invalid_actions
+simple,numeric,2,0,0,10,0
+simple,semantic,2,0,0,20,2
+simple,none,2,0,0,34,0
+complex,numeric,2,2,2,0,0
+complex,semantic,2,2,2,0,18
+complex,none,2,0,0,212,0
+extended,numeric,2,0,0,0,0
+extended,semantic,2,2,2,0,6
+extended,none,2,2,0,14,0

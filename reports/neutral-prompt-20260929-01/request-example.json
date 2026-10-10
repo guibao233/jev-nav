@@ -1,0 +1,226 @@
+{
+  "model": "typesafe/jev-1.13",
+  "state": {
+    "task": {
+      "kind": "reference_path_following",
+      "stop_tolerance_m": 0.3,
+      "step": 1,
+      "steps_left": 250
+    },
+    "reference": {
+      "current_target": {
+        "forward_m": -0.673,
+        "left_m": -0.33,
+        "distance_m": 0.75,
+        "bearing_deg": -153.86,
+        "is_final": false
+      },
+      "ordered_preview": [
+        {
+          "forward_m": -0.449,
+          "left_m": -0.22,
+          "distance_m": 0.5,
+          "bearing_deg": -153.86,
+          "ahead_along_path_m": 0.5
+        },
+        {
+          "forward_m": -0.898,
+          "left_m": -0.441,
+          "distance_m": 1.0,
+          "bearing_deg": -153.86,
+          "ahead_along_path_m": 1.0
+        },
+        {
+          "forward_m": -0.962,
+          "left_m": -0.472,
+          "distance_m": 1.072,
+          "bearing_deg": -153.86,
+          "ahead_along_path_m": 1.072
+        },
+        {
+          "forward_m": -1.17,
+          "left_m": -0.846,
+          "distance_m": 1.444,
+          "bearing_deg": -144.12,
+          "ahead_along_path_m": 1.5
+        },
+        {
+          "forward_m": -1.182,
+          "left_m": -0.868,
+          "distance_m": 1.467,
+          "bearing_deg": -143.71,
+          "ahead_along_path_m": 1.525
+        },
+        {
+          "forward_m": -1.331,
+          "left_m": -1.319,
+          "distance_m": 1.874,
+          "bearing_deg": -135.26,
+          "ahead_along_path_m": 2.0
+        },
+        {
+          "forward_m": -1.387,
+          "left_m": -1.487,
+          "distance_m": 2.033,
+          "bearing_deg": -133.01,
+          "ahead_along_path_m": 2.177
+        },
+        {
+          "forward_m": -1.482,
+          "left_m": -1.796,
+          "distance_m": 2.329,
+          "bearing_deg": -129.53,
+          "ahead_along_path_m": 2.5
+        },
+        {
+          "forward_m": -1.629,
+          "left_m": -2.274,
+          "distance_m": 2.797,
+          "bearing_deg": -125.61,
+          "ahead_along_path_m": 3.0
+        }
+      ],
+      "final_goal": {
+        "forward_m": 0.524,
+        "left_m": -6.921,
+        "distance_m": 6.941,
+        "bearing_deg": -85.67
+      },
+      "distance_from_local_reference_m": 0.0,
+      "remaining_reference_length_m": 9.798
+    },
+    "robot": {
+      "radius_m": 0.10000000149011612,
+      "height_m": 1.5,
+      "camera_pitch_deg": 0.0,
+      "pitch_limits_deg": [
+        -30,
+        45
+      ],
+      "previous_collided": false
+    },
+    "depth": {
+      "source": "current_mesh_depth_only",
+      "valid_fraction": 0.985,
+      "sectors": [
+        {
+          "bearing_interval_deg": [
+            -45.0,
+            -35.0
+          ],
+          "nearest_obstacle_m": 1.6,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.62,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -35.0,
+            -25.0
+          ],
+          "nearest_obstacle_m": 2.43,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.22,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -25.0,
+            -15.0
+          ],
+          "nearest_obstacle_m": 4.37,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.12,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -15.0,
+            -5.0
+          ],
+          "nearest_obstacle_m": 5.34,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.25,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -5.0,
+            5.0
+          ],
+          "nearest_obstacle_m": 3.26,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.39,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            5.0,
+            15.0
+          ],
+          "nearest_obstacle_m": 2.2,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 4.81,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            15.0,
+            25.0
+          ],
+          "nearest_obstacle_m": 1.89,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 4.09,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            25.0,
+            35.0
+          ],
+          "nearest_obstacle_m": 1.39,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 4.7,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            35.0,
+            45.0
+          ],
+          "nearest_obstacle_m": 1.24,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 4.44,
+          "near_floor_seen": false
+        }
+      ],
+      "move_checks": {
+        "move_forward": {
+          "status": "unknown",
+          "swept_volume_observed_fraction": 0.11
+        },
+        "move_backward": {
+          "status": "unknown",
+          "swept_volume_observed_fraction": 0.0
+        }
+      },
+      "note": "No obstacle seen is not confirmed free space. Clear is a sampled geometric estimate; unseen volume is unknown."
+    },
+    "recent_actions": []
+  },
+  "questions": {
+    "action": {
+      "type": "choice",
+      "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.",
+      "criteria": {
+        "move_forward": "Translate forward 0.25 metres without changing body heading.",
+        "move_backward": "Translate backward 0.25 metres without changing body heading.",
+        "turn_left": "Rotate body left 15 degrees in place.",
+        "turn_right": "Rotate body right 15 degrees in place.",
+        "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+        "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+        "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+      }
+    }
+  }
+}

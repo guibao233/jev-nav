@@ -1,0 +1,14 @@
+test_smoke_prepares_images_without_claiming_a_live_submission (test_rgb_input.RgbRequestTests.test_smoke_prepares_images_without_claiming_a_live_submission) ... FAIL
+
+======================================================================
+FAIL: test_smoke_prepares_images_without_claiming_a_live_submission (test_rgb_input.RgbRequestTests.test_smoke_prepares_images_without_claiming_a_live_submission)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 205, in test_smoke_prepares_images_without_claiming_a_live_submission
+    self.assertFalse(data['rgb_provided_to_model'])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.388s
+
+FAILED (failures=1)

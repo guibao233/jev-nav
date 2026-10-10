@@ -1,0 +1,7 @@
+{
+  "runs": 37,
+  "requests_identical": 6880,
+  "wire_bytes_identical": 6880,
+  "protected_files_unchanged": 229,
+  "api_calls": 0
+}

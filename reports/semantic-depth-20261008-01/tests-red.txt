@@ -1,0 +1,69 @@
+test_config_and_cli_enable_semantic_without_changing_task (test_semantic_depth.SemanticDepthTests.test_config_and_cli_enable_semantic_without_changing_task) ... FAIL
+test_metric_distances_become_named_ordered_ranges_with_correct_boundaries (test_semantic_depth.SemanticDepthTests.test_metric_distances_become_named_ordered_ranges_with_correct_boundaries) ... FAIL
+test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence (test_semantic_depth.SemanticDepthTests.test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence) ... FAIL
+test_other_sector_counts_are_rejected_instead_of_mislabelled (test_semantic_depth.SemanticDepthTests.test_other_sector_counts_are_rejected_instead_of_mislabelled) ... FAIL
+test_real_missing_depth_and_wall_retain_unknown_and_blocked (test_semantic_depth.SemanticDepthTests.test_real_missing_depth_and_wall_retain_unknown_and_blocked) ... FAIL
+test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation (test_semantic_depth.SemanticDepthTests.test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation) ... FAIL
+test_unknown_and_no_obstacle_seen_are_never_far_or_clear (test_semantic_depth.SemanticDepthTests.test_unknown_and_no_obstacle_seen_are_never_far_or_clear) ... FAIL
+
+======================================================================
+FAIL: test_config_and_cli_enable_semantic_without_changing_task (test_semantic_depth.SemanticDepthTests.test_config_and_cli_enable_semantic_without_changing_task)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 90, in test_config_and_cli_enable_semantic_without_changing_task
+    self.assertEqual(load_config(p).get('depth_format'),'numeric')
+AssertionError: None != 'numeric'
+
+======================================================================
+FAIL: test_metric_distances_become_named_ordered_ranges_with_correct_boundaries (test_semantic_depth.SemanticDepthTests.test_metric_distances_become_named_ordered_ranges_with_correct_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 34, in test_metric_distances_become_named_ordered_ranges_with_correct_boundaries
+    self.assertEqual(depth.get('format'),'semantic')
+AssertionError: None != 'semantic'
+
+======================================================================
+FAIL: test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence (test_semantic_depth.SemanticDepthTests.test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 83, in test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence
+    self.assertNotEqual(prompt_version(cfg),prompt_version(dict(cfg,depth_format='semantic')))
+AssertionError: 'seven_actions_reassociate_motion_v5' == 'seven_actions_reassociate_motion_v5'
+
+======================================================================
+FAIL: test_other_sector_counts_are_rejected_instead_of_mislabelled (test_semantic_depth.SemanticDepthTests.test_other_sector_counts_are_rejected_instead_of_mislabelled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 115, in test_other_sector_counts_are_rejected_instead_of_mislabelled
+    with self.assertRaisesRegex(ValueError,'nine'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_real_missing_depth_and_wall_retain_unknown_and_blocked (test_semantic_depth.SemanticDepthTests.test_real_missing_depth_and_wall_retain_unknown_and_blocked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 106, in test_real_missing_depth_and_wall_retain_unknown_and_blocked
+    self.assertTrue(all(s.get('distance_band')=='unknown' for s in missing['sectors']))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation (test_semantic_depth.SemanticDepthTests.test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 66, in test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation
+    self.assertFalse(numbers(request['state']['depth']))
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_unknown_and_no_obstacle_seen_are_never_far_or_clear (test_semantic_depth.SemanticDepthTests.test_unknown_and_no_obstacle_seen_are_never_far_or_clear)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/share/guiyuanze/code/habitat-gs/jev_nav/test_semantic_depth.py", line 49, in test_unknown_and_no_obstacle_seen_are_never_far_or_clear
+    self.assertEqual(depth['sectors'][0].get('distance_band'),'unknown')
+AssertionError: None != 'unknown'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.007s
+
+FAILED (failures=7)

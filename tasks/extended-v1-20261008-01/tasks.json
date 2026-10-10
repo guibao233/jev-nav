@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "seed": 20261008,
+  "sampling_attempts": 42,
+  "sampling_policy": "first qualifying pair on largest NavMesh island; geodesic 16-20m, >=3 bends >=30deg, detour ratio >=1.35, flat <=0.02m, endpoint extra clearance >=0.25m; no model-based selection",
+  "suggested_max_steps": 500,
+  "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+  "config_at_generation": {
+    "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+    "gpu_id": 0,
+    "allow_sliding": true,
+    "resolution": [
+      480,
+      640
+    ],
+    "hfov_deg": 90,
+    "camera_height_m": 1.5,
+    "near_m": 0.05,
+    "far_m": 20.0,
+    "move_m": 0.25,
+    "turn_deg": 15,
+    "pitch_deg": 15,
+    "pitch_min_deg": -30,
+    "pitch_max_deg": 45,
+    "preview_m": 3.0,
+    "sample_spacing_m": 0.5,
+    "target_lookahead_m": 0.75,
+    "success_m": 0.3,
+    "max_steps": 100,
+    "history_steps": 5,
+    "sectors": 9,
+    "obstacle_min_height_m": 0.08,
+    "geometry_margin_m": 0.03,
+    "task_min_m": 2.0,
+    "task_max_m": 5.0,
+    "model": "typesafe/jev-1.13",
+    "api_timeout_s": 15,
+    "api_retries": 2,
+    "depth_input": "mesh",
+    "depth_format": "numeric",
+    "agent_radius_m": 0.10000000149011612,
+    "agent_height_m": 1.5
+  },
+  "assets": {
+    "shuyuan.navmesh": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.navmesh",
+      "bytes": 129388,
+      "mtime_ns": 1788163942085373455,
+      "sha256": "4c21f2de21173be05e19bb592f967393ac95baabc20f303ad27cda9249294c49"
+    },
+    "shuyuan.mesh.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+      "bytes": 93062608,
+      "mtime_ns": 1788163075561382114
+    },
+    "shuyuan.gs.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.gs.ply",
+      "bytes": 996739998,
+      "mtime_ns": 1788833822105634981
+    }
+  },
+  "tasks": [
+    {
+      "id": "extended-000",
+      "category": "extended",
+      "start": [
+        -10.961957931518555,
+        -0.125,
+        -26.560068130493164
+      ],
+      "goal": [
+        0.22865009307861328,
+        -0.125,
+        -26.451885223388672
+      ],
+      "yaw_deg": 0.0,
+      "pitch_deg": 0,
+      "geodesic_m": 17.757165908813477,
+      "path": [
+        [
+          -10.961957931518555,
+          -0.125,
+          -26.560068130493164
+        ],
+        [
+          -9.7528076171875,
+          -0.125,
+          -26.56195068359375
+        ],
+        [
+          -9.352807998657227,
+          -0.125,
+          -26.56195068359375
+        ],
+        [
+          -8.95280647277832,
+          -0.125,
+          -26.46194839477539
+        ],
+        [
+          -8.552806854248047,
+          -0.125,
+          -26.06195068359375
+        ],
+        [
+          -8.45280647277832,
+          -0.125,
+          -25.76194953918457
+        ],
+        [
+          -7.20280647277832,
+          -0.125,
+          -21.76194953918457
+        ],
+        [
+          -7.0028076171875,
+          -0.125,
+          -21.611949920654297
+        ],
+        [
+          -6.652807235717773,
+          -0.125,
+          -21.56195068359375
+        ],
+        [
+          -3.5028076171875,
+          -0.125,
+          -21.911949157714844
+        ],
+        [
+          -1.4028072357177734,
+          -0.125,
+          -22.46194839477539
+        ],
+        [
+          -0.9528064727783203,
+          -0.125,
+          -22.611949920654297
+        ],
+        [
+          -0.4528064727783203,
+          -0.125,
+          -22.81195068359375
+        ],
+        [
+          -0.35280799865722656,
+          -0.125,
+          -23.111949920654297
+        ],
+        [
+          0.22865009307861328,
+          -0.125,
+          -26.451885223388672
+        ]
+      ],
+      "geometry": {
+        "euclidean_m": 11.191130930409496,
+        "geodesic_to_euclidean_ratio": 1.5867177338227891,
+        "significant_turns": 3,
+        "turn_threshold_deg": 30.0,
+        "turn_angles_deg": [
+          0.08920500531602424,
+          14.036500603190554,
+          30.9633627925701,
+          26.56518778131736,
+          1.0809241866609105,
+          35.775990291073086,
+          28.74001385804162,
+          14.470136306132472,
+          8.336206015412683,
+          3.7587234263326406,
+          3.3663903206631636,
+          49.763784890048406,
+          8.558936629891289
+        ],
+        "total_abs_turn_deg": 225.5053621066503,
+        "path_vertices": 15,
+        "path_height_span_m": 0.0
+      },
+      "geodesic_to_euclidean_ratio": 1.5867177338227891,
+      "endpoint_extra_navmesh_clearance_m": [
+        0.26969435811042786,
+        0.5692810416221619
+      ]
+    }
+  ]
+}

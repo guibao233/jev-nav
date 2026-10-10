@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "navigation-summary",
+      "title": "18轮视觉导航全部成功，16轮成功且无碰撞",
+      "queries": [
+        {
+          "id": "run-totals",
+          "source": {
+            "label": "OpenAI Decisions 固定路线导航记录",
+            "files": [
+              {
+                "label": "纯文字与视觉实验的 metadata.json、steps.jsonl、summary.json"
+              }
+            ],
+            "filters": [
+              "三条固定路线：simple、complex、extended",
+              "每条路线三种深度文字条件：numeric、semantic、none",
+              "每种条件两轮：20261009-01、20261009-02",
+              "五步联调不计入"
+            ],
+            "metricDefinitions": [
+              {
+                "label": "导航成功",
+                "definition": "模型主动选择stop，且最终NavMesh路径距离不超过0.30 m。"
+              },
+              {
+                "label": "无碰撞成功",
+                "definition": "导航成功且本轮collided计数为0。"
+              }
+            ],
+            "caveats": [
+              "每类只有一个固定任务，重复两轮在每个条件中的轨迹和答案概率完全一致。",
+              "视觉组联合增加RGB、目标标记和视觉提示词，不能把改善单独归因于RGB。"
+            ],
+            "evidenceFlow": [
+              {
+                "kind": "check",
+                "title": "原始指标复算",
+                "detail": "重新计算6308个动作后的NavMesh距离及计数，所有汇总指标与原始日志一致。"
+              },
+              {
+                "kind": "check",
+                "title": "实际图像输入核查",
+                "detail": "3280幅JPEG及对应网络请求SHA-256均与客户端记录一致，服务都有动作响应。"
+              }
+            ]
+          },
+          "columns": [
+            "input",
+            "runs",
+            "successes",
+            "collision_free_successes",
+            "actions",
+            "collisions",
+            "invalid_actions"
+          ],
+          "rows": [
+            {
+              "input": "text",
+              "runs": 18,
+              "successes": 8,
+              "collision_free_successes": 6,
+              "actions": 3028,
+              "collisions": 290,
+              "invalid_actions": 26
+            },
+            {
+              "input": "rgb",
+              "runs": 18,
+              "successes": 18,
+              "collision_free_successes": 16,
+              "actions": 3280,
+              "collisions": 2,
+              "invalid_actions": 2
+            }
+          ],
+          "methods": [
+            {
+              "language": "python",
+              "code": "totals={}\nfor arm in ['text','rgb']:\n    group=[r for r in rows if r['arm']==arm]\n    totals[arm]={'runs':len(group),**{field:sum(r[field] for r in group) for field in ['success','collision_free_success','steps','collisions','invalid_actions','cost_usd']},'unique_response_ids':len(set(ids[arm])),'sum_path_length_m':sum(r['path_length_m'] for r in group),'sum_request_latency_s':sum(r['total_request_latency_s'] for r in group)}\n"
+            },
+            {
+              "language": "calculation",
+              "code": "纯文字成功率 = 8 / 18 = 44.4%\n视觉成功率 = 18 / 18 = 100%\n成功率变化 = +55.6个百分点\n无碰撞成功率 = 6 / 18 → 16 / 18 = 33.3% → 88.9%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

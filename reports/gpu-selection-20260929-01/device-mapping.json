@@ -1,0 +1,10 @@
+{
+  "CUDA_VISIBLE_DEVICES": "7",
+  "cuda_device_count": 1,
+  "logical_device": 0,
+  "physical_nvidia_smi_index": 7,
+  "uuid": "GPU-a7c3df45-13f7-44f3-2465-54c887d83f22",
+  "name": "NVIDIA GeForce RTX 4090",
+  "original_gpu_id": 2,
+  "config_variant": "config.single-gpu.json"
+}

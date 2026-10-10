@@ -1,0 +1,453 @@
+--- before/core.py
++++ core.py
+@@ -18,13 +18,16 @@
+ 
+ 
+ class RoutePreview:
+-    """Fixed initial shortest polyline; bounded monotone projection, no replanning.
+-
+-    Nearby later branches cannot attract the projection across a wall. Progress is
+-    only accepted near the original path and within a bounded arc-length window.
+-    Preview includes corners, so sampling does not hide an upcoming turn.
++    """Monotone tracking on the fixed route, with optional checked reassociation.
++
++    Normal tracking uses the original local window. If that window is lost,
++    reconnect validates a direct NavMesh connection to a nearby later segment.
++    No connection checker means no reassociation. The route is never replanned.
+     """
+-    def __init__(self, points):
++    VERSION = "checked_reassociation_v1"
++    MAX_REFERENCE_DISTANCE_M = .5
++
++    def __init__(self, points, reconnect=None):
+         pts = np.asarray(points, dtype=float)
+         if pts.ndim != 2 or pts.shape[1] != 3 or len(pts) < 2 or not np.isfinite(pts).all():
+             raise ValueError("path must contain at least two finite XYZ points")
+@@ -36,6 +39,8 @@
+         self.arcs = np.r_[0., np.cumsum(self.lengths)]
+         self.progress = 0.
+         self.previous_position = None
++        self.reconnect = reconnect
++        self.tracking = {"mode": "local", "progress_m": 0., "reassociation_jump_m": 0.}
+ 
+     @property
+     def total(self):
+@@ -49,7 +54,9 @@
+     def update(self, position, step_m):
+         pos = np.asarray(position, dtype=float)
+         moved = 0. if self.previous_position is None else float(np.linalg.norm(pos - self.previous_position))
+-        # Includes a small initial and corner tolerance; never searches the whole route.
++        previous_progress = self.progress
++        mode = "local"
++        # Preserve local tracking near the route; do not switch nearby branches.
+         limit = min(self.total, self.progress + max(step_m + .15, moved + .15))
+         best = (float("inf"), self.progress)
+         for i, length in enumerate(self.lengths):
+@@ -61,8 +68,31 @@
+             dist = float(np.linalg.norm(pos - self.at(s)))
+             if (dist, s) < best:
+                 best = dist, s
+-        if best[0] <= .5:
++        if best[0] <= self.MAX_REFERENCE_DISTANCE_M:
+             self.progress = max(self.progress, best[1])
++        else:
++            mode = "off_path"
++            if self.reconnect is not None:
++                candidates = []
++                for i, length in enumerate(self.lengths):
++                    lo, hi = max(limit, self.arcs[i]), self.arcs[i+1]
++                    if lo > hi:
++                        continue
++                    direction = (self.points[i+1] - self.points[i]) / length
++                    arc = float(np.clip(self.arcs[i] + np.dot(pos - self.points[i], direction), lo, hi))
++                    point = self.at(arc)
++                    distance = float(np.linalg.norm(pos-point))
++                    if distance <= self.MAX_REFERENCE_DISTANCE_M and arc > limit + 1e-6:
++                        candidates.append((distance, arc))
++                # Nearest connectable segment first; prefer the earlier arc at ties.
++                for distance, arc in sorted(candidates):
++                    if self.reconnect(pos, self.at(arc)):
++                        self.progress = arc
++                        best = distance, arc
++                        mode = "reassociated"
++                        break
++        self.tracking = {"mode": mode, "progress_m": round(self.progress, 3),
++                         "reassociation_jump_m": round(self.progress-previous_progress, 3) if mode == "reassociated" else 0.}
+         self.previous_position = pos.copy()
+         return best[0]
+ 
+@@ -86,7 +116,54 @@
+         return {"current_target": target, "ordered_preview": samples,
+                 "final_goal": relative(self.points[-1], position, yaw),
+                 "distance_from_local_reference_m": round(lateral, 3),
+-                "remaining_reference_length_m": round(self.total - self.progress, 3)}
++                "remaining_reference_length_m": round(self.total - self.progress, 3),
++                "tracking": dict(self.tracking)}
++
++
++def recent_motion_summary(history, window_steps=5, move_m=.25):
++    """Summarize own executed deltas only, composing their changing body frames.
++
++    No goal, route, depth, or world-map history is read. A turn can execute
++    successfully while producing no translation; useful observation is not failure.
++    """
++    recent = history[-window_steps:]
++    displacement = np.zeros(2)  # forward, left in the window's initial body frame
++    heading = travelled = absolute_turn = 0.
++    turn_deltas = []
++    for outcome in recent:
++        forward, left = outcome["actual_forward_m"], outcome["actual_left_m"]
++        c, s = math.cos(heading), math.sin(heading)
++        displacement += [forward*c-left*s, forward*s+left*c]
++        yaw = outcome["actual_yaw_deg"]
++        heading += math.radians(yaw)
++        absolute_turn += abs(yaw)
++        travelled += outcome["actual_translation_m"]
++        turn_deltas.append(yaw)
++    reversals = sum(a*b < 0 for a,b in zip(turn_deltas, turn_deltas[1:]))
++    net = float(np.linalg.norm(displacement))
++    full = len(recent) == window_steps
++    threshold = max(.02, move_m*.2)
++    low_net_motion = full and net <= threshold
++    if not full:
++        status = "insufficient_history"
++    elif low_net_motion and reversals >= 2:
++        status = "turn_oscillation"
++    elif low_net_motion and travelled <= threshold:
++        status = "no_translation"
++    elif low_net_motion:
++        status = "low_net_motion"
++    else:
++        status = "moving"
++    return {"source": "recent_own_action_outcomes_only", "window_steps": len(recent),
++            "window_capacity": window_steps, "status": status,
++            "net_translation_m": round(net, 4), "travelled_m": round(travelled, 4),
++            "net_turn_deg": round(math.degrees(heading), 3),
++            "absolute_turn_deg": round(absolute_turn, 3), "opposite_turn_pairs": reversals,
++            "collision_count": sum(bool(o["collided"]) for o in recent),
++            "invalid_action_count": sum(not o["valid"] for o in recent),
++            "execution_success_count": sum(bool(o["success"]) for o in recent),
++            "low_net_motion": low_net_motion,
++            "note": "Action success means execution succeeded, not navigation progress. No translation alone can be useful observation."}
+ 
+ 
+ def depth_points(depth, pitch_deg, cfg):
+--- before/environment.py
++++ environment.py
+@@ -58,6 +58,31 @@
+     if not pf.find_path(path) or not np.isfinite(path.geodesic_distance):
+         return None
+     return float(path.geodesic_distance), [np.asarray(p).tolist() for p in path.points]
++
++
++def direct_navmesh_connection(pf, start, end):
++    """Validate a short reference connector on CPU, never a model action mask.
++
++    Sample the requested straight line every <=5 cm and require the movement
++    filter to reach every point without sliding away. A reachable detour alone
++    is insufficient: close points separated by a wall must not reconnect.
++    """
++    start, end = np.asarray(start, dtype=float), np.asarray(end, dtype=float)
++    if not np.isfinite(start).all() or not np.isfinite(end).all():
++        return False
++    if abs(start[1]-end[1]) > .25 or not pf.is_navigable(start) or not pf.is_navigable(end):
++        return False
++    count = max(1, int(math.ceil(float(np.linalg.norm(end-start))/.05)))
++    current = start
++    for fraction in np.linspace(0., 1., count+1)[1:]:
++        desired = start + fraction*(end-start)
++        reached = np.asarray(pf.try_step(current, desired))
++        if not np.isfinite(reached).all() or np.linalg.norm(reached-desired) > 1e-4:
++            return False
++        if not pf.is_navigable(reached):
++            return False
++        current = reached
++    return True
+ 
+ 
+ def sample_tasks(cfg, count, seed):
+--- before/run.py
++++ run.py
+@@ -9,8 +9,8 @@
+ import time
+ import numpy as np
+ 
+-from core import RoutePreview, depth_facts
+-from environment import ACTIONS, Environment, load_pathfinder, sample_tasks, shortest
++from core import RoutePreview, depth_facts, recent_motion_summary
++from environment import ACTIONS, Environment, direct_navmesh_connection, load_pathfinder, sample_tasks, shortest
+ from jev import ENDPOINT, PROMPT_VERSION, JevClient, ServiceFailure, make_request
+ from replay import save_frame, save_map, write_replay
+ 
+@@ -72,7 +72,7 @@
+     check = shortest(pf,task["start"],task["goal"])
+     if check is None or not math.isclose(check[0],task["geodesic_m"],abs_tol=.02):
+         raise ValueError("task path is unreachable or inconsistent")
+-    route = RoutePreview(task["path"])
++    route = RoutePreview(task["path"], reconnect=lambda start, end: direct_navmesh_connection(pf, start, end))
+     if not np.allclose(route.points[0],task["start"],atol=.03) or not np.allclose(route.points[-1],task["goal"],atol=.03):
+         raise ValueError("reference path endpoints differ from task")
+     output = Path(args.out)
+@@ -88,8 +88,11 @@
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
+         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
+-        "route_policy":"fixed initial shortest polyline; no replanning or controller substitution",
+-        "memory":"recent own local action outcomes only; no persistent obstacle map",
++        "route_policy":"fixed initial shortest polyline; checked reassociation to nearby later segments; no replanning or controller substitution",
++        "route_policy_version":RoutePreview.VERSION,
++        "reassociation":{"max_distance_m":RoutePreview.MAX_REFERENCE_DISTANCE_M,
++                         "connector_sample_m":.05,"connector_endpoint_tolerance_m":1e-4},
++        "memory":"recent own local action outcomes and their motion summary only; no persistent obstacle map",
+         "map":save_map(pf,task["start"][1],output)}
+     (output/"metadata.json").write_text(json.dumps(metadata,indent=2,allow_nan=False))
+     print("OUTPUT",output,flush=True)
+@@ -110,7 +113,8 @@
+                 "robot": {"radius_m":cfg["agent_radius_m"],"height_m":cfg["agent_height_m"],
+                     "camera_pitch_deg":env.pitch,"pitch_limits_deg":[cfg["pitch_min_deg"],cfg["pitch_max_deg"]],
+                     "previous_collided":history[-1]["collided"] if history else False},
+-                "depth":depth_facts(depth,env.pitch,cfg), "recent_actions":history[-cfg["history_steps"]:]}
++                "depth":depth_facts(depth,env.pitch,cfg), "recent_actions":history[-cfg["history_steps"]:],
++                "recent_motion":recent_motion_summary(history,cfg["history_steps"],cfg["move_m"])}
+             request = make_request(state,cfg)
+             record = {"step":index,"frame_kind":"before_action","images":images,
+                 "pose":{"position":position.tolist(),"yaw_rad":yaw,"pitch_deg":env.pitch},"request":request}
+--- before/jev.py
++++ jev.py
+@@ -13,7 +13,7 @@
+ 
+ 
+ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+-PROMPT_VERSION = "seven_actions_neutral_v4"
++PROMPT_VERSION = "seven_actions_reassociate_motion_v5"
+ 
+ 
+ def make_request(state, cfg):
+@@ -47,7 +47,12 @@
+         "progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen "
+         "nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise "
+         "continue. There is no automatic recovery controller and no action safety override; your selected action is executed "
+-        "subject to the simulator's physical constraints.")
++        "subject to the simulator's physical constraints. "
++        "recent_motion summarizes only recent_actions. Action success means the action executed, not that navigation advanced. "
++        "If recent_motion.status is turn_oscillation, recent opposite turns have produced little net translation: "
++        "avoid repeating that left-right pair and choose a different observation or recovery, such as inspecting farther "
++        "in one turn direction or backing away when appropriate. A no_translation status alone can also mean useful observation. "
++        "When reference.tracking.mode is reassociated, follow the updated current_target and ordered_preview.")
+     return {"model": cfg["model"], "state": state,
+             "questions": {"action": {"type": "choice", "instructions": instructions, "criteria": criteria}}}
+ 
+--- before/README.md
++++ README.md
+@@ -6,9 +6,34 @@
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
+ 
++## 2026-09-29 更新：路径重新关联与五步停滞摘要
++
++当前提示词为 `seven_actions_reassociate_motion_v5`，路径策略为 `checked_reassociation_v1`。
++
++- 路径正常跟踪仍采用局部、单调投影。机器人离旧跟踪窗口超过 0.5 m 时，寻找距离机器人不超过 0.5 m 的后续路线投影点；只有 NavMesh 直连检查通过才重新关联。直连按最多 5 cm 一段查询运动过滤器，每个期望位置均须可达，不能靠绕行或滑动到另一个位置来通过。保留初始路线、拐角目标与单调进度。
++- 模型输入新增 `recent_motion`，仅汇总最近五步已有自身动作。净位移按每步身体朝向变化组合，不能直接相加各步局部前进距离；同时提供净转角、累计转角、相邻相反转向次数、碰撞和无效动作计数。
++- 完整五步窗口净位移不超过 0.05 m（当前 0.25 m 步长）且至少两对相邻相反转向时，标记 `turn_oscillation`。`no_translation` 本身也可能只是正常观察，提示词明确区分动作执行成功与导航进展。没有强制后退、屏蔽动作或替模型选择恢复方向。
++
++七动作、前后各 0.25 m、明确停止规则、allow_sliding、深度算法及 API 调用方式保持。NavMesh 只检查重新关联连接，不把查询结果当成 Jev 动作的安全答案。
++
++同一任务复测：
++
++```bash
++CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++  --tasks tasks/challenge-v1-20260928/tasks.json --episode turn-000 \
++  --out runs/jev-challenge-turn-000-reassociate-motion-01 --rgb gs --max-steps 250
++python visualize.py --run runs/jev-challenge-turn-000-reassociate-motion-01 --serve --port 8765
++```
++
++显存紧张时可用 `--rgb mesh` 省去 GS RGB 渲染器，深度与模型输入方案相同。
++
++新日志可查看 `request.state.reference.tracking`（本步关联方式、路线进度与跳变量）和 `request.state.recent_motion`。已有回放会展示这些真实请求字段。
++
++验证：50 项回归通过；neutral-02 的 250 份保存状态重放能修复路线进度滞后并识别转向循环；12 条正常路线的 1,448 个采样状态保持原目标行为；真实 mesh 六步冒烟已核对新字段。没有调用 Jev，实际导航改善待复测。见 [实现与验证报告](reports/reassociate-motion-20260929-01/README.md)。
++
+ ## 2026-09-29 更新：恢复中性动作与通用恢复描述
+ 
+-当前提示词版本为 `seven_actions_neutral_v4`。以成功实验 `jev-challenge-turn-000-02` 保存的请求为依据，恢复通用导航说明与六个非停止动作的原始描述：后退只说明“保持身体朝向向后移动指定距离”；恢复“允许暂时远离目标进行恢复”及“避免无进展的相反动作交替”。去掉后来新增的后退专属恢复/后方风险强调，以及“前进受阻后先转向”的指令。深度状态中的后方 unknown 与通用 unknown 提醒仍保留。
++该阶段提示词版本为 `seven_actions_neutral_v4`，现已由上述 v5 替代。以成功实验 `jev-challenge-turn-000-02` 保存的请求为依据，恢复通用导航说明与六个非停止动作的原始描述：后退只说明“保持身体朝向向后移动指定距离”；恢复“允许暂时远离目标进行恢复”及“避免无进展的相反动作交替”。去掉后来新增的后退专属恢复/后方风险强调，以及“前进受阻后先转向”的指令。深度状态中的后方 unknown 与通用 unknown 提醒仍保留。
+ 
+ 当前七个动作、前后各 0.25 m、明确停止规则及 allow_sliding=true 保持；未恢复左右平移。路径、深度计算、短期历史和 API 调用逻辑均未调整。此次恢复的是提示词描述，不能据此保证复现旧九动作实验的成功结果。
+ 
+@@ -80,9 +105,9 @@
+ - 环境：`config.json` 指定 shuyuan 资产目录。`shuyuan.mesh.ply` 提供深度，原 `shuyuan.navmesh` 约束运动；可选同位姿的 `shuyuan.gs.ply` RGB 仅供回放，不送给模型。
+ - 机器人半径和高度读取 NavMesh 保存的参数。本场景为约 0.10 m / 1.50 m，`config.json` 当前设置 `allow_sliding=true`，允许碰壁后沿 NavMesh 边界滑动。运动为 Habitat 离散运动学动作，无 Bullet 动力学。
+ - 每轮固定初始最短路径，不自动重规划。每步提供沿路径前方 3 m 的预览，每 0.5 m 采样并额外保留拐角；“前方”指路径进度方向，不要求位于当前相机视野内。局部目标前视 0.75 m，在下一拐角截断；预览可能包含拐角之后的点，不能直接抄近路。
+-- 路径投影采用局部、单调进度；不会因另一段路径欧氏距离近就跳过去。明显偏离（超过 0.5 m）时保持进度，让模型恢复。这里只保留路线管理状态，不记忆历史障碍。
++- 路径正常投影采用局部、单调进度。偏离局部窗口超过 0.5 m 后，仅当附近后续路线点通过 NavMesh 直连检查才重新关联；否则保持原进度。重关联不会重规划路线。只保留路线管理状态，不记忆历史障碍。
+ - 所有目标转换成**当前身体坐标系**：前方/左方为正，方位角向左为正。相机低头不改变目标的水平相对坐标。
+-- 短期记忆仅最近 5 个自身动作的有效性、成功、碰撞、实际局部平移及角度变化，不保存跨帧地图、历史深度或模型思考文本。
++- 短期记忆仅最近 5 个自身动作的有效性、执行成功、碰撞、实际局部平移及角度变化，并计算这些动作的净位移、相反转向等摘要；不保存跨帧地图、历史深度或模型思考文本。
+ - 七个动作：前进、后退各 0.25 m（共用 `move_m`）；左右转各 15°；抬头/低头各 15°；停止。俯仰角正值向下，范围 [-30°,45°]。
+ - 碰撞、受阻、未知动作或超限后继续决策。未知/超限动作不改变位姿，但计入 100 步预算。没有规则控制器接管，也不根据深度屏蔽/替换模型动作。NavMesh 的正常运动过滤仍然生效。
+ - 只有主动 `stop` 且到**最终终点**的 NavMesh 路径距离 ≤0.30 m 才成功。进入范围不会自动结束；到达中间目标不能停止。记录提前停止、曾到达但未正确停止、预算耗尽、服务失败。
+@@ -244,6 +269,6 @@
+ 
+ ## 文件
+ 
+-`core.py`：坐标、路径预览与单帧深度几何；`environment.py`：任务采样和 Habitat 适配；`jev.py`：请求与有限重试；`run.py`：执行/记录/度量；`visualize.py`：可复用可视化工具与浏览服务；`replay.py`：HTML 回放；`map_view.py`：日志目标反算与 NavMesh 图层；`export_replay.py`：离线视频/动图导出；`test_core.py` / `test_map_view.py` / `test_visualize.py`：几何、接口及可视化回归。
++`core.py`：坐标、路径预览与单帧深度几何；`environment.py`：任务采样和 Habitat 适配；`jev.py`：请求与有限重试；`run.py`：执行/记录/度量；`visualize.py`：可复用可视化工具与浏览服务；`replay.py`：HTML 回放；`map_view.py`：日志目标反算与 NavMesh 图层；`export_replay.py`：离线视频/动图导出；`test_core.py` / `test_map_view.py` / `test_visualize.py` / `test_recovery.py`：几何、接口、可视化及重新关联/动作摘要回归。
+ 
+ 不依赖其他 Jev 导航方案的代码或控制器。本版没有自动批量调参、复杂地图记忆和自动重规划。
+--- before/VALIDATION.md
++++ VALIDATION.md
+@@ -168,3 +168,16 @@
+ 新增 `config.single-gpu.json`，仅将默认配置中的 `gpu_id=2` 改为 0，用于 `CUDA_VISIBLE_DEVICES` 只暴露一张卡的启动方式。原配置、导航代码、提示词和旧结果保持原样。`CUDA_VISIBLE_DEVICES=7` 下已用 CUDA Driver API 核对逻辑 GPU 0 的 UUID 与物理 GPU 7 一致。
+ 
+ 实际 `runs/smoke-gpu7-20260929-01` 在 7 号卡上正常初始化 mesh 与 GS，完成 1 次脚本 stop 并正常退出；2 幅 RGB 和 2 份 mesh 深度检查通过。early_stop 属于脚本预期，不是模型导航评估。测试子进程移除了 API 密钥，未调用 Jev。详细记录及启动命令见 [单卡验证报告](reports/gpu-selection-20260929-01/README.md)。
++
++
++## 2026-09-29：路径重新关联与最近动作停滞摘要
++
++按用户确认的两个方向实现：`RoutePreview` 在偏离旧局部窗口时，对距离不超过 0.5 m 的后续路线投影点做 NavMesh 直连检查，通过后更新单调路径进度；`recent_motion` 只汇总最近五步自身动作。提示词版本 `seven_actions_reassociate_motion_v5`，路径策略 `checked_reassociation_v1`。没有自动恢复动作、重规划、动作替换或深度语义改写。
++
++- 50 项回归通过（原 37 项 + 13 项新回归）。覆盖跨墙拒绝、近邻路径分支、拐角、进度不回退、旋转坐标下的净位移、转向循环、正常单向观察及历史截断。
++- CPU 重放 neutral-02 的全部 250 个历史状态：新策略在原第 46、82 步分别重新关联，最终参考进度由旧 2.546 m 改为 4.767 m，剩余原路线由 7.252 m 改为 5.031 m。原第 150 步的目标从左侧已越过路段转为右侧后续拐角；同一帧 recent_motion 显示净位移 0、4 对相反转向、turn_oscillation。
++- 五步局部动作组合得到的净位移与保存世界位姿差的最大偏差约 0.000411 m，符合原动作日志舍入精度。该摘要计算本身不读取世界位姿、目标或历史深度。
++- 12 条挑战路线共 1,448 个理想采样位置，新增 tracking 字段以外的目标/预览行为与旧算法完全一致。真实 NavMesh 负例：两点直线距 0.382 m，但需绕角走 0.400 m，直连检查正确拒绝。
++- 在用户所选 7 号 GPU 上运行 `runs/smoke-reassociate-motion-20260929-01`，只加载 mesh、无 API。脚本五次左右交替后 stop，6 步、0 碰撞、0 无效、early_stop 符合预期；第六份实际请求已包含 turn_oscillation，所有脚本选择与实际执行动作一致。
++- 七项动作 criteria 和明确停止前缀保持；深度算法、模拟器动作适配器及 API 客户端 AST 保持。90 个配置、任务、历史记录及受保护源码文件哈希不变，未修改 Habitat-GS 源码。
++- 离线重放沿用旧轨迹，不能代表新模型会采取这些动作或完成任务；没有调用真实 Jev。报告保存全部验证、请求样例及复测命令：[实现与验证报告](reports/reassociate-motion-20260929-01/README.md)。
+--- /dev/null
++++ test_recovery.py
+@@ -0,0 +1,134 @@
++"""Regressions for path reassociation and local-action summaries; no GPU/API."""
++import math
++import unittest
++from unittest.mock import Mock
++import numpy as np
++
++from core import RoutePreview, recent_motion_summary
++from environment import direct_navmesh_connection
++from test_core import config
++
++
++class WallPathfinder:
++    """Two navigable half-planes separated by an impassable x=0.1 wall."""
++    def is_navigable(self, point):
++        return abs(point[0]-.1) > 1e-8
++
++    def try_step(self, start, end):
++        if (start[0]-.1)*(end[0]-.1) <= 0:
++            return np.asarray(start)
++        return np.asarray(end)
++
++
++class ReassociationTests(unittest.TestCase):
++    def test_lost_window_rejoins_later_segment_and_moves_target_ahead(self):
++        route = RoutePreview([[0,0,0],[0,0,-5]], reconnect=lambda a,b: True)
++        route.state([0,0,0],0,config())
++        route.state([1.,0,-1.9],0,config())  # Leave the route, then approach a later part.
++        state = route.state([.1,0,-2],0,config())
++        self.assertEqual(state['tracking']['mode'],'reassociated')
++        self.assertAlmostEqual(route.progress,2.)
++        self.assertAlmostEqual(state['current_target']['forward_m'],.75)
++        self.assertAlmostEqual(state['distance_from_local_reference_m'],.1)
++        next_state = route.state([.1,0,-2],0,config())
++        self.assertEqual(next_state['tracking']['mode'],'local')
++        self.assertEqual(next_state['tracking']['reassociation_jump_m'],0)
++
++    def test_nearby_branch_is_not_used_when_local_tracking_is_valid(self):
++        checker=Mock(return_value=True)
++        route=RoutePreview([[0,0,0],[0,0,-3],[.2,0,-3],[.2,0,0]], reconnect=checker)
++        for _ in range(20):
++            route.state([.19,0,0],0,config())
++        self.assertLess(route.progress,.5)
++        checker.assert_not_called()
++
++    def test_wall_separating_close_route_point_prevents_reassociation(self):
++        pf=WallPathfinder()
++        self.assertTrue(pf.is_navigable([.2,0,-2]))
++        self.assertTrue(pf.is_navigable([0,0,-2]))
++        route=RoutePreview([[0,0,0],[0,0,-5]], reconnect=lambda a,b: direct_navmesh_connection(pf,a,b))
++        state=route.state([.2,0,-2],0,config())
++        self.assertEqual(route.progress,0.)
++        self.assertEqual(state['tracking']['mode'],'off_path')
++
++    def test_direct_connector_rejects_sliding_and_other_floor(self):
++        pf=Mock()
++        pf.is_navigable.return_value=True
++        pf.try_step.side_effect=lambda start,end: np.asarray(end)+[.01,0,0]
++        self.assertFalse(direct_navmesh_connection(pf,[0,0,0],[0,0,-.3]))
++        pf.try_step.reset_mock()
++        self.assertFalse(direct_navmesh_connection(pf,[0,0,0],[0,1,-.3]))
++        pf.try_step.assert_not_called()
++
++    def test_direct_connector_accepts_same_point_and_unobstructed_line(self):
++        pf=WallPathfinder()
++        self.assertTrue(direct_navmesh_connection(pf,[0,0,0],[0,0,0]))
++        self.assertTrue(direct_navmesh_connection(pf,[0,0,0],[0,0,-.48]))
++
++    def test_missing_checker_and_distant_route_do_not_reassociate(self):
++        for callback,position in [(None,[.1,0,-2]),(lambda a,b: True,[1.,0,-2])]:
++            route=RoutePreview([[0,0,0],[0,0,-5]], reconnect=callback)
++            route.state(position,0,config())
++            self.assertEqual(route.progress,0.)
++
++    def test_reassociated_progress_never_rewinds_and_preserves_corner(self):
++        route=RoutePreview([[0,0,0],[0,0,-2.2],[2,0,-2.2]], reconnect=lambda a,b: True)
++        state=route.state([.1,0,-2],0,config())
++        self.assertEqual(state['tracking']['mode'],'reassociated')
++        self.assertAlmostEqual(state['current_target']['forward_m'],.2)
++        self.assertFalse(state['current_target']['is_final'])
++        self.assertTrue(any(abs(p['forward_m']-.2)<1e-4 and abs(p['left_m']-.1)<1e-4 for p in state['ordered_preview']))
++        route.state([0,0,-1.0],0,config())
++        self.assertGreaterEqual(route.progress,2.)
++
++
++def outcome(forward=0.,left=0.,yaw=0.,valid=True,collided=False):
++    return {'actual_forward_m':forward,'actual_left_m':left,'actual_translation_m':math.hypot(forward,left),
++            'actual_yaw_deg':yaw,'valid':valid,'collided':collided,'success':valid and not collided}
++
++
++class RecentMotionTests(unittest.TestCase):
++    def test_short_history_does_not_claim_stagnation(self):
++        for history in [[],[outcome(yaw=15),outcome(yaw=-15)]]:
++            summary=recent_motion_summary(history)
++            self.assertEqual(summary['status'],'insufficient_history')
++            self.assertFalse(summary['low_net_motion'])
++
++    def test_five_opposite_turns_are_oscillation_despite_execution_success(self):
++        summary=recent_motion_summary([outcome(yaw=y) for y in [15,-15,15,-15,15]])
++        self.assertEqual(summary['status'],'turn_oscillation')
++        self.assertEqual(summary['opposite_turn_pairs'],4)
++        self.assertEqual(summary['net_translation_m'],0.)
++        self.assertEqual(summary['net_turn_deg'],15.)
++        self.assertEqual(summary['execution_success_count'],5)
++
++    def test_consistent_rotation_is_observation_not_turn_oscillation(self):
++        summary=recent_motion_summary([outcome(yaw=15)]*5)
++        self.assertEqual(summary['status'],'no_translation')
++        self.assertEqual(summary['opposite_turn_pairs'],0)
++        self.assertEqual(summary['net_turn_deg'],75.)
++
++    def test_translation_composes_body_rotations_instead_of_summing_local_axes(self):
++        summary=recent_motion_summary([outcome(forward=.25),outcome(yaw=90),outcome(forward=.25),outcome(yaw=90),outcome(forward=.25)])
++        self.assertAlmostEqual(summary['net_translation_m'],.25)
++        self.assertAlmostEqual(summary['travelled_m'],.75)
++        self.assertEqual(summary['status'],'moving')
++
++    def test_return_to_start_after_rotation_is_low_net_motion(self):
++        summary=recent_motion_summary([outcome(forward=.25),outcome(yaw=90),outcome(yaw=90),outcome(forward=.25),outcome()])
++        self.assertEqual(summary['status'],'low_net_motion')
++        self.assertAlmostEqual(summary['net_translation_m'],0.)
++        self.assertAlmostEqual(summary['travelled_m'],.5)
++
++    def test_only_last_window_is_used_and_execution_failures_are_counted(self):
++        prefix=[outcome(yaw=15,valid=False,collided=True)]*20
++        recent=[outcome(forward=.25)]*5
++        self.assertEqual(recent_motion_summary(prefix+recent),recent_motion_summary(recent))
++        mixed=recent_motion_summary([outcome(valid=False),outcome(collided=True),outcome(),outcome(),outcome()])
++        self.assertEqual(mixed['invalid_action_count'],1)
++        self.assertEqual(mixed['collision_count'],1)
++        self.assertEqual(mixed['execution_success_count'],3)
++
++
++if __name__=='__main__':
++    unittest.main()

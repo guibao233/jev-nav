@@ -1,0 +1,26 @@
+{
+  "prompt_version": "seven_actions_neutral_v4",
+  "saved_states_checked": 22,
+  "historical_general_instructions_exact_match": true,
+  "historical_non_stop_criteria_exact_match": true,
+  "current_stop_prefix_and_criterion_unchanged": true,
+  "state_and_other_request_fields_unchanged": true,
+  "available_actions": [
+    "move_forward",
+    "move_backward",
+    "turn_left",
+    "turn_right",
+    "look_up",
+    "look_down",
+    "stop"
+  ],
+  "move_m": 0.25,
+  "allow_sliding": true,
+  "api_code_unchanged": true,
+  "protected_files_unchanged": 88,
+  "api_calls": 0,
+  "simulator_runs": 0,
+  "performance_recovery_verified": false,
+  "before_jev_sha256": "ff2ab6122b039febdaf03b34258db54ea8952e53f2f148c2d65527169da4b60f",
+  "after_jev_sha256": "25ee9cec0cfbb07f21204982283f278d25b3ef3cd0d2f48bb2e0f55adbd14b67"
+}

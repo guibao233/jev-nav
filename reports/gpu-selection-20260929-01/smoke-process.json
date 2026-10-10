@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/data/guiyuanze/miniconda3/envs/habitat-gs/bin/python",
+    "-B",
+    "run.py",
+    "--config",
+    "config.single-gpu.json",
+    "smoke",
+    "--tasks",
+    "tasks/challenge-v1-20260928/tasks.json",
+    "--episode",
+    "turn-000",
+    "--out",
+    "runs/smoke-gpu7-20260929-01",
+    "--rgb",
+    "gs",
+    "--max-steps",
+    "1",
+    "--actions",
+    "stop"
+  ],
+  "CUDA_VISIBLE_DEVICES": "7",
+  "api_keys_removed_from_child": true,
+  "exit_code": 0,
+  "elapsed_s": 38.23256056569517
+}

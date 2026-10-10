@@ -1,0 +1,13 @@
+arm,dimension,value,runs,successes,collision_free_successes,steps,collisions,invalid_actions
+text,route,simple,6,0,0,550,64,2
+text,route,complex,6,4,4,984,212,18
+text,route,extended,6,4,2,1494,14,6
+text,input,numeric,6,2,2,760,10,0
+text,input,semantic,6,4,4,1214,20,26
+text,input,none,6,2,0,1054,260,0
+rgb,route,simple,6,6,4,294,2,0
+rgb,route,complex,6,6,6,836,0,2
+rgb,route,extended,6,6,6,2150,0,0
+rgb,input,numeric,6,6,6,1080,0,0
+rgb,input,semantic,6,6,6,948,0,2
+rgb,input,none,6,6,4,1252,2,0

@@ -1,0 +1,19 @@
+{
+  "source_run": "/tmp/tmpzvdc7qtb/run",
+  "source_sha256": {
+    "metadata.json": "7b161810e1a1d02930f95a08ab6c771b09b8dd3ab72ad114555a01b44602f44e",
+    "summary.json": "d721f07978ace839e64273338e29fbb21e612c3427beec082ecb235ecc96b18c",
+    "steps.jsonl": "d9b48711a4dd72ebb22a8c316b90a046121cde16635d399564f2973c2f7e8dbd",
+    "navmap.png": "83741eed7acbc299f01cab146eff988143d5131d8815f25f831695d80787c0d1",
+    "frames/rgb.png": "83741eed7acbc299f01cab146eff988143d5131d8815f25f831695d80787c0d1",
+    "frames/depth.png": "83741eed7acbc299f01cab146eff988143d5131d8815f25f831695d80787c0d1"
+  },
+  "observations": 1,
+  "media_exported": false,
+  "entry": "index.html",
+  "portable": true,
+  "reran_simulator": false,
+  "called_jev": false,
+  "event_timing": "Previous completed action, displayed on the following observation (including terminal); never the current pending action.",
+  "target_source": "actual logged requests transformed by each observation's body pose"
+}

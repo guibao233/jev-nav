@@ -1,0 +1,268 @@
+--- /dev/null
++++ b/prepare_initial_heading.py
+@@ -0,0 +1,122 @@
++#!/usr/bin/env python3
++"""Create tasks facing the first local reference target; no GPU or API required."""
++import argparse
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++
++import numpy as np
++from core import RoutePreview
++from run import ROOT, load_config
++
++POLICY = 'face_first_local_target_v1'
++# These settings affect RoutePreview.state(), including its initial projection.
++SELECTION_KEYS = ('move_m', 'preview_m', 'sample_spacing_m', 'target_lookahead_m')
++
++
++def initial_target(task, yaw_deg, cfg):
++    # Fresh tracker: match the first decision after Environment.reset().
++    route = RoutePreview(task['path'])
++    if not np.allclose(route.points[0], task['start'], atol=.03, rtol=0):
++        raise ValueError('reference path start differs from task start')
++    return route.state(task['start'], math.radians(yaw_deg), cfg)['current_target']
++
++
++def align_task(original, cfg):
++    old_yaw = float(original['yaw_deg'])
++    if not math.isfinite(old_yaw):
++        raise ValueError('initial yaw must be finite')
++    before = initial_target(original, old_yaw, cfg)
++    # At body yaw zero, the local bearing equals the world yaw toward the target.
++    # Use the runner's target selector (including corner limits), not the final goal.
++    world_target = initial_target(original, 0., cfg)
++    if world_target['distance_m'] <= .001:
++        raise ValueError('initial local target has no usable horizontal direction')
++    yaw = (world_target['bearing_deg'] + 180.) % 360. - 180.
++    after = initial_target(original, yaw, cfg)
++    if abs(after['bearing_deg']) > .01 or after['forward_m'] <= 0:
++        raise ValueError('failed to align initial local target')
++    result = copy.deepcopy(original)
++    result['yaw_deg'] = yaw
++    result['initial_heading'] = {
++        'policy': POLICY,
++        'source_yaw_deg': old_yaw,
++        'aligned_yaw_deg': yaw,
++        'target_before': before,
++        'target_after': after,
++        'selection_config': {key: cfg[key] for key in SELECTION_KEYS},
++        'bearing_resolution_deg': .01,
++        'scope': 'initial horizontal heading only; pitch and runtime target selection unchanged',
++    }
++    return result
++
++
++def build_dataset(dataset, cfg, selected=None):
++    tasks = dataset['tasks']
++    ids = [task['id'] for task in tasks]
++    if not ids or len(set(ids)) != len(ids):
++        raise ValueError('source must contain nonempty, unique task IDs')
++    selected = set(ids) if selected is None else set(selected)
++    if not selected or not selected.issubset(ids):
++        raise ValueError(f'empty selection or unknown task IDs: {sorted(selected-set(ids))}')
++    result = copy.deepcopy(dataset)
++    result['tasks'] = [align_task(task, cfg) for task in tasks if task['id'] in selected]
++    result['initial_heading_policy'] = POLICY
++    return result
++
++
++def write_bundle(out, dataset):
++    out = Path(out)
++    out.mkdir(parents=True, exist_ok=False)
++    (out/'tasks.json').write_text(json.dumps(dataset, indent=2, ensure_ascii=False, allow_nan=False)+'\n')
++    rows = ['| 任务 | 原 yaw ° | 新 yaw ° | 原目标方位 ° | 新目标方位 ° |', '|---|---:|---:|---:|---:|']
++    for task in dataset['tasks']:
++        h = task['initial_heading']
++        rows.append(f"| {task['id']} | {h['source_yaw_deg']:.3f} | {h['aligned_yaw_deg']:.3f} | {h['target_before']['bearing_deg']:.2f} | {h['target_after']['bearing_deg']:.2f} |")
++    (out/'README.md').write_text(
++        '# 初始朝向对齐任务变体\n\n'
++        '只调整 yaw_deg，按运行器现有规则对准第一个局部目标（含拐角截断），精度为方位字段的 0.01°。'
++        '起终点、pitch、参考路线、原最短路线与评估距离均继承源任务；没有改变提示词或后续目标更新。\n\n'
++        + '\n'.join(rows) + '\n\n'
++        'initial_heading 保存原朝向、生成时目标选择参数和前后目标；initial_heading_source_tasks 保存直接来源，'
++        '既有 source_tasks 等规划来源字段保留。继承的 config_at_generation 仍属于源任务生成过程。\n\n'
++        '这是任务初始化条件，不是一次执行动作，不消耗动作预算。仅保证初始局部目标的水平方向对齐；'
++        '不保证目标地面点在画面内、无遮挡或后续时刻一直在视野内。没有调用模型。'
++        '复测需使用相同的 move_m、preview_m、sample_spacing_m、target_lookahead_m；改变这些参数后应重新生成。\n'
++    )
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--config', default=str(ROOT/'config.json'))
++    parser.add_argument('--tasks', required=True)
++    parser.add_argument('--episode', action='append', help='repeat to select several; omit for all')
++    parser.add_argument('--out', required=True, help='new output directory; never overwrites existing data')
++    args = parser.parse_args(argv)
++    out = Path(args.out)
++    if out.exists():
++        raise FileExistsError(out)
++    source = Path(args.tasks)
++    source_bytes = source.read_bytes()
++    cfg = load_config(args.config)
++    result = build_dataset(json.loads(source_bytes), cfg, args.episode)
++    result['initial_heading_source_tasks'] = {
++        'path': str(source.resolve()), 'sha256': hashlib.sha256(source_bytes).hexdigest()}
++    result['initial_heading_generator_sha256'] = {
++        name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
++        for name in ('prepare_initial_heading.py', 'core.py')}
++    write_bundle(out, result)
++    for task in result['tasks']:
++        h = task['initial_heading']
++        print(json.dumps({'episode': task['id'], 'source_yaw_deg': h['source_yaw_deg'],
++                          'aligned_yaw_deg': task['yaw_deg'],
++                          'target_bearing_before_deg': h['target_before']['bearing_deg'],
++                          'target_bearing_after_deg': h['target_after']['bearing_deg']}), flush=True)
++    print('OUTPUT', out, flush=True)
++    return 0
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+--- /dev/null
++++ b/test_initial_heading.py
+@@ -0,0 +1,87 @@
++"""Initial pose regressions: coordinate convention, first corner, source integrity."""
++import copy
++import math
++from pathlib import Path
++import tempfile
++import unittest
++
++from prepare_initial_heading import align_task, build_dataset, main, write_bundle
++
++CFG = {'move_m': .25, 'preview_m': 3., 'sample_spacing_m': .5, 'target_lookahead_m': .75}
++
++
++def task(path, yaw=135., identifier='test'):
++    return {'id': identifier, 'start': path[0], 'goal': path[-1], 'path': path,
++            'yaw_deg': yaw, 'pitch_deg': 15., 'geodesic_m': 5.,
++            'shortest_path': copy.deepcopy(path), 'reference_path_kind': 'clearance_weighted'}
++
++
++class InitialHeadingTests(unittest.TestCase):
++    def test_habitat_heading_convention_in_all_quadrants(self):
++        for x, z in [(0,-2), (-2,-2), (-2,0), (-2,2), (0,2), (2,2), (2,0), (2,-2)]:
++            with self.subTest(x=x, z=z):
++                source = task([[0,0,0], [x,0,z]], yaw=-170.)
++                result = align_task(source, CFG)
++                heading = math.radians(result['yaw_deg'])
++                # Habitat body forward is local -Z, yaw positive about +Y.
++                forward = (-math.sin(heading), -math.cos(heading))
++                length = math.hypot(x,z)
++                self.assertAlmostEqual(forward[0], x/length)
++                self.assertAlmostEqual(forward[1], z/length)
++                self.assertAlmostEqual(result['initial_heading']['target_after']['bearing_deg'], 0.)
++
++    def test_first_corner_target_takes_priority_over_final_goal(self):
++        source = task([[0,0,0], [0,0,-.4], [4,0,-.4]])
++        result = align_task(source, CFG)
++        self.assertEqual(result['yaw_deg'], 0.)
++        self.assertEqual(result['initial_heading']['target_after']['distance_m'], .4)
++        self.assertFalse(result['initial_heading']['target_after']['is_final'])
++
++    def test_short_path_and_initial_projection_use_runtime_target(self):
++        source = task([[0,0,0], [0,0,-.1], [2,0,-.1]])
++        long = align_task(source, CFG)
++        short = align_task(source, dict(CFG, target_lookahead_m=.05))
++        self.assertEqual(short['yaw_deg'], 0.)
++        # Existing tracker skips corners within 0.12 m: target is (0.65, 0, -0.1).
++        self.assertAlmostEqual(long['yaw_deg'], math.degrees(math.atan2(-.65,.1)), delta=.0051)
++        final = align_task(task([[0,0,0],[.2,0,0]]), CFG)
++        self.assertEqual(final['yaw_deg'], -90.)
++        self.assertTrue(final['initial_heading']['target_after']['is_final'])
++
++    def test_source_and_non_heading_fields_preserved(self):
++        source = {'tasks': [task([[0,0,0], [2,0,0]]),
++                            task([[0,0,0], [0,0,-2]], identifier='other')],
++                  'source_tasks': {'path':'clearance-source.json'}, 'assets': {'hash':'unchanged'}}
++        before = copy.deepcopy(source)
++        result = build_dataset(source, CFG, ['test'])
++        self.assertEqual(source, before)
++        self.assertEqual(len(result['tasks']), 1)
++        original, aligned = source['tasks'][0], result['tasks'][0]
++        self.assertEqual({k:v for k,v in aligned.items() if k != 'initial_heading' and k != 'yaw_deg'},
++                         {k:v for k,v in original.items() if k != 'yaw_deg'})
++        self.assertEqual(result['source_tasks'], source['source_tasks'])
++        self.assertEqual(result, build_dataset(source, CFG, ['test']))
++
++    def test_bad_heading_zero_horizontal_target_and_bad_selection_rejected(self):
++        source = task([[0,0,0], [0,0,-1]])
++        for bad in [dict(source, yaw_deg=float('nan')), task([[0,0,0],[0,1,0]]),
++                    dict(source, start=[10,0,0])]:
++            with self.subTest(bad=bad), self.assertRaises(ValueError):
++                align_task(bad, CFG)
++        for selected in [[], ['missing']]:
++            with self.subTest(selected=selected), self.assertRaises(ValueError):
++                build_dataset({'tasks':[source]}, CFG, selected)
++
++    def test_existing_output_preserved_before_source_or_environment_access(self):
++        with tempfile.TemporaryDirectory() as folder:
++            sentinel = Path(folder)/'tasks.json'
++            sentinel.write_text('original')
++            with self.assertRaises(FileExistsError):
++                main(['--tasks','nonexistent.json','--out',folder])
++            with self.assertRaises(FileExistsError):
++                write_bundle(folder, {})
++            self.assertEqual(sentinel.read_text(), 'original')
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- a/README.md
++++ b/README.md
+@@ -5,6 +5,31 @@
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-09-30 更新：初始朝向对准局部目标
++
++已生成 [居中路线 + 初始朝向对齐任务](tasks/challenge-clearance-aligned-20260930-01/tasks.json)。从上一版居中任务派生，原有任务字段仅改变 `yaw_deg`；起终点、俯仰、参考路线和最短距离基准一致。turn-000 初始 yaw 从 112.704° 调整到 −90.390°，第一局部目标从左后方 156.90° 变为正前方 0°，距离 0.708 m。
++
++这是初始化条件，朝向对齐不作为一次动作、不消耗预算。只对齐第一个局部目标的水平方向；地面点不一定出现在画面内，也不保证后续目标一直可见。提示词、七动作、深度摘要和运行中的路径目标更新策略保持。新旧朝向属于不同实验条件，应使用同一参考路线做对照。
++
++```bash
++CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++  --tasks tasks/challenge-clearance-aligned-20260930-01/tasks.json --episode turn-000 \
++  --out runs/jev-challenge-turn-000-clearance-aligned-01 --rgb gs --max-steps 250
++python visualize.py --run runs/jev-challenge-turn-000-clearance-aligned-01 --serve --port 8765
++```
++
++显存紧张可用 `--rgb mesh`。后续对其他任务复用 CPU 工具，无需 GPU/API key：
++
++```bash
++python prepare_initial_heading.py --config config.single-gpu.json \
++  --tasks tasks/challenge-clearance-20260929-01/tasks.json --episode turn-000 \
++  --out tasks/my-aligned-variant
++```
++
++可重复 `--episode`，省略则处理全部；输出目录必须尚不存在。工具使用实际 `RoutePreview` 的首个目标（含拐角截断），不是对准最终终点；初始方位精度 0.01°。运行时应使用相同的 `move_m`、`preview_m`、`sample_spacing_m`、`target_lookahead_m`，改变后需重新生成。任务 `initial_heading` 保存原朝向、前后目标与生成参数；生成来源和源码哈希另存，既有规划来源保留。
++
++63 项测试和实际 mesh 前进验证通过，未调用 Jev。详细记录：[初始朝向验证报告](reports/initial-heading-20260930-01/README.md)。
+ 
+ ## 2026-09-29 更新：可选的居中参考路线
+ 
+--- a/VALIDATION.md
++++ b/VALIDATION.md
+@@ -194,3 +194,16 @@
+ - `runs/smoke-clearance-reference-20260929-01`：GPU 7、mesh、脚本 stop，正常退出，early_stop 符合预期；实际请求的参考剩余长度为 11.711 m，而 summary.initial_geodesic_m 仍为 9.79769 m。实际回放包含蓝色新路线和紫色原最短路径。
+ - 提示词仍为 seven_actions_reassociate_motion_v5；core.py、environment.py、jev.py、配置、原任务和历史主要日志等 94 个受保护文件哈希保持。未调用 Jev，模型跟随效果待用户复测。
+ - [验证报告、命令、对照图与可复用生成器说明](reports/clearance-reference-20260929-01/README.md)。
++
++
++## 2026-09-30：独立初始朝向对齐任务
++
++新增 `prepare_initial_heading.py`，按运行器相同的首个局部目标计算初始 yaw，处理拐角截断，精度为方位字段的 0.01°。生成 [challenge-clearance-aligned-20260930-01](tasks/challenge-clearance-aligned-20260930-01/tasks.json)，继承居中路线；原字段仅改变 yaw_deg，新增 initial_heading 及生成来源/源码哈希。没有修改运行器、core、环境适配器、提示词或配置。
++
++- **63 项回归通过**，覆盖八方向坐标、首个拐角与终点区别、近拐角/短路线、确定性和来源保护、无效输入与输出覆盖保护。
++- 原 12 条 challenge 任务均能对齐，未另行写入任务；当前居中 turn-000 首目标方位从 156.90° 变为 0°、距离保持 0.708 m。新旧任务除 yaw 和新增来源记录外相同；113 个历史任务/日志/配置/原源码哈希保持。
++- 实际 GPU 7 的 [mesh 冒烟回放](runs/smoke-initial-heading-20260930-01/index.html)：加载 yaw=−90.390002°，首个请求目标 forward=0.708 m、left=0、bearing=0°。脚本前进 0.25 m，无碰撞/无效动作；第二步预设 stop 产生预期 early_stop，进程正常退出。
++- 保留原最短距离 9.797690 m 和参考长度 11.710970 m；提示词仍为 seven_actions_reassociate_motion_v5。没有加入运行中视野约束或自动转向，俯仰不变。
++- 未发送真实 Jev 请求，初始化改善是否带来成功率收益待用户测试。几何对齐不等于地面点可见，也不保证后续目标不出视野。
++
++生成命令、验证脚本、测试日志及可复现证据见 [初始朝向验证报告](reports/initial-heading-20260930-01/README.md)。

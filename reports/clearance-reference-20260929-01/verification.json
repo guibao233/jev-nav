@@ -1,0 +1,26 @@
+{
+  "source_task_fields_unchanged_except_path": true,
+  "shortest_path_preserved": true,
+  "original_geodesic_m": 9.797690391540527,
+  "new_reference_length_m": 11.710969541083603,
+  "reference_length_increase_percent": 19.527858843090517,
+  "fine_reference_statistics": {
+    "length_m": 11.710969541083603,
+    "vertices": 8,
+    "sample_spacing_m": 0.01,
+    "samples": 1173,
+    "clearance_query_cap_m": 2.0,
+    "extra_navmesh_clearance_min_m": 0.4104572832584381,
+    "extra_navmesh_clearance_p10_m": 0.5399066209793091,
+    "extra_navmesh_clearance_median_m": 0.598638117313385,
+    "fraction_below_0_10_m": 0.0,
+    "fraction_below_0_20_m": 0.0
+  },
+  "validated_segments": 7,
+  "minimum_segment_length_m": 0.5499164171523752,
+  "ideal_following_states_and_direct_targets_checked": 119,
+  "protected_files_unchanged": 94,
+  "api_calls": 0,
+  "gpu_runs": 0,
+  "evidence_limit": "Reference geometry only; no claim of Jev task success or collision-free execution"
+}

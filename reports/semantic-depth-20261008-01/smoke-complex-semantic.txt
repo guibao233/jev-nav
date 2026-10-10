@@ -1,0 +1,40 @@
+OUTPUT runs/smoke-semantic-complex-semantic-20261008-01
+[init] Loading mesh depth renderer. No Jev request has been sent.
+Renderer: NVIDIA GeForce RTX 4090/PCIe/SSE2 by NVIDIA Corporation
+OpenGL version: 4.6.0 NVIDIA 575.64.03
+Using optional features:
+    GL_ARB_vertex_array_object
+    GL_ARB_separate_shader_objects
+    GL_ARB_robustness
+    GL_ARB_texture_storage
+    GL_ARB_texture_view
+    GL_ARB_framebuffer_no_attachments
+    GL_ARB_invalidate_subdata
+    GL_ARB_texture_storage_multisample
+    GL_ARB_multi_bind
+    GL_ARB_direct_state_access
+    GL_ARB_get_texture_sub_image
+    GL_ARB_texture_filter_anisotropic
+    GL_KHR_debug
+    GL_KHR_parallel_shader_compile
+    GL_NV_depth_buffer_float
+Using driver workarounds:
+    no-forward-compatible-core-context
+    nv-egl-incorrect-gl11-function-pointers
+    no-layout-qualifiers-on-old-glsl
+    nv-broken-buffer-dsa
+    nv-zero-context-profile-mask
+    nv-implementation-color-read-format-dsa-broken
+    nv-framebuffer-invalidation-wants-draw-binding
+    nv-cubemap-inconsistent-compressed-image-size
+    nv-cubemap-broken-full-compressed-image-query
+    nv-compressed-block-size-in-bits
+[14:09:10:980864]:[Warning]:[Metadata] SceneDatasetAttributes.cpp(107)::addNewSceneInstanceToDataset : Dataset : 'default' : Lighting Layout Attributes 'no_lights' specified in Scene Attributes but does not exist in dataset, so creating default.
+[14:09:11:413137]:[Warning]:[Sim] Simulator.cpp(801)::instanceStageForSceneAttributes : The active scene does not contain semantic annotations : activeSemanticSceneID_ = 0
+[init] Mesh + NavMesh ready (0.7s).
+[init] Environment ready; starting decision loop.
+{"step": 1, "action": "move_forward", "collided": false, "valid": true, "distance_m": 9.653955459594727}
+{"step": 2, "action": "look_down", "collided": false, "valid": true, "distance_m": 9.653955459594727}
+{"step": 3, "action": "turn_left", "collided": false, "valid": true, "distance_m": 9.653955459594727}
+{"step": 4, "action": "stop", "collided": false, "valid": true, "distance_m": 9.653955459594727}
+SUMMARY {"provider": "scripted_smoke", "is_jev_evaluation": false, "status": "early_stop", "depth_input": "mesh", "depth_provided_to_model": true, "depth_format": "semantic", "success": false, "collision_free_success": false, "steps": 4, "collisions": 0, "invalid_actions": 0, "path_length_m": 0.2500000596046448, "initial_geodesic_m": 9.797690391540527, "final_geodesic_m": 9.653955459594727, "ever_within_goal_tolerance": false, "reached_but_not_successful_stop": false, "spl": 0.0, "jev_request_latency": null, "cycle_including_render_and_logging": {"p50_s": 0.12794337142258883, "p95_s": 0.20047036986798045}, "elapsed_s": 1.4681493882089853}

@@ -1,0 +1,26 @@
+{
+  "steps": 6,
+  "status": "early_stop",
+  "prompt_version": "seven_actions_reassociate_motion_v5",
+  "route_policy_version": "checked_reassociation_v1",
+  "all_requests_have_tracking_and_recent_motion": true,
+  "last_request_recent_motion": {
+    "source": "recent_own_action_outcomes_only",
+    "window_steps": 5,
+    "window_capacity": 5,
+    "status": "turn_oscillation",
+    "net_translation_m": 0.0,
+    "travelled_m": 0.0,
+    "net_turn_deg": 15.0,
+    "absolute_turn_deg": 75.0,
+    "opposite_turn_pairs": 4,
+    "collision_count": 0,
+    "invalid_action_count": 0,
+    "execution_success_count": 5,
+    "low_net_motion": true,
+    "note": "Action success means execution succeeded, not navigation progress. No translation alone can be useful observation."
+  },
+  "scripted_choices_equal_executed_actions": true,
+  "protected_files_unchanged": 90,
+  "api_calls": 0
+}

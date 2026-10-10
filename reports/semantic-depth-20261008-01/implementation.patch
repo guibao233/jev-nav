@@ -1,0 +1,418 @@
+--- /dev/null
++++ b/depth_language.py
+@@ -0,0 +1,71 @@
++"""Language-only encoding of the existing nine mesh-depth sectors; no geometry changes."""
++import math
++
++DEPTH_FORMATS = ('numeric', 'semantic')
++SEMANTIC_VERSION = 'nine_sectors_language_v1'
++# Upper bounds inclusive; applies to already logged, rounded horizontal distances.
++DISTANCE_BANDS = ((.5, 'very close'), (1., 'close'), (2., 'moderately near'), (4., 'far'))
++# core.depth_facts orders sectors from negative bearing (right) to positive (left).
++DIRECTIONS = ('right edge of forward view', 'outer right-front', 'right-front',
++              'slightly right of ahead', 'straight ahead', 'slightly left of ahead',
++              'left-front', 'outer left-front', 'left edge of forward view')
++
++
++def depth_format(cfg):
++    value = cfg.get('depth_format', 'numeric')
++    if value not in DEPTH_FORMATS:
++        raise ValueError("depth_format must be 'numeric' or 'semantic'")
++    return value
++
++
++def distance_band(value):
++    if value is None:
++        return 'unknown'
++    if isinstance(value, bool) or not math.isfinite(value) or value < 0:
++        raise ValueError('depth distance must be finite and nonnegative')
++    for limit, label in DISTANCE_BANDS:
++        if value <= limit:
++            return label
++    return 'very far'
++
++
++def coverage_label(value):
++    if not math.isfinite(value) or not 0 <= value <= 1:
++        raise ValueError('depth coverage must be between zero and one')
++    return 'not observed' if value == 0 else 'fully sampled' if value == 1 else 'partly observed'
++
++
++def semantic_depth(facts):
++    sectors = facts['sectors']
++    if len(sectors) != len(DIRECTIONS):
++        raise ValueError('semantic depth requires nine sectors')
++    rows = []
++    for direction, sector in zip(DIRECTIONS, sectors):
++        observation = sector['observation']
++        if observation not in ('obstacle_seen', 'no_obstacle_seen', 'unknown'):
++            raise ValueError('invalid depth observation')
++        band = distance_band(sector['nearest_obstacle_m']) if observation == 'obstacle_seen' else 'unknown'
++        description = (f'Observed obstacle is {band}.' if band != 'unknown' else 'Obstacle detected; distance unknown.') if observation == 'obstacle_seen' else (
++            'No obstacle detected in current observations; unobserved obstacles may exist.' if observation == 'no_obstacle_seen'
++            else 'No valid observations; obstacle distance unknown.')
++        rows.append({'direction': direction, 'observation': observation, 'distance_band': band,
++                     'description': description,
++                     'observed_surface_range': distance_band(sector['observed_surface_range_p90_m']),
++                     'near_floor': 'nearby floor seen' if sector['near_floor_seen'] else 'nearby floor not confirmed visible'})
++    descriptions = {'blocked':'An obstacle is observed in the next movement volume.',
++                    'unknown':'The movement volume is not fully observed; safety is unknown.',
++                    'clear':'Sampled movement volume appears free; this is not a safety guarantee.'}
++    moves = {}
++    for action, check in facts['move_checks'].items():
++        status = check['status']
++        if status not in descriptions:
++            raise ValueError('invalid movement observation')
++        moves[action] = {'status':status, 'description':descriptions[status],
++                         'coverage':coverage_label(check['swept_volume_observed_fraction'])}
++    return {'source':'current_mesh_depth_only','format':'semantic',
++            'valid_observation_coverage':coverage_label(facts['valid_fraction']),
++            'sectors':rows,'move_checks':moves,
++            'note':'Directions refer only to the forward camera view, not the full surroundings. '
++                   'Distance bands describe observed obstacles, not traversable distance. '
++                   'Observed surface range is separate from obstacle distance. '
++                   'No obstacle detected and unknown never mean confirmed free space.'}
+--- /dev/null
++++ b/test_semantic_depth.py
+@@ -0,0 +1,119 @@
++"""Semantic depth must preserve geometry facts while excluding metric sensor fields."""
++import copy
++import io
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import numpy as np
++from core import depth_facts
++from jev import make_request, prompt_version, JevClient
++from run import load_config, main
++from test_core import config
++
++
++def numeric_facts():
++    return {'source':'current_mesh_depth_only','valid_fraction':.8,
++            'sectors':[{'bearing_interval_deg':[-45+i*10,-35+i*10],
++                        'nearest_obstacle_m':d,'observation':'obstacle_seen',
++                        'observed_surface_range_p90_m':5.,'near_floor_seen':False}
++                       for i,d in enumerate([.2,.5,.51,1.,1.01,2.,2.01,4.,4.01])],
++            'move_checks':{'move_forward':{'status':'blocked','swept_volume_observed_fraction':.12},
++                           'move_backward':{'status':'unknown','swept_volume_observed_fraction':0.}}}
++
++
++def semantic_request(facts):
++    return make_request({'depth':facts,'reference':{'current_target':{'bearing_deg':20}},
++                         'robot':{'previous_collided':True}},dict(config(),depth_format='semantic'))
++
++
++class SemanticDepthTests(unittest.TestCase):
++    def test_metric_distances_become_named_ordered_ranges_with_correct_boundaries(self):
++        depth=semantic_request(numeric_facts())['state']['depth']
++        self.assertEqual(depth.get('format'),'semantic')
++        self.assertEqual([r['distance_band'] for r in depth['sectors']],
++                         ['very close','very close','close','close','moderately near',
++                          'moderately near','far','far','very far'])
++        self.assertEqual(depth['sectors'][0]['direction'],'right edge of forward view')
++        self.assertEqual(depth['sectors'][4]['direction'],'straight ahead')
++        self.assertEqual(depth['sectors'][-1]['direction'],'left edge of forward view')
++
++    def test_unknown_and_no_obstacle_seen_are_never_far_or_clear(self):
++        facts=numeric_facts()
++        facts['sectors'][0].update(nearest_obstacle_m=None,observation='unknown',observed_surface_range_p90_m=None)
++        facts['sectors'][1].update(nearest_obstacle_m=None,observation='no_obstacle_seen',near_floor_seen=True)
++        depth=semantic_request(facts)['state']['depth']
++        self.assertEqual(depth['sectors'][0]['observation'],'unknown')
++        self.assertEqual(depth['sectors'][1]['observation'],'no_obstacle_seen')
++        self.assertEqual(depth['sectors'][0].get('distance_band'),'unknown')
++        self.assertEqual(depth['sectors'][1].get('distance_band'),'unknown')
++        self.assertNotEqual(depth['sectors'][0]['near_floor'],depth['sectors'][1]['near_floor'])
++        self.assertEqual(depth['move_checks']['move_backward']['status'],'unknown')
++        self.assertEqual(depth['move_checks']['move_forward']['status'],'blocked')
++
++    def test_request_boundary_excludes_all_numeric_depth_but_preserves_navigation(self):
++        state={'depth':numeric_facts(),'reference':{'distance_m':.75},'recent_actions':[]}
++        before=copy.deepcopy(state);cfg=dict(config(),depth_format='semantic')
++        request=make_request(state,cfg)
++        self.assertEqual(state,before)
++        self.assertEqual(request['state']['reference'],state['reference'])
++        self.assertEqual(request['state']['recent_actions'],[])
++        def numbers(value):
++            if isinstance(value,dict):return any(numbers(v) for v in value.values())
++            if isinstance(value,list):return any(numbers(v) for v in value)
++            return isinstance(value,(int,float)) and not isinstance(value,bool)
++        self.assertFalse(numbers(request['state']['depth']))
++        for name in ['nearest_obstacle_m','bearing_interval_deg','valid_fraction','swept_volume_observed_fraction','observed_surface_range_p90_m']:
++            self.assertNotIn(name,json.dumps(request))
++        response={'answers':{'action':{'choice':'stop','probabilities':{'stop':1.}}}}
++        with patch.dict('os.environ',{'OPENROUTER_API_KEY':'test-placeholder'},clear=True),patch('urllib.request.urlopen',return_value=io.BytesIO(json.dumps(response).encode())) as transport:
++            JevClient(cfg).decide(request)
++        self.assertEqual(json.loads(transport.call_args.args[0].data),request)
++
++    def test_numeric_default_actions_and_stop_rule_unchanged_none_takes_precedence(self):
++        state={'depth':numeric_facts()};cfg=config()
++        numeric=make_request(state,cfg)
++        semantic=make_request(state,dict(cfg,depth_format='semantic'))
++        self.assertEqual(numeric,make_request(state,dict(cfg,depth_format='numeric')))
++        self.assertIs(numeric['state'],state)
++        self.assertEqual(numeric['questions']['action']['criteria'],semantic['questions']['action']['criteria'])
++        self.assertEqual(numeric['questions']['action']['instructions'].split('Choose one next action')[0],
++                         semantic['questions']['action']['instructions'].split('Choose one next action')[0])
++        self.assertNotEqual(prompt_version(cfg),prompt_version(dict(cfg,depth_format='semantic')))
++        self.assertEqual(make_request(state,dict(cfg,depth_input='none')),
++                         make_request(state,dict(cfg,depth_input='none',depth_format='semantic')))
++
++    def test_config_and_cli_enable_semantic_without_changing_task(self):
++        with tempfile.TemporaryDirectory() as folder:
++            p=Path(folder)/'config.json';cfg=config();p.write_text(json.dumps(cfg))
++            self.assertEqual(load_config(p).get('depth_format'),'numeric')
++            cfg['depth_format']='semantic';p.write_text(json.dumps(cfg))
++            self.assertEqual(load_config(p)['depth_format'],'semantic')
++            for bad in [None,False,'text']:
++                cfg['depth_format']=bad;p.write_text(json.dumps(cfg))
++                with self.assertRaisesRegex(ValueError,'depth_format'):load_config(p)
++        for command in ['smoke','run']:
++            with patch('sys.argv',['run.py',command,'--tasks','same.json','--episode','turn-000','--out','unused','--depth-format','semantic']),patch('run.run_episode',return_value=0) as runner:
++                self.assertEqual(main(),0)
++                args,cfg=runner.call_args.args
++                self.assertEqual(cfg['depth_format'],'semantic')
++                self.assertEqual(args.tasks,'same.json')
++
++    def test_real_missing_depth_and_wall_retain_unknown_and_blocked(self):
++        cfg=config()
++        missing=semantic_request(depth_facts(np.zeros((120,160)),0,cfg))['state']['depth']
++        self.assertTrue(all(s.get('distance_band')=='unknown' for s in missing['sectors']))
++        self.assertEqual(missing['move_checks']['move_forward']['status'],'unknown')
++        wall=semantic_request(depth_facts(np.full((120,160),.2),0,cfg))['state']['depth']
++        self.assertEqual(wall['sectors'][4]['distance_band'],'very close')
++        self.assertEqual(wall['move_checks']['move_forward']['status'],'blocked')
++        self.assertEqual(wall['move_checks']['move_backward']['status'],'unknown')
++
++    def test_other_sector_counts_are_rejected_instead_of_mislabelled(self):
++        facts=numeric_facts();facts['sectors'].pop()
++        with self.assertRaisesRegex(ValueError,'nine'):
++            semantic_request(facts)
++
++
++if __name__=='__main__':unittest.main()
+--- a/jev.py
++++ b/jev.py
+@@ -10,6 +10,7 @@
+ import time
+ import urllib.error
+ import urllib.request
++from depth_language import depth_format, semantic_depth
+ 
+ 
+ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+@@ -26,7 +27,9 @@
+ 
+ 
+ def prompt_version(cfg):
+-    return PROMPT_VERSION if depth_input_mode(cfg) == "mesh" else NO_DEPTH_PROMPT_VERSION
++    if depth_input_mode(cfg) == "none":
++        return NO_DEPTH_PROMPT_VERSION
++    return PROMPT_VERSION + "_semantic_depth_v1" if depth_format(cfg) == "semantic" else PROMPT_VERSION
+ 
+ 
+ def make_request(state, cfg):
+@@ -34,6 +37,9 @@
+     if not use_depth:
+         # Enforce the ablation at the API boundary too; never mutate caller state.
+         state = {key: value for key, value in state.items() if key != "depth"}
++    use_semantic = use_depth and depth_format(cfg) == "semantic"
++    if use_semantic and "depth" in state:
++        state = dict(state, depth=semantic_depth(state["depth"]))
+     step, turn, pitch = cfg["move_m"], cfg["turn_deg"], cfg["pitch_deg"]
+     stop_rule = (
+         "STOP RULE (highest priority): When reference.current_target.is_final is true and "
+@@ -59,6 +65,13 @@
+         if use_depth else
+         "No depth or image observations are provided. Use the supplied reference path and recent own-action outcomes. "
+         "Camera tilts do not reveal environmental observations in this condition. ")
++    if use_semantic:
++        perception += (
++            "Depth is described in words. Directions are ordered from the right edge through straight ahead to the left edge "
++            "of the current forward view; side edges do not describe the body's full left or right surroundings. "
++            "Obstacle distance bands, nearest to farthest, are very close, close, moderately near, far, very far. "
++            "These are obstacle ranges, not guaranteed free movement distances. Unknown and no_obstacle_seen do not mean far or safe. "
++            "Surface range describes observed surfaces, separately from obstacles. Nearby floor not confirmed visible indicates a blind region. ")
+     floor_inspection = "Use camera tilts to inspect unseen nearby floor when useful. " if use_depth else ""
+     instructions = (
+         stop_rule +
+--- a/run.py
++++ b/run.py
+@@ -10,6 +10,7 @@
+ import numpy as np
+ 
+ from core import RoutePreview, depth_facts, recent_motion_summary
++from depth_language import DEPTH_FORMATS, SEMANTIC_VERSION, DISTANCE_BANDS, depth_format
+ from clearance import validate_reference_path
+ from environment import ACTIONS, Environment, direct_navmesh_connection, load_pathfinder, sample_tasks, shortest
+ from jev import ENDPOINT, DEPTH_INPUT_MODES, JevClient, ServiceFailure, depth_input_mode, make_request, prompt_version
+@@ -21,6 +22,7 @@
+ def load_config(path):
+     cfg = json.loads(Path(path).read_text())
+     cfg["depth_input"] = depth_input_mode(cfg)
++    cfg["depth_format"] = depth_format(cfg)
+     # Missing setting preserves the motion policy of old saved configurations.
+     cfg.setdefault("allow_sliding",False)
+     if not isinstance(cfg["allow_sliding"],bool):
+@@ -58,6 +60,9 @@
+ 
+ def run_episode(args, cfg):
+     depth_mode = depth_input_mode(cfg)
++    representation = depth_format(cfg) if depth_mode == "mesh" else "none"
++    if representation == "semantic" and cfg["sectors"] != 9:
++        raise ValueError("semantic depth requires nine sectors")
+     # Fail before renderer initialization if the user has not configured the API.
+     client = JevClient(cfg) if args.command == "run" else None
+     provider = "jev" if client else "scripted_smoke"
+@@ -91,6 +96,9 @@
+     metadata = {"provider":provider,"rgb_mode":args.rgb,"task":task,"config":cfg,"assets":manifest,
+         "available_actions":list(ACTIONS),"prompt_version":prompt_version(cfg),
+         "depth_input":depth_mode,"depth_provided_to_model":depth_mode == "mesh",
++        "depth_format":representation,
++        "semantic_depth":{"version":SEMANTIC_VERSION,"upper_bounds_inclusive_m":dict((label,limit) for limit,label in DISTANCE_BANDS),
++                          "diagnostics":"depth_numeric_debug is local only, not in request"} if representation == "semantic" else None,
+         "rgb_provided_to_model":False,
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
+@@ -129,6 +137,8 @@
+             request = make_request(state,cfg)
+             record = {"step":index,"frame_kind":"before_action","images":images,
+                 "pose":{"position":position.tolist(),"yaw_rad":yaw,"pitch_deg":env.pitch},"request":request}
++            if representation == "semantic":
++                record["depth_numeric_debug"] = state["depth"]
+             try:
+                 if client:
+                     print(f"[jev] Requesting action {index+1}/{cfg['max_steps']} via OpenRouter...",flush=True)
+@@ -190,7 +200,7 @@
+         if env is not None:
+             env.close()
+         summary = {"provider":provider,"is_jev_evaluation":bool(client),"status":status,
+-            "depth_input":depth_mode,"depth_provided_to_model":depth_mode == "mesh",
++            "depth_input":depth_mode,"depth_provided_to_model":depth_mode == "mesh","depth_format":representation,
+             "success":status=="success", "collision_free_success":status=="success" and collisions==0,
+             "steps":steps,"collisions":collisions,"invalid_actions":invalid,
+             "path_length_m":travel,"initial_geodesic_m":check[0],"final_geodesic_m":final_distance,
+@@ -220,6 +230,8 @@
+         sub.add_argument("--out",required=True)
+         sub.add_argument("--rgb",choices=["gs","mesh","none"],default="gs")
+         sub.add_argument("--max-steps",type=int)
++        sub.add_argument("--depth-format",choices=DEPTH_FORMATS,
++                         help="numeric (default) or nine-sector semantic depth facts; depth-input none takes precedence")
+         sub.add_argument("--depth-input",choices=DEPTH_INPUT_MODES,
+                          help="mesh: send depth facts (default); none: omit depth facts, retain replay images")
+         if name == "smoke":
+@@ -236,6 +248,8 @@
+             json.dump(dataset,f,indent=2,allow_nan=False)
+         print("TASKS",path,"count",len(dataset["tasks"]),flush=True)
+         return 0
++    if args.depth_format is not None:
++        cfg["depth_format"] = args.depth_format
+     if args.depth_input is not None:
+         cfg["depth_input"] = args.depth_input
+     if args.max_steps is not None:
+--- a/replay.py
++++ b/replay.py
+@@ -78,6 +78,10 @@
+  document.querySelector('#kind').textContent+=' · 无深度输入消融';
+  document.querySelector('#depthTitle').textContent+=' 本组深度仅供回放，未提供给 Jev。';
+ }
++if(meta.depth_format==='semantic'){
++ document.querySelector('#kind').textContent+=' · 九方向语义深度';
++ document.querySelector('#depthTitle').textContent+=' Jev 接收文字摘要；精确数值仅保存在本地诊断日志。';
++}
+ document.querySelector('#summary').textContent=JSON.stringify(data.summary);
+ document.querySelector('#all').textContent=JSON.stringify({metadata:meta,summary:data.summary},null,2);
+ slider.max=Math.max(0,rows.length-1);slider.value=0;
+--- a/export_replay.py
++++ b/export_replay.py
+@@ -85,9 +85,13 @@
+                 draw.text((column*640+16,250),"未保存该通道",font=font,fill="white")
+         if state:
+             if state.get("depth") is not None:
+-                near = state["depth"]["sectors"][4]["nearest_obstacle_m"]
++                sector = state["depth"]["sectors"][4]
+                 check = state["depth"]["move_checks"]["move_forward"]["status"]
+-                depth_caption = f"正前方区间最近障碍：{near} m   |   前进检查：{check}"
++                if state["depth"].get("format") == "semantic":
++                    depth_caption = f"正前方：{sector['distance_band']} / {sector['observation']}   |   前进检查：{check}"
++                else:
++                    near = sector["nearest_obstacle_m"]
++                    depth_caption = f"正前方区间最近障碍：{near} m   |   前进检查：{check}"
+             else:
+                 depth_caption = "本帧未向 Jev 提供深度摘要（无障碍距离或前进检查）"
+             bearing = state["reference"]["current_target"]["bearing_deg"]
+--- a/README.md
++++ b/README.md
+@@ -5,6 +5,49 @@
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-10-08 更新：九方向语义深度实验
++
++新增 `--depth-format semantic`，在相同九个扇区中，把数值距离转为 very close（非常近）、close（很近）、moderately near（较近）、far（较远）、very far（很远）。默认 `numeric` 维持当前数值方案，`--depth-input none` 优先并继续移除深度。五方向版本没有在本次加入。
++
++分档上界依次为 0.5、1、2、4 m，包含边界，超过 4 m 为 very far；按当前 depth_facts 保存的两位小数水平距离分档。观测缺失和未发现障碍分别保留，不解释成远或畅通。表面观测范围、近地面可见性、前后移动检查和覆盖状态也转成文字；给 Jev 的深度字段不含距离、角度或覆盖比例数值。方向从视野右侧到左侧，正前方为第五个扇区，只代表当前前向 90°，不是身体正左/正右或全景。
++
++语义深度仅改变感知表达；路线、相对目标数值、本体/历史、七动作、停止和运动过滤保持。初始俯仰仍使用任务中的 0°，不同时改成下视。新提示词版本为 `seven_actions_reassociate_motion_v5_semantic_depth_v1`，增加方向、等级与未知区域解释。
++
++[两种路线完整对照命令](reports/semantic-depth-20261008-01/commands.sh)：每条路线分别运行当前 numeric 与 semantic，避免用简单路线的历史九动作成功轮直接当作当前七动作对照。默认使用 mesh RGB 减少显存；如需 GS 回放可把两组都改为 `--rgb gs`，RGB 不作为模型输入。
++
++```bash
++# 在 habitat-gs 环境、jev_nav 目录运行。每条路线依次跑 numeric 和 semantic。
++# 如果输出目录已存在，请改末尾编号；不会覆盖旧实验。
++
++# 简单路线：原 debug episode-000，最短距离约 4.20 m，100 步预算。
++for format in numeric semantic; do
++  CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++    --tasks tasks/debug-10.json --episode episode-000 \
++    --out "runs/jev-simple-${format}-20261008-01" \
++    --rgb mesh --max-steps 100 --depth-input mesh --depth-format "$format"
++done
++
++# 复杂路线：居中 + 初始身体朝向对齐的 turn-000，250 步预算。
++for format in numeric semantic; do
++  CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++    --tasks tasks/challenge-clearance-aligned-20260930-01/tasks.json --episode turn-000 \
++    --out "runs/jev-complex-${format}-20261008-01" \
++    --rgb mesh --max-steps 250 --depth-input mesh --depth-format "$format"
++done
++
++```
++
++查看语义版回放：
++
++```bash
++python visualize.py --run runs/jev-simple-semantic-20261008-01 --serve --port 8765
++python visualize.py --run runs/jev-complex-semantic-20261008-01 --serve --port 8765
++```
++
++以上两个服务分别使用，先关闭一个再运行另一个，或给第二个使用不同端口。真实模型输入在 `steps.jsonl` 的 `request.state.depth.sectors` / `move_checks`；原始摘要另存每条记录顶层 `depth_numeric_debug`，只供诊断，不发送给模型。metadata/summary 保存实际 `depth_format`；metadata 记录阈值与表达版本。原始深度 NPZ/PNG 继续保留，HTML/MP4/GIF 均兼容两种表达。
++
++76 项测试通过；简单数值/语义两组与复杂语义组的真实 mesh 预设动作验证通过；536 份历史状态在修改前后默认组包一致，其中 500 份当前 v5 有/无深度请求与历史原请求也精确一致。未运行真实 Jev。见 [实现和验证报告](reports/semantic-depth-20261008-01/README.md)。
+ 
+ ## 2026-09-30 更新：无深度摘要消融
+ 
+--- a/VALIDATION.md
++++ b/VALIDATION.md
+@@ -221,3 +221,17 @@
+ - 118 个受保护历史/任务/配置/其他源码文件哈希一致。本轮真实 Jev 请求为 0，模型导航收益待用户对照测试。
+ 
+ 详见 [消融验证报告](reports/no-depth-ablation-20260930-01/README.md)；[无深度组回放示例](reports/no-depth-ablation-20260930-01/viewer-none/index.html)。
++
++
++## 2026-10-08：九方向语义深度
++
++新增 depth_language.py，在 Jev 组包边界转换已有数值摘要，保留几何算法、九扇区和其右至左顺序；新增 --depth-format numeric/semantic，默认 numeric，depth-input none 优先。语言等级上界 0.5/1/2/4 m（包含边界）；未知和 no_obstacle_seen 独立保留。深度摘要中的距离、角度和覆盖比例不进入语义请求，数值另存顶层 depth_numeric_debug；导航目标和本体数值保持。
++
++- **76 项完整 unittest discover 通过**，包含原 69 项与新增 7 项。新增测试先失败（7 failures），实现后通过，覆盖分档边界、左右顺序、未知/未见障碍、运动状态、序列化隔离、默认/no-depth 模式、配置 CLI 和九扇区约束。
++- 536 份历史输入在新组包与修改前源码之间相等；其中当前 v5 有深度和无深度各 250 份与历史原请求也精确相等。另 36 份简单路线来自初始九动作提示词，当前 v5 本就不同，不能作为当前动作集的直接对照。
++- GPU 7、内部 gpu_id=0：简单 numeric、简单 semantic、复杂 semantic 各 4 步脚本验证，0 碰撞/无效，预设 stop 产生预期 early_stop。简单两组位姿、动作、执行结果和非深度状态完全一致。
++- 两组语义共 8 份请求从保存原始 NPZ 重算，numeric_debug 精确匹配底层事实，语义输入精确对应这些事实，深度对象递归检查无数字。133 个受保护历史/任务/配置/其他代码文件哈希未变。
++- 复杂语义 5 幅观察成功导出便携 HTML/MP4/GIF，视频 225 帧、7.5 秒，完整解码和源文件哈希验证通过；HTML 请求与日志相等、JavaScript 语法检查通过，未作浏览器手工交互验收。
++- 真实 Jev API 请求为 0；上述 early_stop 均为脚本验证，不代表模型导航效果。
++
++[报告和命令](reports/semantic-depth-20261008-01/README.md)、[验证脚本与结果](reports/semantic-depth-20261008-01/verification.json)、[语义回放样例](reports/semantic-depth-20261008-01/viewer-complex/index.html)。

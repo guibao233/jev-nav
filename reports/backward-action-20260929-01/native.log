@@ -1,0 +1,232 @@
+[init] Loading mesh depth renderer. No Jev request has been sent.
+Renderer: NVIDIA GeForce RTX 4090/PCIe/SSE2 by NVIDIA Corporation
+OpenGL version: 4.6.0 NVIDIA 575.64.03
+Using optional features:
+    GL_ARB_vertex_array_object
+    GL_ARB_separate_shader_objects
+    GL_ARB_robustness
+    GL_ARB_texture_storage
+    GL_ARB_texture_view
+    GL_ARB_framebuffer_no_attachments
+    GL_ARB_invalidate_subdata
+    GL_ARB_texture_storage_multisample
+    GL_ARB_multi_bind
+    GL_ARB_direct_state_access
+    GL_ARB_get_texture_sub_image
+    GL_ARB_texture_filter_anisotropic
+    GL_KHR_debug
+    GL_KHR_parallel_shader_compile
+    GL_NV_depth_buffer_float
+Using driver workarounds:
+    no-forward-compatible-core-context
+    nv-egl-incorrect-gl11-function-pointers
+    no-layout-qualifiers-on-old-glsl
+    nv-broken-buffer-dsa
+    nv-zero-context-profile-mask
+    nv-implementation-color-read-format-dsa-broken
+    nv-framebuffer-invalidation-wants-draw-binding
+    nv-cubemap-inconsistent-compressed-image-size
+    nv-cubemap-broken-full-compressed-image-query
+    nv-compressed-block-size-in-bits
+[15:53:29:524976]:[Warning]:[Metadata] SceneDatasetAttributes.cpp(107)::addNewSceneInstanceToDataset : Dataset : 'default' : Lighting Layout Attributes 'no_lights' specified in Scene Attributes but does not exist in dataset, so creating default.
+[15:53:29:965287]:[Warning]:[Sim] Simulator.cpp(801)::instanceStageForSceneAttributes : The active scene does not contain semantic annotations : activeSemanticSceneID_ = 0
+[init] Mesh + NavMesh ready (0.8s).
+[init] Loading mesh depth renderer. No Jev request has been sent.
+Renderer: NVIDIA GeForce RTX 4090/PCIe/SSE2 by NVIDIA Corporation
+OpenGL version: 4.6.0 NVIDIA 575.64.03
+Using optional features:
+    GL_ARB_vertex_array_object
+    GL_ARB_separate_shader_objects
+    GL_ARB_robustness
+    GL_ARB_texture_storage
+    GL_ARB_texture_view
+    GL_ARB_framebuffer_no_attachments
+    GL_ARB_invalidate_subdata
+    GL_ARB_texture_storage_multisample
+    GL_ARB_multi_bind
+    GL_ARB_direct_state_access
+    GL_ARB_get_texture_sub_image
+    GL_ARB_texture_filter_anisotropic
+    GL_KHR_debug
+    GL_KHR_parallel_shader_compile
+    GL_NV_depth_buffer_float
+Using driver workarounds:
+    no-forward-compatible-core-context
+    nv-egl-incorrect-gl11-function-pointers
+    no-layout-qualifiers-on-old-glsl
+    nv-broken-buffer-dsa
+    nv-zero-context-profile-mask
+    nv-implementation-color-read-format-dsa-broken
+    nv-framebuffer-invalidation-wants-draw-binding
+    nv-cubemap-inconsistent-compressed-image-size
+    nv-cubemap-broken-full-compressed-image-query
+    nv-compressed-block-size-in-bits
+[15:53:30:019364]:[Warning]:[Metadata] SceneDatasetAttributes.cpp(107)::addNewSceneInstanceToDataset : Dataset : 'default' : Lighting Layout Attributes 'no_lights' specified in Scene Attributes but does not exist in dataset, so creating default.
+[15:53:30:481282]:[Warning]:[Sim] Simulator.cpp(801)::instanceStageForSceneAttributes : The active scene does not contain semantic annotations : activeSemanticSceneID_ = 0
+[init] Mesh + NavMesh ready (0.5s).
+{
+  "passed": true,
+  "prompt_version": "seven_actions_backward_v3",
+  "actions": [
+    "move_forward",
+    "move_backward",
+    "turn_left",
+    "turn_right",
+    "look_up",
+    "look_down",
+    "stop"
+  ],
+  "open_space_checks": [
+    {
+      "move_m": 0.25,
+      "yaw_deg": 17.0,
+      "actuation_amounts": {
+        "move_forward": 0.25,
+        "move_backward": 0.25
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.25,
+      "yaw_deg": 107.0,
+      "actuation_amounts": {
+        "move_forward": 0.25,
+        "move_backward": 0.25
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.4,
+      "yaw_deg": 17.0,
+      "actuation_amounts": {
+        "move_forward": 0.4,
+        "move_backward": 0.4
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": 0.4,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": -0.4,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 0.0
+    },
+    {
+      "move_m": 0.4,
+      "yaw_deg": 107.0,
+      "actuation_amounts": {
+        "move_forward": 0.4,
+        "move_backward": 0.4
+      },
+      "forward": {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": 0.4,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "backward": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.4,
+        "actual_forward_m": -0.4,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "return_error_m": 1.1920928955078125e-07
+    }
+  ],
+  "recorded_collision_backward_check": {
+    "source_run": "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01",
+    "after_action_1based": 14,
+    "outcome": {
+      "action": "move_backward",
+      "valid": true,
+      "success": true,
+      "collided": false,
+      "actual_translation_m": 0.25,
+      "actual_forward_m": -0.25,
+      "actual_left_m": 0.0,
+      "actual_yaw_deg": 0.0,
+      "actual_pitch_deg": 0.0,
+      "result": "executed"
+    },
+    "desired_error_m": 2.502363690894138e-07
+  },
+  "configuration_on_disk_unchanged": true,
+  "called_jev": false
+}

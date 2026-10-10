@@ -1,0 +1,19 @@
+{
+  "deterministic_regeneration_identical": true,
+  "current_generator_hashes": {
+    "clearance.py": "a6a01efb42352883282e35c5708088e0e90a3cd11451fbf186c6ebd911f73b93",
+    "prepare_clearance.py": "0113cff13556bd03379034ffd1e229343f9eb5deacf910f364410dc3100a4794"
+  },
+  "saved_generator_hashes_match": true,
+  "smoke_used_new_reference": true,
+  "smoke_original_geodesic_preserved": 9.797690391540527,
+  "smoke_reference_length_m": 11.710969541083603,
+  "replay_both_path_colors_pixel_counts": {
+    "reference_blue": 1633,
+    "original_purple": 773
+  },
+  "prompt_version_unchanged": "seven_actions_reassociate_motion_v5",
+  "protected_files_unchanged": 94,
+  "api_calls": 0,
+  "generator_hashes_finalized_after_identical_reproduction": true
+}

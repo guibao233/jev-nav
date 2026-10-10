@@ -1,0 +1,25 @@
+{
+  "render_asset": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+  "collision_asset": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+  "up": [
+    0,
+    1,
+    0
+  ],
+  "front": [
+    0,
+    0,
+    -1
+  ],
+  "origin": [
+    0,
+    0,
+    0
+  ],
+  "scale": [
+    1,
+    1,
+    1
+  ],
+  "units_to_meters": 1.0
+}

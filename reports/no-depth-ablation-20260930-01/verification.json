@@ -1,0 +1,22 @@
+{
+  "historical_default_requests_exactly_preserved": 250,
+  "paired_smoke_requests_with_only_depth_state_removed": 6,
+  "paired_poses_actions_outcomes_equal": true,
+  "actions": [
+    "move_forward",
+    "move_backward",
+    "turn_left",
+    "turn_right",
+    "look_up",
+    "look_down",
+    "stop"
+  ],
+  "no_depth_prompt_version": "seven_actions_reassociate_motion_v5_no_depth",
+  "depth_images_retained_only_for_replay": true,
+  "viewer_requests_match_logs": true,
+  "viewer_javascript_syntax_valid": true,
+  "video_frames": 315,
+  "video_seconds": 10.5,
+  "protected_files_unchanged": 118,
+  "api_calls": 0
+}

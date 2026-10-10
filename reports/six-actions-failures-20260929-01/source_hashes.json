@@ -1,0 +1,15 @@
+{
+  "runs/jev-challenge-turn-000-six-actions-01/metadata.json": "ecae1996bf8fea9e1b3863d6ec715102e4f516a38b34976f1348efecb6bf7102",
+  "runs/jev-challenge-turn-000-six-actions-01/steps.jsonl": "9c66617cb4acac6df4f7f4a2d5d6050b92f2f50710c3df0cc1eb5e85150b1e20",
+  "runs/jev-challenge-turn-000-six-actions-01/summary.json": "20f53d366025f48223e3c38e6e18e0218d9d763ab556b07b2849839309357f44",
+  "runs/jev-challenge-turn-000-six-actions-02/metadata.json": "8cd7b07811313737e3385db64fe87ac384153200ef3fcf71668c83bd73b0bcc2",
+  "runs/jev-challenge-turn-000-six-actions-02/steps.jsonl": "b73239480e18b45c8324e481743191ca7b3345f2a6262e1ad4261547b28161a9",
+  "runs/jev-challenge-turn-000-six-actions-02/summary.json": "b93f08e584d268c9e3b13c2a8c3603eb991e6069d86367339374230cbebd1b16",
+  "runs/jev-challenge-turn-000-six-actions-03/metadata.json": "184015f15c336028c8e62da8e8fdcbe2fa72fddd8c20e2293fb4164e7c8f60d2",
+  "runs/jev-challenge-turn-000-six-actions-03/steps.jsonl": "53b2eb75c8354b5d3e70725ac23b82ce8579f2b8c403f9a975ae2b3b6effd6af",
+  "runs/jev-challenge-turn-000-six-actions-03/summary.json": "aeb8da2816f26e55ea91b807a3daf784b79f23a64f1c87a4177ff93d8fde755e",
+  "environment.py": "09c034ed57f3ca40b162ba74211a4b99961133160742dcf72a7abee21604ec1b",
+  "core.py": "47be8150a69ea3ad83968c0a309738eb39b00c177ac38cccd77b4540915c01b8",
+  "jev.py": "c94e20fc3f24a6fa31623526014ec8d61d52d0b3db3abc0f5dbd17e939f34cd0",
+  "run.py": "24efd7cd43c6618d3cc9e586c99438dd6622a255a45e51d6d9ba2572d1b05129"
+}

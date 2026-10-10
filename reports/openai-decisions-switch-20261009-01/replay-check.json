@@ -1,0 +1,17 @@
+[
+  {
+    "case": "legacy-jev",
+    "label": "真实 Jev 决策运行",
+    "node_executed": true
+  },
+  {
+    "case": "openai",
+    "label": "真实 GPT-6 Luna Decisions 决策运行",
+    "node_executed": true
+  },
+  {
+    "case": "smoke",
+    "label": "脚本仿真验证：没有调用模型，不代表模型导航能力",
+    "node_executed": true
+  }
+]

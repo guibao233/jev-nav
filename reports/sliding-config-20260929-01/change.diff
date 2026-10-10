@@ -1,0 +1,137 @@
+--- before/config.json
++++ config.json
+@@ -1,6 +1,7 @@
+ {
+   "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+   "gpu_id": 2,
++  "allow_sliding": true,
+   "resolution": [480, 640],
+   "hfov_deg": 90,
+   "camera_height_m": 1.5,
+--- before/environment.py
++++ environment.py
+@@ -140,7 +140,7 @@
+         sim = h.SimulatorConfiguration()
+         sim.scene_id, sim.gpu_device_id = scene, c["gpu_id"]
+         sim.enable_physics, sim.create_renderer = False, True
+-        sim.navmesh_settings, sim.allow_sliding = None, False
++        sim.navmesh_settings, sim.allow_sliding = None, c.get("allow_sliding",False)
+         agent = h.agent.AgentConfiguration()
+         agent.height, agent.radius = c["agent_height_m"], c["agent_radius_m"]
+         specs = []
+--- before/run.py
++++ run.py
+@@ -19,6 +19,10 @@
+ 
+ def load_config(path):
+     cfg = json.loads(Path(path).read_text())
++    # Missing setting preserves the motion policy of old saved configurations.
++    cfg.setdefault("allow_sliding",False)
++    if not isinstance(cfg["allow_sliding"],bool):
++        raise ValueError("allow_sliding must be a JSON boolean")
+     for key in ["move_m","turn_deg","pitch_deg","preview_m","sample_spacing_m","target_lookahead_m","success_m","max_steps","history_steps"]:
+         if not isinstance(cfg[key],(int,float)) or not math.isfinite(cfg[key]) or cfg[key] <= 0:
+             raise ValueError(f"{key} must be positive")
+@@ -82,7 +86,7 @@
+     metadata = {"provider":provider,"rgb_mode":args.rgb,"task":task,"config":cfg,"assets":manifest,
+         "available_actions":list(ACTIONS),"prompt_version":PROMPT_VERSION,
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+-        "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":False,
++        "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
+         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
+         "route_policy":"fixed initial shortest polyline; no replanning or controller substitution",
+         "memory":"recent own local action outcomes only; no persistent obstacle map",
+--- before/test_core.py
++++ test_core.py
+@@ -3,6 +3,7 @@
+ import io
+ import math
+ import signal
++import tempfile
+ from pathlib import Path
+ import unittest
+ from unittest.mock import patch, Mock
+@@ -12,13 +13,35 @@
+ from core import RoutePreview, depth_points, depth_facts, relative
+ from environment import ACTIONS, Environment, defer_startup_interrupt
+ from jev import JevClient, ServiceFailure, make_request
+-from run import stop_status
++from run import stop_status, load_config
+ 
+ 
+ def config():
+     cfg = json.loads(Path(__file__).with_name("config.json").read_text())
+     cfg.update(agent_radius_m=.1,agent_height_m=1.5)
+     return cfg
++
++
++class SlidingConfigTests(unittest.TestCase):
++    def read_config(self, cfg):
++        with tempfile.TemporaryDirectory() as folder:
++            path = Path(folder)/"config.json"
++            path.write_text(json.dumps(cfg))
++            return load_config(path)
++
++    def test_explicit_boolean_and_legacy_default(self):
++        for enabled in (True,False):
++            cfg = config();cfg["allow_sliding"] = enabled
++            self.assertIs(self.read_config(cfg)["allow_sliding"],enabled)
++        cfg = config();cfg.pop("allow_sliding",None)
++        self.assertIs(self.read_config(cfg)["allow_sliding"],False)
++
++    def test_ambiguous_sliding_values_rejected(self):
++        for value in ("false", "true", 0, 1, None):
++            with self.subTest(value=value):
++                cfg = config();cfg["allow_sliding"] = value
++                with self.assertRaisesRegex(ValueError,"allow_sliding must be a JSON boolean"):
++                    self.read_config(cfg)
+ 
+ 
+ class GeometryTests(unittest.TestCase):
+--- before/README.md
++++ README.md
+@@ -5,6 +5,19 @@
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-09-29 更新：允许沿边界滑动
++
++`config.json` 新增 `"allow_sliding": true`，由导航适配器传给 Habitat 的已有参数。此方案使用允许滑动的运动过滤路径，绕过当前本地 no-sliding 分支的边界误阻挡；没有修改或重新编译 Habitat-GS 源码，也没有改 NavMesh。
++
++这个参数允许碰壁时沿边界滑动，前进的实际位移可能含侧向分量；不是移除了碰撞约束。六个可选动作、停止提示、路径和短期历史保持不变。新记录的配置及顶层元数据均保存真实 `allow_sliding` 值，需与旧的 false 实验分开比较。需要旧行为时显式设置 `"allow_sliding": false`；缺少该字段的旧配置按 false 解释。
++
++重新测试同一任务（使用新输出目录）：
++
++```bash
++python run.py run --tasks tasks/challenge-v1-20260928/tasks.json --episode turn-000 \
++  --out runs/jev-challenge-turn-000-sliding-01 --rgb gs --max-steps 500
++```
+ 
+ ## 2026-09-29 更新：六动作与明确停止提示
+ 
+@@ -22,7 +35,7 @@
+ ## 已固定的实验约定
+ 
+ - 环境：`config.json` 指定 shuyuan 资产目录。`shuyuan.mesh.ply` 提供深度，原 `shuyuan.navmesh` 约束运动；可选同位姿的 `shuyuan.gs.ply` RGB 仅供回放，不送给模型。
+-- 机器人半径和高度读取 NavMesh 保存的参数。本场景为约 0.10 m / 1.50 m，`allow_sliding=False`。运动为 Habitat 离散运动学动作，无 Bullet 动力学。
++- 机器人半径和高度读取 NavMesh 保存的参数。本场景为约 0.10 m / 1.50 m，`config.json` 当前设置 `allow_sliding=true`，允许碰壁后沿 NavMesh 边界滑动。运动为 Habitat 离散运动学动作，无 Bullet 动力学。
+ - 每轮固定初始最短路径，不自动重规划。每步提供沿路径前方 3 m 的预览，每 0.5 m 采样并额外保留拐角；“前方”指路径进度方向，不要求位于当前相机视野内。局部目标前视 0.75 m，在下一拐角截断；预览可能包含拐角之后的点，不能直接抄近路。
+ - 路径投影采用局部、单调进度；不会因另一段路径欧氏距离近就跳过去。明显偏离（超过 0.5 m）时保持进度，让模型恢复。这里只保留路线管理状态，不记忆历史障碍。
+ - 所有目标转换成**当前身体坐标系**：前方/左方为正，方位角向左为正。相机低头不改变目标的水平相对坐标。
+--- before/VALIDATION.md
++++ VALIDATION.md
+@@ -116,3 +116,13 @@
+ - 逐条检查 9 个实际请求：六选一，深度 move_checks 只有 move_forward，优先停止规则已写入。原 47 个配置/任务/历史运行文件哈希保持不变。
+ - 详细记录、请求样例和修改前源码：[六动作验证报告](reports/six-actions-stop-20260929-01/README.md)。历史章节中的九动作说明属于旧版本。
+ - 未调用真实 Jev；当前进程无 OPENROUTER_API_KEY。停止行为改善尚待用户终端使用同一任务复测，命令见上述报告。
++
++
++## 2026-09-29：allow_sliding 执行参数
++
++按用户授权，仅在独立导航模块中启用 Habitat 现有 `allow_sliding` 参数；不修改或编译 Habitat-GS 源码。当前 `config.json` 为 true，旧配置缺少字段时保持 false，新实验元数据保存实际值。
++
++- 在真实 mesh 模拟器中复用三轮失败实验卡点，关闭滑动时合法离开方向全部移动 0 m，开启后全部前进 0.25 m 且无碰撞；第二个卡点使用相对原朝向 +45° 的离开方向。朝不可通行区域移动的对照均仍受 NavMesh 约束并报告碰撞，共验证 12 次实际动作。
++- 37 项回归测试通过。正常入口 `runs/smoke-sliding-20260929-01`：9 步、0 碰撞、1 次刻意俯仰超限、early_stop；两处 allow_sliding 元数据均为 true，六动作和停止提示不变。
++- 61 个原有任务/日志/结果/受保护源码文件哈希未变，NavMesh 哈希与历史实验一致。允许滑动可能产生被动侧向位移，实验应与旧的 false 配置区分。
++- 本次未调用 Jev，也未运行新的完整模型任务；不能将执行层回归通过等同于导航成功率改善。详细证据、限制及复测命令见 [参数验证报告](reports/sliding-config-20260929-01/README.md)。

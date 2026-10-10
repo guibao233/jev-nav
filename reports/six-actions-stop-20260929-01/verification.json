@@ -1,0 +1,38 @@
+{
+  "unit_tests_passed": 35,
+  "smoke_run": "runs/smoke-six-actions-20260929-01",
+  "smoke_summary": {
+    "provider": "scripted_smoke",
+    "is_jev_evaluation": false,
+    "status": "early_stop",
+    "success": false,
+    "collision_free_success": false,
+    "steps": 9,
+    "collisions": 0,
+    "invalid_actions": 1,
+    "path_length_m": 0.2500002682209015,
+    "initial_geodesic_m": 4.196040153503418,
+    "final_geodesic_m": 3.9524292945861816,
+    "ever_within_goal_tolerance": false,
+    "reached_but_not_successful_stop": false,
+    "spl": 0.0,
+    "jev_request_latency": null,
+    "cycle_including_render_and_logging": {
+      "p50_s": 0.1352683063596487,
+      "p95_s": 0.28370054587721816
+    },
+    "elapsed_s": 2.4118746276944876
+  },
+  "available_actions": [
+    "look_down",
+    "look_up",
+    "move_forward",
+    "stop",
+    "turn_left",
+    "turn_right"
+  ],
+  "prompt_version": "six_actions_stop_v2",
+  "saved_requests_checked": 9,
+  "protected_files_unchanged": 47,
+  "real_jev_evaluation_performed": false
+}

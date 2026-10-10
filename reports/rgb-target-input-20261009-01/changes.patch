@@ -1,0 +1,751 @@
+--- before/core.py
++++ after/core.py
+@@ -106,7 +106,8 @@
+         corners = [float(s) for s in self.arcs[1:-1] if s > self.progress + .12]
+         if corners:
+             target_s = min(target_s, corners[0])
+-        target = relative(self.at(target_s), position, yaw)
++        self.current_target_point = self.at(target_s)
++        target = relative(self.current_target_point, position, yaw)
+         target["is_final"] = abs(target_s - self.total) < 1e-6
+         samples = []
+         for arc in sorted(set(round(s, 5) for s in arcs)):
+--- before/environment.py
++++ after/environment.py
+@@ -148,7 +148,8 @@
+             print(f"[init] Mesh + NavMesh ready ({time.perf_counter()-started:.1f}s).",flush=True)
+             if rgb_mode == "gs":
+                 gs_path = Path(cfg["scene_dir"])/"shuyuan.gs.ply"
+-                print(f"[init] Loading GS RGB ({gs_path.stat().st_size/1e9:.2f} GB) for replay. "
++                usage = "for model input and replay" if cfg.get('rgb_input', 'none') != 'none' else "for replay"
++                print(f"[init] Loading GS RGB ({gs_path.stat().st_size/1e9:.2f} GB) {usage}. "
+                       "This can take tens of seconds; missing semantic .scn warnings are not fatal here. "
+                       "Ctrl+C during native initialization is deferred until this renderer finishes loading.",flush=True)
+                 started = time.perf_counter()
+--- before/jev.py
++++ after/jev.py
+@@ -5,12 +5,15 @@
+ No automatic action substitution; unknown action names are evaluated as invalid.
+ """
+ import json
++import base64
++import hashlib
+ import math
+ import os
+ import time
+ import urllib.error
+ import urllib.request
+ from depth_language import depth_format, semantic_depth
++from rgb_input import rgb_input_mode
+ 
+ 
+ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+@@ -42,13 +45,14 @@
+ 
+ 
+ def prompt_version(cfg):
+-    if depth_input_mode(cfg) == "none":
+-        return NO_DEPTH_PROMPT_VERSION
+-    return PROMPT_VERSION + "_semantic_depth_v1" if depth_format(cfg) == "semantic" else PROMPT_VERSION
++    version = NO_DEPTH_PROMPT_VERSION if depth_input_mode(cfg) == "none" else (
++        PROMPT_VERSION + "_semantic_depth_v1" if depth_format(cfg) == "semantic" else PROMPT_VERSION)
++    return version + "_target_marked_rgb_v1" if rgb_input_mode(cfg) != "none" else version
+ 
+ 
+ def make_request(state, cfg):
+     use_depth = depth_input_mode(cfg) == "mesh"
++    use_rgb = rgb_input_mode(cfg) != "none"
+     if not use_depth:
+         # Enforce the ablation at the API boundary too; never mutate caller state.
+         state = {key: value for key, value in state.items() if key != "depth"}
+@@ -80,6 +84,9 @@
+         if use_depth else
+         "No depth or image observations are provided. Use the supplied reference path and recent own-action outcomes. "
+         "Camera tilts do not reveal environmental observations in this condition. ")
++    if use_rgb and not use_depth:
++        perception = ("No depth observations are provided. Use the current RGB image, supplied reference path "
++                      "and recent own-action outcomes. Camera tilts provide a new RGB observation. ")
+     if use_semantic:
+         perception += (
+             "Depth is described in words. Directions are ordered from the right edge through straight ahead to the left edge "
+@@ -87,7 +94,15 @@
+             "Obstacle distance bands, nearest to farthest, are very close, close, moderately near, far, very far. "
+             "These are obstacle ranges, not guaranteed free movement distances. Unknown and no_obstacle_seen do not mean far or safe. "
+             "Surface range describes observed surfaces, separately from obstacles. Nearby floor not confirmed visible indicates a blind region. ")
+-    floor_inspection = "Use camera tilts to inspect unseen nearby floor when useful. " if use_depth else ""
++    if use_rgb:
++        perception += (
++            "A current RGB image accompanies this text. The magenta virtual marker refers only to "
++            "reference.current_target. A circle is its geometric projection; it does not prove visibility, "
++            "free space, or a direct safe route. A border arrow explicitly means the target is outside the "
++            "image or behind the camera, not a ground point at the arrow's pixel. It may be necessary to "
++            "turn or look down to inspect it. Use image obstacles together with the available text and feedback. "
++            "The marker is not an environmental object. It is an intermediate waypoint unless is_final is true. ")
++    floor_inspection = "Use camera tilts to inspect unseen nearby floor when useful. " if use_depth or use_rgb else ""
+     instructions = (
+         stop_rule +
+         "Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding "
+@@ -114,6 +129,18 @@
+         self.attempts, self.latency_s = attempts, latency_s
+ 
+ 
++def encode_request(payload, image_bytes=None):
++    """Wire representation only; callers keep readable text states in logs."""
++    if image_bytes is not None:
++        if payload['model'] != DECISION_MODELS['openai']:
++            raise ValueError('RGB input currently requires the OpenAI decision model')
++        if not isinstance(image_bytes, bytes) or not image_bytes:
++            raise ValueError('current RGB image bytes are required')
++        payload = dict(payload, state=[json.dumps(payload['state'], allow_nan=False),
++            {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + base64.b64encode(image_bytes).decode('ascii')}}])
++    return json.dumps(payload, allow_nan=False).encode()
++
++
+ class DecisionsClient:
+     def __init__(self, cfg):
+         self.cfg = cfg
+@@ -122,11 +149,14 @@
+         if not self.key:
+             raise ValueError("OPENROUTER_API_KEY is not configured; no model calls made")
+ 
+-    def decide(self, payload):
++    def decide(self, payload, image_bytes=None):
++        if (rgb_input_mode(self.cfg) != 'none') != (image_bytes is not None):
++            raise ValueError('RGB input setting and current image bytes must agree')
++        body = encode_request(payload, image_bytes)
+         started, errors = time.perf_counter(), []
+         for attempt in range(self.cfg["api_retries"]+1):
+             try:
+-                req = urllib.request.Request(ENDPOINT, data=json.dumps(payload,allow_nan=False).encode(),
++                req = urllib.request.Request(ENDPOINT, data=body,
+                     headers={"Authorization": f"Bearer {self.key}", "Content-Type": "application/json"})
+                 with urllib.request.urlopen(req,timeout=self.cfg["api_timeout_s"]) as response:
+                     result = json.load(response)
+@@ -143,7 +173,8 @@
+                 return {"provider": self.identity["provider"], "requested_model":self.cfg["model"],
+                         "api_provider": "openrouter", "response": result, "choice": answer["choice"],
+                         "latency_s": time.perf_counter()-started, "attempts": attempt+1,
+-                        "retry_errors": errors}
++                        "retry_errors": errors,
++                        **({'request_body_sha256': hashlib.sha256(body).hexdigest()} if image_bytes is not None else {})}
+             except urllib.error.HTTPError as exc:
+                 errors.append(f"HTTP {exc.code}")
+                 if exc.code not in (408,429,500,502,503,504,524,529):
+--- before/run.py
++++ after/run.py
+@@ -14,7 +14,8 @@
+ from clearance import validate_reference_path
+ from environment import ACTIONS, Environment, direct_navmesh_connection, load_pathfinder, sample_tasks, shortest
+ from jev import (ENDPOINT, DEPTH_INPUT_MODES, DECISION_MODELS, DecisionsClient,
+-                 ServiceFailure, depth_input_mode, make_request, prompt_version, evaluation_identity)
++                 ServiceFailure, depth_input_mode, make_request, prompt_version, evaluation_identity, encode_request)
++from rgb_input import RGB_INPUT_MODES, VERSION as RGB_INPUT_VERSION, rgb_input_mode, validate_rgb_input, save_model_image
+ from replay import save_frame, save_map, write_replay
+ 
+ ROOT = Path(__file__).resolve().parent
+@@ -60,6 +61,9 @@
+ 
+ 
+ def run_episode(args, cfg):
++    validate_rgb_input(cfg, args.rgb)
++    rgb_mode = rgb_input_mode(cfg)
++    use_rgb = rgb_mode != 'none'
+     depth_mode = depth_input_mode(cfg)
+     representation = depth_format(cfg) if depth_mode == "mesh" else "none"
+     if representation == "semantic" and cfg["sectors"] != 9:
+@@ -101,7 +105,9 @@
+         "depth_format":representation,
+         "semantic_depth":{"version":SEMANTIC_VERSION,"upper_bounds_inclusive_m":dict((label,limit) for limit,label in DISTANCE_BANDS),
+                           "diagnostics":"depth_numeric_debug is local only, not in request"} if representation == "semantic" else None,
+-        "rgb_provided_to_model":False,
++        "rgb_input":rgb_mode, "rgb_provided_to_model":use_rgb and client is not None,
++        "model_input_image_version":RGB_INPUT_VERSION if use_rgb else None,
++        "request_representation":"readable_text_state_plus_image_manifest" if use_rgb else "wire_json",
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
+         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
+@@ -136,15 +142,27 @@
+                 **({"depth":depth_facts(depth,env.pitch,cfg)} if depth_mode == "mesh" else {}),
+                 "recent_actions":history[-cfg["history_steps"]:],
+                 "recent_motion":recent_motion_summary(history,cfg["history_steps"],cfg["move_m"])}
++            image_input, image_bytes = None, None
++            if use_rgb:
++                image_input, image_bytes = save_model_image(output,index,rgb,
++                    state['reference']['current_target'],env.pitch,cfg,
++                    target_height_m=float(route.current_target_point[1]-position[1]))
++                images['model_rgb'] = image_input['path']
++                state['visual'] = {'source': 'current_'+args.rgb+'_rgb',
++                                   'marker': image_input['marker']}
+             request = make_request(state,cfg)
+             record = {"step":index,"frame_kind":"before_action","images":images,
+                 "pose":{"position":position.tolist(),"yaw_rad":yaw,"pitch_deg":env.pitch},"request":request}
++            if use_rgb:
++                record.update(image_input=image_input,
++                    wire_request_sha256=hashlib.sha256(encode_request(request,image_bytes)).hexdigest(),
++                    wire_state_encoding='array_of_text_string_and_image_url')
+             if representation == "semantic":
+                 record["depth_numeric_debug"] = state["depth"]
+             try:
+                 if client:
+                     print(f"[{provider}] Requesting action {index+1}/{cfg['max_steps']} via OpenRouter ({cfg['model']})...",flush=True)
+-                    decision = client.decide(request)
++                    decision = client.decide(request,image_bytes=image_bytes) if use_rgb else client.decide(request)
+                 else:
+                     if index >= len(scripts):
+                         status = "script_complete"
+@@ -205,6 +223,7 @@
+             "response_models":sorted({r["decision"]["response"]["model"] for r in records
+                 if ((r.get("decision") or {}).get("response") or {}).get("model")}),
+             "depth_input":depth_mode,"depth_provided_to_model":depth_mode == "mesh","depth_format":representation,
++            "rgb_input":rgb_mode,"rgb_provided_to_model":use_rgb and client is not None,
+             "success":status=="success", "collision_free_success":status=="success" and collisions==0,
+             "steps":steps,"collisions":collisions,"invalid_actions":invalid,
+             "path_length_m":travel,"initial_geodesic_m":check[0],"final_geodesic_m":final_distance,
+@@ -235,6 +254,8 @@
+         sub.add_argument("--episode",default="episode-000")
+         sub.add_argument("--out",required=True)
+         sub.add_argument("--rgb",choices=["gs","mesh","none"],default="gs")
++        sub.add_argument("--rgb-input",choices=RGB_INPUT_MODES,
++                         help="none (default): replay RGB only; target_marked: send waypoint-marked RGB to OpenAI")
+         sub.add_argument("--max-steps",type=int)
+         sub.add_argument("--decision-model",choices=DECISION_MODELS,
+                          help="jev or openai (GPT-6 Luna Decisions), via OpenRouter; default uses config.model")
+@@ -258,6 +279,8 @@
+         return 0
+     if args.depth_format is not None:
+         cfg["depth_format"] = args.depth_format
++    if args.rgb_input is not None:
++        cfg["rgb_input"] = args.rgb_input
+     if args.decision_model is not None:
+         cfg["model"] = DECISION_MODELS[args.decision_model]
+     if args.depth_input is not None:
+--- before/replay.py
++++ after/replay.py
+@@ -66,7 +66,7 @@
+ <label>展示间隔 <select id="speed"><option value="0.5">0.5 秒</option><option value="1">1 秒</option><option value="1.5" selected>1.5 秒</option><option value="3">3 秒</option></select></label>
+ <p><input id="slider" type="range" min="0" step="1"><span id="counter"></span></p>
+ <p class="caption">红色圈叉：碰撞；黄色方框叹号：无效动作。标识对应上一动作完成后的当前观察；地图保留已发生事件的机器人位置，不表示精确接触点。</p><p id="event" role="status"></p>
+-<div class="grid"><div><p class="caption" id="rgbTitle"></p><img id="rgb"><p class="caption" id="depthTitle">Mesh 深度：黄色近、紫色远，显示范围 0–6 m；原始米制深度另存 NPZ。</p><img id="depth"></div>
++<div class="grid"><div><p class="caption" id="rgbTitle"></p><img id="rgb"><div id="modelRgbPanel" hidden><p class="caption">本帧模型输入 RGB：粉色圆环为当前航点投影，边缘箭头表示目标在画面外或身后；虚拟标记不代表可通行。终态不再请求模型。</p><img id="modelRgb"></div><p class="caption" id="depthTitle">Mesh 深度：黄色近、紫色远，显示范围 0–6 m；原始米制深度另存 NPZ。</p><img id="depth"></div>
+ <div><p class="caption">NavMesh 局部俯视图：蓝线为本轮参考路线，紫线为另存的原最短路径（如有），橙线为已执行轨迹；绿色 S 起点、红色 G 终点、白色机器人朝向。粉色 T 为当前目标，青色编号点为实际交给决策模型的前方路径点。</p><img id="map" width="640" height="480"><p class="caption">下方记录为本帧观察之后选择的动作及结果；画面标识为上一动作反馈。</p><pre id="decision"></pre></div></div>
+ <details open><summary>本帧模型输入状态（执行动作之前）</summary><pre id="state"></pre></details>
+ <details><summary>配置与结果</summary><pre id="all"></pre></details>
+@@ -77,6 +77,10 @@
+ const live=meta.is_model_evaluation??['jev','openai_decisions'].includes(meta.provider);
+ document.querySelector('#kind').textContent=live?`真实 ${modelLabel} 决策运行`:'脚本仿真验证：没有调用模型，不代表模型导航能力';
+ document.querySelector('#rgbTitle').textContent=meta.rgb_mode==='gs'?'Gaussian RGB（只用于回放，不送入模型）':meta.rgb_mode==='mesh'?'Mesh RGB（只用于回放）':'本次未渲染 RGB';
++if(meta.rgb_provided_to_model){
++ document.querySelector('#rgbTitle').textContent='原始 RGB（下方另示实际输入的标注图）';
++ document.querySelector('#kind').textContent+=' · 当前 RGB + 虚拟航点标记';
++}
+ if(meta.depth_input==='none'||meta.depth_provided_to_model===false){
+  document.querySelector('#kind').textContent+=' · 无深度输入消融';
+  document.querySelector('#depthTitle').textContent+=' 本组深度仅供回放，未提供给模型。';
+@@ -91,6 +95,7 @@
+ function draw(){let i=+slider.value,r=rows[i];if(!r)return;
+  document.querySelector('#map').src=r.map_image;
+  document.querySelector('#rgb').hidden=!r.images.rgb;if(r.images.rgb)document.querySelector('#rgb').src=r.rgb_display_image||r.images.rgb;
++ document.querySelector('#modelRgbPanel').hidden=!r.images.model_rgb;if(r.images.model_rgb)document.querySelector('#modelRgb').src=r.images.model_rgb;
+  const event=r.previous_action_event,eventLabel=document.querySelector('#event');
+  eventLabel.textContent=event?event.label:'上一动作无碰撞或无效标识';eventLabel.style.color=event?event.color:'#b8c5d6';
+  document.querySelector('#depth').src=r.images.depth;document.querySelector('#counter').textContent=` ${i+1} / ${rows.length}`;
+--- before/visualize.py
++++ after/visualize.py
+@@ -48,7 +48,7 @@
+         if not record.get("images",{}).get("depth"):
+             raise ValueError(f"第 {index+1} 条记录没有深度图路径")
+         channels = {}
+-        for channel in ("rgb","depth"):
++        for channel in ("rgb","depth","model_rgb"):
+             name = record["images"].get(channel)
+             channels[channel] = source(name) if name else None
+             if channels[channel]:
+--- before/export_replay.py
++++ after/export_replay.py
+@@ -66,7 +66,8 @@
+             caption = f"结束状态：{summary['status']}    |    本帧未再次请求模型"
+         draw.text((16,47),caption,font=font,fill="#ffd27c")
+         rgb_label = "GS RGB" if metadata["rgb_mode"] == "gs" else "Mesh RGB"
+-        draw.text((16,83),f"{rgb_label}（仅供回放）",font=small_font,fill="#b8c5d6")
++        rgb_note = '模型输入标注图；终态显示原图' if metadata.get('rgb_provided_to_model') else '仅供回放'
++        draw.text((16,83),f"{rgb_label}（{rgb_note}）",font=small_font,fill="#b8c5d6")
+         depth_title = "Mesh 深度（仅供回放，未提供给模型）；0–6 m" if no_depth_input else "Mesh 深度：黄色近、紫色远；固定色标 0–6 m"
+         draw.text((656,83),depth_title,font=small_font,fill="#b8c5d6")
+         draw.text((1296,83),"NavMesh 局部俯视图：灰色可通行区；仅供回放",font=small_font,fill="#b8c5d6")
+@@ -74,7 +75,7 @@
+         map_image.save(out/"maps"/f"{i:05d}.png")
+         canvas.paste(map_image,(1280,112))
+         for column, channel in enumerate(["rgb","depth"]):
+-            name = r["images"].get(channel)
++            name = (r['images'].get('model_rgb') or r['images'].get('rgb')) if channel == 'rgb' else r['images'].get(channel)
+             if name:
+                 with Image.open(run/name) as im:
+                     panel = im.convert("RGB").resize((640,480),Image.Resampling.LANCZOS)
+--- before/scripts/run_model_ablation.sh
++++ after/scripts/run_model_ablation.sh
+@@ -23,8 +23,16 @@
+ nav_python="${NAV_PYTHON:-python}"
+ nav_config="${NAV_CONFIG:-config.single-gpu.json}"
+ nav_rgb="${NAV_RGB:-gs}"
++nav_rgb_input="${NAV_RGB_INPUT:-none}"
+ export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-7}"
+ case "$nav_rgb" in gs|mesh|none) ;; *) echo 'NAV_RGB must be gs, mesh, or none.' >&2; exit 2 ;; esac
++case "$nav_rgb_input" in
++  none) ;;
++  target_marked)
++    [[ "$nav_model" == openai && "$nav_rgb" != none ]] || { echo 'RGB input requires openai and NAV_RGB=gs or mesh.' >&2; exit 2; }
++    nav_prefix="${nav_prefix}-rgbtarget" ;;
++  *) echo 'NAV_RGB_INPUT must be none or target_marked.' >&2; exit 2 ;;
++esac
+ read -r -a nav_routes <<< "${ROUTES:-simple complex extended}"
+ read -r -a nav_modes <<< "${MODES:-numeric semantic none}"
+ [[ -f "$nav_config" ]] || { echo "Missing config: $nav_config" >&2; exit 2; }
+@@ -48,6 +56,7 @@
+     --tasks "$task" --episode "$episode" --out "$nav_out"
+     --rgb "$nav_rgb" --max-steps "$budget" --decision-model "$nav_model"
+     --depth-input "$depth_input" --depth-format "$depth_format")
++  if [[ "$nav_rgb_input" != none ]]; then nav_cmd+=(--rgb-input "$nav_rgb_input"); fi
+ }
+ 
+ # Check every output before starting the first paid request.
+--- before/README.md
++++ after/README.md
+@@ -6,11 +6,69 @@
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
+ 
++## 2026-10-09 更新：OpenAI 当前 RGB＋航点标记输入
++
++新增 `run.py run --rgb-input target_marked`；默认 `none` 保持已有纯文字请求。该功能仅支持 `--decision-model openai`，并要求 `--rgb gs` 或 `mesh`。新增图像输入可与数值深度、语义深度、无深度三个文字条件组合。相同任务的起终点、参考路线、初始朝向/俯仰、七动作、步长、历史和停止阈值保持不变。
++
++每次决策之前，从同一时刻的 RGB 生成当前 `reference.current_target` 的虚拟导航标记：
++
++- 粉色圆环：航点投影落在图像范围内。投影考虑相机内参、身体朝向、实际俯仰和航点相对高度；不进行遮挡或可通行性检查，圆环不表示无障碍。
++- 边缘箭头：投影在画面外或相机后方，明确标为 OUTSIDE IMAGE / BEHIND CAMERA；不把箭头像素解释为地面点。目标在相机平面时使用画面外提示，不误标为身后。
++- 只标记当前局部航点；`is_final=true` 时才标为最终终点。相机俯仰不改变文字目标的身体坐标。
++
++相机高 1.5 m、近处航点约 0.75 m，平视时地面航点通常在画面下方。这版保留原相机配置，让模型根据观察选择是否下俯，不自动改变俯仰、延长航点或替换动作。
++
++OpenRouter 接口保持 `/api/alpha/decisions` 和相同 API key。实际 `state` 为 `[JSON文字字符串, image_url图像部分]`，图像为 base64 JPEG data URL；不能把图片嵌在普通 JSON 对象里，也不使用 OpenAI 原生的 `input_image` 格式。依据：[OpenRouter 多模态 Decisions 文档](https://openrouter.ai/docs/guides/community/multimodal-decisions)。
++
++### 首次联调：先跑五个动作
++
++```bash
++conda activate habitat-gs
++cd /data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav
++CUDA_VISIBLE_DEVICES=7 python run.py --config config.single-gpu.json run \
++  --decision-model openai --rgb gs --rgb-input target_marked \
++  --tasks tasks/debug-10.json --episode episode-000 \
++  --out runs/openai-decisions-rgbtarget-connectivity-20261009-01 \
++  --max-steps 5 --depth-input mesh --depth-format numeric
++```
++
++### 三类路线 × 三种深度输入
++
++```bash
++# 先查看九条命令，不调用 API、不初始化 GPU。
++NAV_RGB_INPUT=target_marked CUDA_VISIBLE_DEVICES=7 \
++  bash scripts/run_model_ablation.sh openai 20261009-01 --dry-run
++
++# 第一轮；每组一次，预算沿用 100 / 250 / 500。
++NAV_RGB_INPUT=target_marked CUDA_VISIBLE_DEVICES=7 \
++  bash scripts/run_model_ablation.sh openai 20261009-01
++
++# 第二轮。
++NAV_RGB_INPUT=target_marked CUDA_VISIBLE_DEVICES=7 \
++  bash scripts/run_model_ablation.sh openai 20261009-02
++```
++
++图像组使用独立前缀，例如 `runs/openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-01`，不会与同编号的原纯文字组重名。`ROUTES`、`MODES`、`NAV_RGB` 等原脚本选项继续可用；例如 `ROUTES=simple MODES=none NAV_RGB_INPUT=target_marked ...` 只运行简单路线的无深度＋RGB 条件。这里无深度表示不发送深度摘要，不表示没有视觉输入。去掉 `NAV_RGB_INPUT` 可继续运行原纯文字组。
++
++### 核查模型输入和回放
++
++- 原始图：`frames/00000-rgb.png`；该步实际输入图：`frames/00000-model-rgb.jpg`。JPEG 在执行动作前生成；终态不会生成或发送新输入图。
++- `steps.jsonl` 的 `request.state` 保留可读文字对象；图像组它不是完整网络包，而是网络 `state[0]` JSON 字符串的解码结果。`image_input` 记录 JPEG 路径、SHA256、字节数、尺寸和标记信息；`wire_state_encoding` 标明网络格式，`wire_request_sha256` 保存完整请求体哈希。不在日志或 HTML 内重复保存 base64。
++- 精确重建：`jev.encode_request(record['request'], saved_jpeg_bytes)` 返回实际请求体；可与 `wire_request_sha256` 比对。客户端直接发送该 JPEG 的原始字节编码，没有另外缩放或重画。
++- metadata/summary 保存 `rgb_input` 和 `rgb_provided_to_model`。`smoke` 仅准备图像，`rgb_provided_to_model=false` 且 `is_model_evaluation=false`；不将预设动作检查记为模型表现。
++- HTML 同时展示原始 RGB 和输入标注图；便携回放会复制输入图，MP4/GIF 显示标注图并额外叠加回放事件。碰撞/无效动作事件仅用于回放，不送入模型。
++
++```bash
++python visualize.py --run runs/openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-01 --serve --port 8765
++```
++
++本组测试的是“RGB＋虚拟航点标记”的共同增益，不将效果单独归因于 RGB。真实多模态 API 是否接收与实际导航能力需由用户在线运行确认。实现验证见 [验证报告](reports/rgb-target-input-20261009-01/README.md)。
++
+ ## 2026-10-09 更新：Jev / OpenAI Decisions 切换与九组实验
+ 
+ 新增 `run.py run --decision-model jev|openai`（`smoke` 同样支持）。不指定时继续使用 `config.model`，原配置和旧命令默认仍为 Jev。`jev` 选择 `typesafe/jev-1.13`；`openai` 选择 `openai/gpt-6-luna-decisions`。两者都通过 `https://openrouter.ai/api/alpha/decisions` 和 `OPENROUTER_API_KEY` 调用，沿用 `state + questions + criteria` 协议，不需要 OpenAI 平台密钥或新 SDK。
+ 
+-切换只改变请求的 `model`；当前参考路线、七动作、步长、初始朝向/俯仰、停止规则、本体/历史信息以及 numeric / semantic / none 三种输入处理保持。RGB 始终仅用于回放。OpenAI 接入依据：[模型页面](https://openrouter.ai/openai/gpt-6-luna-decisions)、[统一接口](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
++切换只改变请求的 `model`；当前参考路线、七动作、步长、初始朝向/俯仰、停止规则、本体/历史信息以及 numeric / semantic / none 三种输入处理保持。本节的纯文字配置中，RGB 仅用于回放；启用下文 `--rgb-input target_marked` 后，OpenAI 会接收图像。OpenAI 接入依据：[模型页面](https://openrouter.ai/openai/gpt-6-luna-decisions)、[统一接口](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ [运行脚本](scripts/run_model_ablation.sh)默认顺序执行以下九组，每组一次：
+ 
+--- before/test_ablation_script.py
++++ after/test_ablation_script.py
+@@ -85,5 +85,24 @@
+         self.assertIn("OPENROUTER_API_KEY",result.stderr)
+         self.assertFalse(self.calls.exists())
+ 
++    def test_rgb_target_batch_passes_input_flag_and_uses_distinct_output_names(self):
++        self.env['NAV_RGB_INPUT'] = 'target_marked'
++        result = self.run_script('openai', 'rgb-batch')
++        self.assertEqual(result.returncode, 0, result.stderr)
++        calls = [json.loads(l) for l in self.calls.read_text().splitlines()]
++        self.assertEqual(len(calls), 9)
++        for args in calls:
++            flags = dict(zip(args[4::2], args[5::2]))
++            self.assertEqual(flags.get('--rgb-input'), 'target_marked')
++            self.assertTrue(flags['--out'].startswith('runs/openai-decisions-rgbtarget-'))
++
++    def test_rgb_target_batch_rejects_jev_or_missing_rgb_before_dispatch(self):
++        self.env['NAV_RGB_INPUT'] = 'target_marked'
++        for model, renderer in [('jev', 'gs'), ('openai', 'none')]:
++            self.env['NAV_RGB'] = renderer
++            result = self.run_script(model, 'invalid-rgb')
++            self.assertNotEqual(result.returncode, 0)
++            self.assertFalse(self.calls.exists())
++
+ 
+ if __name__ == "__main__":unittest.main()
+--- before/rgb_input.py
++++ after/rgb_input.py
+@@ -0,0 +1,106 @@
++"""Deterministic waypoint overlay for model input; no depth/map/action queries.
++
++OpenRouter multimodal state schema checked 2026-10-09:
++https://openrouter.ai/docs/guides/community/multimodal-decisions
++"""
++import hashlib
++import math
++import numpy as np
++from PIL import Image, ImageDraw
++
++RGB_INPUT_MODES = ('none', 'target_marked')
++VERSION = 'target_marked_rgb_v1'
++
++
++def rgb_input_mode(cfg):
++    mode = cfg.get('rgb_input', 'none')
++    if mode not in RGB_INPUT_MODES:
++        raise ValueError('RGB input must be none or target_marked')
++    return mode
++
++
++def validate_rgb_input(cfg, renderer):
++    if rgb_input_mode(cfg) == 'none':
++        return
++    if cfg['model'] != 'openai/gpt-6-luna-decisions':
++        raise ValueError('RGB input currently requires --decision-model openai')
++    if renderer not in ('gs', 'mesh'):
++        raise ValueError('RGB input requires --rgb gs or mesh')
++
++
++def project_target(target, pitch_deg, cfg, target_height_m=0.):
++    """Project current waypoint; pitch is positive down, left is image-left.
++
++    target_height_m is waypoint height relative to the agent's feet. In-frame
++    means projected into the image, not visible/unoccluded or collision-free.
++    """
++    h, w = cfg['resolution']
++    forward, left = target['forward_m'], target['left_m']
++    if not all(math.isfinite(x) for x in (forward, left, pitch_deg, target_height_m)):
++        raise ValueError('nonfinite target projection')
++    down = cfg['camera_height_m'] - target_height_m
++    pitch = math.radians(pitch_deg)
++    y = down*math.cos(pitch) - forward*math.sin(pitch)
++    z = forward*math.cos(pitch) + down*math.sin(pitch)
++    info = {'projection_status': 'camera_plane' if abs(z) <= 1e-8 else 'behind_camera', 'pixel_xy': None,
++            'target_height_above_agent_feet_m': float(target_height_m),
++            'camera_forward_m': float(z), 'occlusion_checked': False}
++    if z > 1e-8:
++        focal = w/(2*math.tan(math.radians(cfg['hfov_deg']/2)))
++        u, v = (w-1)/2 - focal*left/z, (h-1)/2 + focal*y/z
++        info['pixel_xy'] = [float(u), float(v)]
++        info['projection_status'] = 'in_frame' if 0 <= u < w and 0 <= v < h else 'outside_frame'
++    return info
++
++
++def annotate_target(rgb, target, pitch_deg, cfg, target_height_m=0.):
++    if rgb is None:
++        raise ValueError('RGB input image is missing')
++    pixels = np.asarray(rgb)
++    h, w = cfg['resolution']
++    if pixels.shape != (h, w, 3) or pixels.dtype != np.uint8:
++        raise ValueError('RGB input image must match configured resolution and uint8 RGB')
++    image = Image.fromarray(pixels.copy())
++    draw = ImageDraw.Draw(image)
++    info = project_target(target, pitch_deg, cfg, target_height_m)
++    info.update(version=VERSION, target_kind='final_goal' if target['is_final'] else 'local_waypoint')
++    color = (255, 70, 215)
++    label = ('FINAL GOAL PROJECTION' if target['is_final'] else 'WAYPOINT PROJECTION') if info['projection_status'] == 'in_frame' else (
++        'TARGET BEHIND CAMERA' if info['projection_status'] == 'behind_camera' else 'TARGET OUTSIDE IMAGE')
++    draw.rectangle((4, 4, w-5, 37), fill=(20, 20, 20))
++    draw.text((10, 7), label+' (virtual marker)', fill=color)
++    draw.text((10, 22), f"distance {target['distance_m']:.3f} m | bearing {target['bearing_deg']:+.2f} deg (left +)", fill=(245, 245, 245))
++    if info['projection_status'] == 'in_frame':
++        x, y = info['pixel_xy']
++        draw.ellipse((x-12, y-12, x+12, y+12), outline=(0, 0, 0), width=5)
++        draw.ellipse((x-11, y-11, x+11, y+11), outline=color, width=3)
++        draw.line((x-5, y, x+5, y), fill=color, width=2)
++        draw.line((x, y-5, x, y+5), fill=color, width=2)
++        info['marker_kind'], info['marker_pixel_xy'] = 'projected_point', [x, y]
++    else:
++        cx, cy = (w-1)/2, (h-1)/2
++        if info['projection_status'] == 'camera_plane':
++            dx, dy = 0., 1.
++        elif info['pixel_xy'] is None:
++            dx, dy = (-1. if target['left_m'] >= 0 else 1.), 0.
++        else:
++            dx, dy = info['pixel_xy'][0]-cx, info['pixel_xy'][1]-cy
++        pad = min(50., w/4, h/4)
++        scale = min((cx-pad)/abs(dx) if abs(dx) > 1e-8 else float('inf'),
++                    (cy-pad)/abs(dy) if abs(dy) > 1e-8 else float('inf'))
++        x, y = cx + dx*scale, cy + dy*scale
++        norm = math.hypot(dx, dy); ux, uy = dx/norm, dy/norm
++        bx, by = x-22*ux, y-22*uy
++        draw.polygon([(x, y), (bx-10*uy, by+10*ux), (bx+10*uy, by-10*ux)], fill=color, outline=(0, 0, 0))
++        info['marker_kind'], info['marker_pixel_xy'] = 'offscreen_arrow', [x, y]
++    return image, info
++
++
++def save_model_image(root, index, rgb, target, pitch_deg, cfg, target_height_m=0.):
++    image, marker = annotate_target(rgb, target, pitch_deg, cfg, target_height_m)
++    name = f'frames/{index:05d}-model-rgb.jpg'
++    image.save(root/name, format='JPEG', quality=90, subsampling=0)
++    data = (root/name).read_bytes()
++    return {'path': name, 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data),
++            'mime_type': 'image/jpeg', 'width': image.width, 'height': image.height,
++            'marker': marker}, data
+--- before/test_rgb_input.py
++++ after/test_rgb_input.py
+@@ -0,0 +1,210 @@
++"""Projection and real request/log boundaries; no GPU or paid requests."""
++import argparse
++import base64
++import contextlib
++import copy
++import hashlib
++import io
++import json
++import os
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import numpy as np
++from PIL import Image
++try:
++    import rgb_input
++except ModuleNotFoundError:
++    rgb_input = None
++from core import RoutePreview
++from jev import DecisionsClient, make_request
++from run import main, run_episode
++from test_core import config
++from test_decision_models import FlatPathfinder, ScriptedEnvironment, response
++from test_semantic_depth import numeric_facts
++
++MODEL = 'openai/gpt-6-luna-decisions'
++
++
++class RgbEnvironment(ScriptedEnvironment):
++    def observe(self):
++        return np.full((480, 640), 3., np.float32), np.full((480, 640, 3), 80, np.uint8)
++
++
++class ProjectionTests(unittest.TestCase):
++    def setUp(self):
++        self.assertIsNotNone(rgb_input, 'RGB target annotation feature is missing')
++        self.cfg = dict(config(), model=MODEL, rgb_input='target_marked')
++
++    def target(self, forward=3., left=0.):
++        return {'forward_m': forward, 'left_m': left, 'distance_m': 3., 'bearing_deg': 0., 'is_final': False}
++
++    def test_center_and_left_target_follow_pinhole_geometry(self):
++        center = rgb_input.project_target(self.target(), 0, self.cfg)
++        self.assertEqual(center['projection_status'], 'in_frame')
++        np.testing.assert_allclose(center['pixel_xy'], [319.5, 399.5], atol=1e-5)
++        left = rgb_input.project_target(self.target(left=.75), 0, self.cfg)
++        np.testing.assert_allclose(left['pixel_xy'], [239.5, 399.5], atol=1e-5)
++
++    def test_near_ground_target_is_outside_frame_until_camera_looks_down(self):
++        target = self.target(forward=.75)
++        level = rgb_input.project_target(target, 0, self.cfg)
++        self.assertEqual(level['projection_status'], 'outside_frame')
++        self.assertGreater(level['pixel_xy'][1], 480)
++        down = rgb_input.project_target(target, 45, self.cfg)
++        self.assertEqual(down['projection_status'], 'in_frame')
++        np.testing.assert_allclose(down['pixel_xy'], [319.5, 346.1666667], atol=1e-5)
++
++    def test_behind_camera_is_not_fabricated_as_a_visible_target(self):
++        info = rgb_input.project_target(self.target(forward=-3.), 0, self.cfg)
++        self.assertEqual(info['projection_status'], 'behind_camera')
++        self.assertIsNone(info['pixel_xy'])
++
++    def test_height_difference_and_route_target_are_retained(self):
++        info = rgb_input.project_target(self.target(), 0, self.cfg, target_height_m=1.5)
++        np.testing.assert_allclose(info['pixel_xy'], [319.5, 239.5], atol=1e-5)
++        route = RoutePreview([[0, 0, 0], [0, 1, -3]])
++        route.state([0, 0, 0], 0, self.cfg)
++        self.assertGreater(route.current_target_point[1], 0)
++
++    def test_marker_changes_copy_only_and_arrow_is_distinct(self):
++        pixels = np.full((480, 640, 3), 80, np.uint8)
++        original = pixels.copy()
++        visible, a = rgb_input.annotate_target(pixels, self.target(), 0, self.cfg)
++        outside, b = rgb_input.annotate_target(pixels, self.target(forward=.75), 0, self.cfg)
++        self.assertEqual(a['marker_kind'], 'projected_point')
++        self.assertEqual(b['marker_kind'], 'offscreen_arrow')
++        np.testing.assert_array_equal(pixels, original)
++        self.assertFalse(np.array_equal(np.asarray(visible), original))
++        self.assertFalse(np.array_equal(np.asarray(outside), original))
++
++    def test_upward_offscreen_arrow_is_not_hidden_by_the_caption(self):
++        _, info = rgb_input.annotate_target(np.zeros((480, 640, 3), np.uint8),
++            self.target(forward=20.), 45, self.cfg)
++        self.assertEqual(info['marker_kind'], 'offscreen_arrow')
++        self.assertGreater(info['marker_pixel_xy'][1], 37)
++
++    def test_target_at_feet_is_not_mislabelled_as_behind_camera(self):
++        info = rgb_input.project_target(self.target(forward=0.), 0, self.cfg)
++        self.assertEqual(info['projection_status'], 'camera_plane')
++
++    def test_visible_marker_takes_priority_over_caption_background(self):
++        image, info = rgb_input.annotate_target(np.zeros((480, 640, 3), np.uint8),
++            self.target(), 0, self.cfg, target_height_m=3.45)
++        self.assertEqual(info['projection_status'], 'in_frame')
++        self.assertTrue(np.any(np.all(np.asarray(image)[25:38, 315:325] == [255, 70, 215], axis=-1)))
++
++
++class RgbRequestTests(unittest.TestCase):
++    def test_rgb_transport_keeps_each_depth_ablation_condition(self):
++        for mode, representation in [('mesh', 'numeric'), ('mesh', 'semantic'), ('none', 'numeric')]:
++            cfg = dict(config(), model=MODEL, rgb_input='target_marked', depth_input=mode, depth_format=representation)
++            state = {'depth': numeric_facts(), 'recent_actions': []}
++            original = copy.deepcopy(state)
++            payload = make_request(state, cfg)
++            with patch.dict(os.environ, {'OPENROUTER_API_KEY': 'test-placeholder'}, clear=True), patch('urllib.request.urlopen', return_value=io.BytesIO(json.dumps(response(MODEL, 'stop')).encode())) as transport:
++                DecisionsClient(cfg).decide(payload, image_bytes=b'only-a-transport-fixture')
++            sent = json.loads(transport.call_args.args[0].data)
++            text_state = json.loads(sent['state'][0])
++            if mode == 'none':
++                self.assertNotIn('depth', text_state)
++            elif representation == 'semantic':
++                self.assertEqual(text_state['depth']['format'], 'semantic')
++                self.assertNotIn('nearest_obstacle_m', json.dumps(text_state['depth']))
++            else:
++                self.assertIn('nearest_obstacle_m', text_state['depth']['sectors'][0])
++            self.assertEqual(state, original)
++    def test_cli_accepts_rgb_input_without_changing_model_or_depth(self):
++        with patch('sys.argv', ['run.py', 'run', '--tasks', 'unused', '--out', 'unused', '--decision-model', 'openai', '--rgb-input', 'target_marked']), patch('run.run_episode', return_value=0) as runner:
++            try:
++                self.assertEqual(main(), 0)
++            except SystemExit:
++                self.fail('CLI must accept --rgb-input target_marked')
++            self.assertEqual(runner.call_args.args[1]['rgb_input'], 'target_marked')
++            self.assertEqual(runner.call_args.args[1]['model'], MODEL)
++
++    def test_invalid_combinations_fail_before_any_output_or_api_initialization(self):
++        for model, renderer in [('typesafe/jev-1.13', 'gs'), (MODEL, 'none')]:
++            cfg = dict(config(), model=model, rgb_input='target_marked')
++            args = argparse.Namespace(command='run', rgb=renderer, tasks='missing', episode='missing', out='unused')
++            with self.subTest(model=model, renderer=renderer), patch('run.DecisionsClient') as client:
++                with self.assertRaisesRegex(ValueError, 'RGB input'):
++                    run_episode(args, cfg)
++                client.assert_not_called()
++
++    def test_no_depth_rgb_prompt_does_not_claim_camera_observations_are_absent(self):
++        payload = make_request({'depth': {'private': 'must be absent'}, 'recent_actions': []}, dict(config(), model=MODEL, depth_input='none', rgb_input='target_marked'))
++        self.assertNotIn('depth', payload['state'])
++        text = payload['questions']['action']['instructions']
++        self.assertNotIn('No depth or image observations', text)
++        self.assertNotIn('Camera tilts do not reveal', text)
++        self.assertIn('RGB', text)
++
++    def test_enabled_mode_cannot_silently_send_text_only(self):
++        cfg = dict(config(), model=MODEL, rgb_input='target_marked')
++        with patch.dict(os.environ, {'OPENROUTER_API_KEY': 'test-placeholder'}, clear=True), patch('urllib.request.urlopen') as transport:
++            client = DecisionsClient(cfg)
++            with self.assertRaisesRegex(ValueError, 'image'):
++                client.decide(make_request({'recent_actions': []}, cfg))
++            transport.assert_not_called()
++
++    def test_runner_sends_exact_saved_image_and_retains_readable_log_and_replay(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp); out = root/'run'; tasks = root/'tasks.json'
++            tasks.write_text(json.dumps({'tasks': [{'id': 'test', 'start': [1, 0, 2], 'goal': [1, 0, 1.75], 'path': [[1, 0, 2], [1, 0, 1.75]], 'geodesic_m': .25, 'yaw_deg': 0, 'pitch_deg': 0}]}))
++            args = argparse.Namespace(command='run', tasks=str(tasks), episode='test', out=str(out), rgb='gs')
++            cfg = dict(config(), model=MODEL, rgb_input='target_marked', depth_input='none', max_steps=2)
++            wire = []
++            def http(req, timeout):
++                wire.append(req.data)
++                return io.BytesIO(json.dumps(response(MODEL, ['move_forward', 'stop'][len(wire)-1])).encode())
++            def shortest(pf, start, goal):
++                return float(np.linalg.norm(np.asarray(goal)-np.asarray(start))), [start, goal]
++            with patch.dict(os.environ, {'OPENROUTER_API_KEY': 'test-placeholder'}, clear=True), patch('run.asset_manifest', return_value={}), patch('run.load_pathfinder', return_value=FlatPathfinder()), patch('run.shortest', side_effect=shortest), patch('run.Environment', RgbEnvironment), patch('urllib.request.urlopen', side_effect=http), contextlib.redirect_stdout(io.StringIO()):
++                self.assertEqual(run_episode(args, cfg), 0)
++            records = [json.loads(l) for l in (out/'steps.jsonl').read_text().splitlines()]
++            for record, body in zip(records, wire):
++                sent = json.loads(body); self.assertEqual(sent['model'], MODEL)
++                self.assertIsInstance(sent['state'][0], str)
++                self.assertEqual(json.loads(sent['state'][0]), record['request']['state'])
++                self.assertNotIn('depth', json.loads(sent['state'][0]))
++                part = sent['state'][1]; self.assertEqual(part['type'], 'image_url')
++                mime, encoded = part['image_url']['url'].split(',', 1)
++                self.assertEqual(mime, 'data:image/jpeg;base64')
++                saved = (out/record['image_input']['path']).read_bytes()
++                self.assertEqual(base64.b64decode(encoded), saved)
++                self.assertEqual(hashlib.sha256(saved).hexdigest(), record['image_input']['sha256'])
++                self.assertEqual(hashlib.sha256(body).hexdigest(), record['wire_request_sha256'])
++            self.assertNotIn('base64,', (out/'steps.jsonl').read_text())
++            for filename in ['metadata.json', 'summary.json']:
++                data = json.loads((out/filename).read_text()); self.assertTrue(data['rgb_provided_to_model'])
++                self.assertEqual(data['rgb_input'], 'target_marked')
++            self.assertTrue(json.loads((out/'summary.json').read_text())['success'])
++            self.assertIn(records[0]['image_input']['path'], (out/'index.html').read_text())
++            self.assertIn('modelRgb', (out/'index.html').read_text())
++            from visualize import build_viewer
++            with contextlib.redirect_stdout(io.StringIO()):
++                viewer = build_viewer(out, root/'portable')
++            copied = viewer/'observations/00000-model_rgb.jpg'
++            self.assertTrue(copied.is_file(), 'portable replay must include the actual model image')
++            self.assertEqual(copied.read_bytes(), (out/records[0]['image_input']['path']).read_bytes())
++
++    def test_smoke_prepares_images_without_claiming_a_live_submission(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp); out = root/'run'; tasks = root/'tasks.json'
++            tasks.write_text(json.dumps({'tasks': [{'id': 'test', 'start': [1, 0, 2], 'goal': [1, 0, 1.75], 'path': [[1, 0, 2], [1, 0, 1.75]], 'geodesic_m': .25, 'yaw_deg': 0, 'pitch_deg': 0}]}))
++            args = argparse.Namespace(command='smoke', tasks=str(tasks), episode='test', out=str(out), rgb='gs', actions='move_forward,stop')
++            cfg = dict(config(), model=MODEL, rgb_input='target_marked', depth_input='none', max_steps=2)
++            with patch.dict(os.environ, {}, clear=True), patch('run.asset_manifest', return_value={}), patch('run.load_pathfinder', return_value=FlatPathfinder()), patch('run.shortest', side_effect=lambda pf, a, b: (float(np.linalg.norm(np.asarray(b)-np.asarray(a))), [a,b])), patch('run.Environment', RgbEnvironment), patch('urllib.request.urlopen') as transport, contextlib.redirect_stdout(io.StringIO()):
++                self.assertEqual(run_episode(args, cfg), 0)
++            transport.assert_not_called()
++            for filename in ['metadata.json', 'summary.json']:
++                data = json.loads((out/filename).read_text())
++                self.assertFalse(data['rgb_provided_to_model'])
++                self.assertFalse(data['is_model_evaluation'])
++            self.assertTrue((out/'frames/00000-model-rgb.jpg').exists())
++
++
++if __name__ == '__main__': unittest.main()
+--- before/VALIDATION.md
++++ after/VALIDATION.md
+@@ -240,3 +240,16 @@
+ ## Jev / OpenAI Decisions 模型切换（2026-10-09）
+ 
+ 新增 `--decision-model jev|openai` 和三路线 × 三输入运行脚本。86 项离线测试通过，19 轮 / 3852 份历史请求完全保持，切换模型仅改变请求 model。日志与回放区分真实模型身份；新增统一 model_request_latency，旧 Jev 字段保留。原始任务和运行不改写；未调用真实模型或启动 GPU。详见 [本次完整验证](reports/openai-decisions-switch-20261009-01/README.md)。
++
++
++## OpenAI 带航点标记的 RGB 输入（2026-10-09）
++
++新增 `--rgb-input target_marked`，默认 `none` 保持原纯文字请求。仅支持 OpenAI Decisions，经 OpenRouter 的多模态 `state` 数组发送当前文字状态和带当前航点标记的 JPEG。数字/语义/无深度条件、任务、七动作、路线策略和初始相机参数保持原设置。图像未检查遮挡，投影圆环不表示可通行；画面外或后方目标用明确标注的方向箭头表示。
++
++- 完整回归 **103 项通过**；新增模拟 HTTP 检查实际发送 JPEG 与保存文件字节相同，图像及完整请求 SHA-256 一致，无深度条件不包含深度摘要。
++- 重建 37 轮历史实验的 **6,880 条纯文字请求**及网络序列化字节，均与原始记录相同；229 个受保护历史日志/任务文件保持原哈希。
++- 实际 GPU 7 上完成 mesh RGB 的四步脚本烟测：平视/下俯 15° 显示画面外箭头，下俯 30°/45° 显示航点圆环。预设动作不涉及模型请求，提前停止结果不能解释为模型导航表现。已生成包含输入图的便携 HTML、MP4、GIF 和总览；视频完整解码检查通过。
++- 另使用已存 GS RGB 生成离线标注预览，没有重跑 GS 仿真。
++- **真实多模态 API 请求次数：0**。在线服务是否接收图像及导航性能尚待用户执行五步联调和九组实验；没有进行原生浏览器手工交互验收。
++
++[详细验证与命令](reports/rgb-target-input-20261009-01/README.md) · [脚本烟测回放](runs/smoke-rgb-target-20261009-01/visualizations/portable/index.html)

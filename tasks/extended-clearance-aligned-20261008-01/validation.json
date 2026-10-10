@@ -1,0 +1,67 @@
+{
+  "task_id": "extended-000",
+  "seed": 20261008,
+  "sampling_attempts": 165,
+  "shortest_m": 16.32259750366211,
+  "reference_m": 19.612880041967692,
+  "straight_line_m": 8.689620410168112,
+  "detour_ratio": 1.8784016715577483,
+  "shortest_significant_turns": 4,
+  "reference_geometry": {
+    "euclidean_m": 8.689620410168112,
+    "geodesic_to_euclidean_ratio": 2.2570468117361933,
+    "significant_turns": 8,
+    "turn_threshold_deg": 30.0,
+    "turn_angles_deg": [
+      50.57946429471188,
+      41.633539336570216,
+      3.366460663429723,
+      45.00000000000001,
+      41.633539336570216,
+      3.366460663429723,
+      44.999999999999986,
+      39.09385888622953,
+      8.130102354155916,
+      30.96375653207358,
+      45.00000000000001,
+      4.617030333081369
+    ],
+    "total_abs_turn_deg": 358.3842124002522,
+    "path_vertices": 14,
+    "path_height_span_m": 0.0
+  },
+  "initial_yaw_deg": -84.42,
+  "initial_target": {
+    "forward_m": 0.75,
+    "left_m": -0.0,
+    "distance_m": 0.75,
+    "bearing_deg": -0.0,
+    "is_final": false
+  },
+  "endpoint_extra_navmesh_clearance_m": [
+    0.2575540542602539,
+    1.2628878355026245
+  ],
+  "reference_statistics": {
+    "length_m": 19.612880041967692,
+    "vertices": 14,
+    "sample_spacing_m": 0.025,
+    "samples": 786,
+    "clearance_query_cap_m": 2.0,
+    "extra_navmesh_clearance_min_m": 0.2575540542602539,
+    "extra_navmesh_clearance_p10_m": 0.4574447274208069,
+    "extra_navmesh_clearance_median_m": 0.710316002368927,
+    "fraction_below_0_10_m": 0.0,
+    "fraction_below_0_20_m": 0.0
+  },
+  "reference_segments_checked": 13,
+  "all_segments_directly_navigable": true,
+  "baseline_geodesic_recomputed": true,
+  "source_hashes_verified": true,
+  "called_jev": false,
+  "used_gpu": false,
+  "suggested_action_budget": 500,
+  "old_shortest_m": 9.797690391540527,
+  "old_reference_m": 11.710969541083603,
+  "old_shortest_significant_turns": 2
+}

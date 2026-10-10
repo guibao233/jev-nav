@@ -1,0 +1,268 @@
+--- before/jev.py
++++ after/jev.py
+@@ -13,30 +13,39 @@
+ 
+ 
+ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
++PROMPT_VERSION = "six_actions_stop_v2"
+ 
+ 
+ def make_request(state, cfg):
+     step, turn, pitch = cfg["move_m"], cfg["turn_deg"], cfg["pitch_deg"]
++    stop_rule = (
++        "STOP RULE (highest priority): When reference.current_target.is_final is true and "
++        "reference.final_goal.distance_m <= task.stop_tolerance_m "
++        f"({cfg['success_m']:g} metres, inclusive), choose stop immediately. "
++        "Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. "
++        "This rule takes priority over path following, further movement, turning, observation, and recovery. "
++        "Reaching an intermediate path point is not arrival at the final destination. ")
+     criteria = {
+         "move_forward": f"Translate forward {step} metres without changing body heading.",
+-        "move_backward": f"Translate backward {step} metres without changing body heading.",
+-        "move_left": f"Translate left {step} metres without turning.",
+-        "move_right": f"Translate right {step} metres without turning.",
+         "turn_left": f"Rotate body left {turn} degrees in place.",
+         "turn_right": f"Rotate body right {turn} degrees in place.",
+         "look_up": f"Tilt camera up {pitch} degrees; does not move the body or change goal bearing.",
+         "look_down": f"Tilt camera down {pitch} degrees; does not move the body or change goal bearing.",
+-        "stop": "End the episode permanently. Choose only when at the final destination, not at an intermediate point."}
++        "stop": (f"End the episode now when the current target is final and the final-goal distance is at most {cfg['success_m']:g} metres, "
++                 "including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. "
++                 "Do not stop at an intermediate target or outside the final-goal tolerance.")}
+     instructions = (
++        stop_rule +
+         "Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. "
++        "The complete action set is move_forward, turn_left, turn_right, look_up, look_down, stop. "
+         "All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. "
+         "The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. "
+         "Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. "
+         "Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. "
+         "Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. "
+-        "Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. "
+-        "Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. "
+-        "Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. "
++        "Avoid repeating ineffective actions or oscillating between turns without progress. "
++        "If forward motion is blocked, turn to inspect another direction before moving forward. "
++        "Use camera tilts to inspect unseen nearby floor when useful, and respect pitch limits. "
+         "There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.")
+     return {"model": cfg["model"], "state": state,
+             "questions": {"action": {"type": "choice", "instructions": instructions, "criteria": criteria}}}
+--- before/environment.py
++++ after/environment.py
+@@ -10,8 +10,7 @@
+ from core import relative
+ 
+ 
+-ACTIONS = ("move_forward", "move_backward", "move_left", "move_right",
+-           "turn_left", "turn_right", "look_up", "look_down", "stop")
++ACTIONS = ("move_forward", "turn_left", "turn_right", "look_up", "look_down", "stop")
+ 
+ 
+ @contextmanager
+--- before/core.py
++++ after/core.py
+@@ -168,7 +168,7 @@
+             "observed_surface_range_p90_m": round(float(np.percentile(distance[measured],90)),2) if measured.any() else None,
+             "near_floor_seen": bool(np.count_nonzero(floor & angular & (distance < .6)) >= 3)})
+     moves = {}
+-    for name, vector in {"move_forward": (0,1), "move_backward": (0,-1), "move_left": (-1,0), "move_right": (1,0)}.items():
++    for name, vector in {"move_forward": (0,1)}.items():
+         mask = _sweep_mask(x, fwd, vector, cfg["move_m"], cfg["agent_radius_m"]+cfg["geometry_margin_m"])
+         count = int(np.count_nonzero(obstacle & mask))
+         coverage = _sweep_visibility(depth, pitch, vector, cfg)
+--- before/run.py
++++ after/run.py
+@@ -11,7 +11,7 @@
+ 
+ from core import RoutePreview, depth_facts
+ from environment import ACTIONS, Environment, load_pathfinder, sample_tasks, shortest
+-from jev import ENDPOINT, JevClient, ServiceFailure, make_request
++from jev import ENDPOINT, PROMPT_VERSION, JevClient, ServiceFailure, make_request
+ from replay import save_frame, save_map, write_replay
+ 
+ ROOT = Path(__file__).resolve().parent
+@@ -80,6 +80,7 @@
+     travel, reached, final_distance = 0., False, check[0]
+     status, env = "action_budget", None
+     metadata = {"provider":provider,"rgb_mode":args.rgb,"task":task,"config":cfg,"assets":manifest,
++        "available_actions":list(ACTIONS),"prompt_version":PROMPT_VERSION,
+         "api_provider":"openrouter" if client else None,"api_endpoint":ENDPOINT if client else None,
+         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":False,
+         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
+@@ -200,7 +201,7 @@
+         sub.add_argument("--rgb",choices=["gs","mesh","none"],default="gs")
+         sub.add_argument("--max-steps",type=int)
+         if name == "smoke":
+-            sub.add_argument("--actions",default="look_down,look_down,look_down,look_down,move_forward,move_left,move_right,move_backward,turn_left,turn_right,look_up,stop")
++            sub.add_argument("--actions",default="look_down,look_down,look_down,look_down,move_forward,turn_left,turn_right,look_up,stop")
+     args = p.parse_args()
+     cfg = load_config(args.config)
+     if args.command == "sample":
+--- before/test_core.py
++++ after/test_core.py
+@@ -5,12 +5,12 @@
+ import signal
+ from pathlib import Path
+ import unittest
+-from unittest.mock import patch
++from unittest.mock import patch, Mock
+ import urllib.error
+ import numpy as np
+ 
+ from core import RoutePreview, depth_points, depth_facts, relative
+-from environment import defer_startup_interrupt
++from environment import ACTIONS, Environment, defer_startup_interrupt
+ from jev import JevClient, ServiceFailure, make_request
+ from run import stop_status
+ 
+@@ -47,10 +47,10 @@
+         self.assertTrue(all(v["status"]=="unknown" for v in facts["move_checks"].values()))
+         json.dumps(facts,allow_nan=False)
+ 
+-    def test_close_wall_blocks_front_not_back(self):
++    def test_close_wall_blocks_only_available_translation(self):
+         facts = depth_facts(np.full((120,160),.20),0,config())
+         self.assertEqual(facts["move_checks"]["move_forward"]["status"],"blocked")
+-        self.assertEqual(facts["move_checks"]["move_backward"]["status"],"unknown")
++        self.assertEqual(set(facts["move_checks"]), {"move_forward"})
+ 
+     def test_far_wall_does_not_prove_unseen_floor_clear(self):
+         facts = depth_facts(np.full((120,160),3.),0,config())
+@@ -84,6 +84,32 @@
+         self.assertEqual(stop_status("stop",.3,.3),"success")
+         self.assertEqual(stop_status("stop",2.,.3),"early_stop")
+         self.assertEqual(stop_status("stop",None,.3),"early_stop")
++
++
++class ActionRestrictionTests(unittest.TestCase):
++    def test_removed_actions_are_invalid_and_never_reach_simulator(self):
++        env = Environment.__new__(Environment)
++        env.cfg, env.pitch = config(), 0.
++        env.pose = Mock(return_value=(np.zeros(3),0.))
++        env.mesh = Mock()
++        for action in ("move_backward", "move_left", "move_right"):
++            with self.subTest(action=action):
++                result = env.act(action)
++                self.assertFalse(result["valid"])
++                self.assertFalse(result["success"])
++                self.assertEqual(result["actual_translation_m"],0.)
++                self.assertEqual(result["result"],"invalid_action_or_pitch_limit")
++        env.mesh.step.assert_not_called()
++
++    def test_stop_does_not_invoke_a_movement(self):
++        env = Environment.__new__(Environment)
++        env.cfg, env.pitch = config(), 45.
++        env.pose = Mock(return_value=(np.zeros(3),0.))
++        env.mesh = Mock()
++        result = env.act("stop")
++        self.assertTrue(result["valid"])
++        self.assertEqual(result["actual_translation_m"],0.)
++        env.mesh.step.assert_not_called()
+ 
+ 
+ class StartupTests(unittest.TestCase):
+@@ -109,11 +135,33 @@
+ 
+ 
+ class ApiTests(unittest.TestCase):
+-    def test_nine_actions_payload_does_not_include_key(self):
+-        payload = make_request({"test":True},config())
+-        self.assertEqual(len(payload["questions"]["action"]["criteria"]),9)
++    def test_six_actions_payload_does_not_include_key_or_removed_actions(self):
++        cfg = config()
++        state = {"depth": depth_facts(np.full((120,160),3.),0,cfg), "recent_actions": []}
++        payload = make_request(state,cfg)
++        expected = {"move_forward", "turn_left", "turn_right", "look_up", "look_down", "stop"}
++        self.assertEqual(set(payload["questions"]["action"]["criteria"]),expected)
++        self.assertEqual(set(ACTIONS), expected)
++        for removed in ("move_backward", "move_left", "move_right"):
++            self.assertNotIn(removed,json.dumps(payload))
+         self.assertEqual(payload["questions"]["action"]["type"],"choice")
+         self.assertNotIn("Authorization",json.dumps(payload))
++
++    def test_stop_prompt_prioritizes_inclusive_final_tolerance(self):
++        for tolerance in (.3,.45):
++            cfg = config();cfg["success_m"] = tolerance
++            state = {"task":{"stop_tolerance_m":tolerance},
++                     "reference":{"current_target":{"is_final":True},"final_goal":{"distance_m":.06}}}
++            payload = make_request(state,cfg)
++            question = payload["questions"]["action"]
++            prompt = question["instructions"]
++            self.assertTrue(prompt.startswith("STOP RULE (highest priority):"))
++            self.assertIn("reference.current_target.is_final is true",prompt)
++            self.assertIn("reference.final_goal.distance_m <= task.stop_tolerance_m",prompt)
++            self.assertIn(f"({tolerance:g} metres, inclusive), choose stop immediately",prompt)
++            self.assertIn("do not try to reach zero distance or align body heading or camera pitch",prompt)
++            self.assertIn(f"at most {tolerance:g} metres",question["criteria"]["stop"])
++            self.assertIs(payload["state"],state)
+ 
+     def test_no_key_fails_without_network(self):
+         # A TypeSafe credential must not be sent to OpenRouter accidentally.
+--- before/README.md
++++ after/README.md
+@@ -5,6 +5,19 @@
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-09-29 更新：六动作与明确停止提示
++
++当前提示词版本为 `six_actions_stop_v2`。停止规则位于提示词首位：当前目标为最终终点（`current_target.is_final=true`）且 `final_goal.distance_m <= task.stop_tolerance_m`（默认 0.30 m，包含边界）时，立即选择 `stop`；无需到达零距离或对齐身体/相机朝向，停止优先于继续跟随、观察和恢复。该规则同时写入 stop 选项说明。
++
++模型选项、Habitat 动作空间和深度动作检查已统一到六动作。只保留前进的扫过体积检查，九个方向的障碍距离扇区仍保留。被移除的动作若意外返回，会记为无效、不执行并消耗预算。最终成功仍由原 NavMesh 距离和主动 stop 判定，不自动代替模型停止；提示词使用的水平距离与评估用的路径距离并非普遍等价。
++
++新运行元数据记录 `available_actions` 与 `prompt_version`。旧任务路线可以复用，旧实验记录及回放保持原样；历史报告中的九动作描述对应旧版本。比较新旧结果时需同时注明动作集与提示词变化。
++
++```bash
++python run.py run --tasks tasks/challenge-v1-20260928/tasks.json --episode turn-000 \
++  --out runs/jev-challenge-turn-000-six-actions-01 --rgb gs --max-steps 500
++```
+ 
+ ## 已固定的实验约定
+ 
+@@ -14,7 +27,7 @@
+ - 路径投影采用局部、单调进度；不会因另一段路径欧氏距离近就跳过去。明显偏离（超过 0.5 m）时保持进度，让模型恢复。这里只保留路线管理状态，不记忆历史障碍。
+ - 所有目标转换成**当前身体坐标系**：前方/左方为正，方位角向左为正。相机低头不改变目标的水平相对坐标。
+ - 短期记忆仅最近 5 个自身动作的有效性、成功、碰撞、实际局部平移及角度变化，不保存跨帧地图、历史深度或模型思考文本。
+-- 九个动作：前后左右平移各 0.25 m；左右转各 15°；抬头/低头各 15°；停止。俯仰角正值向下，范围 [-30°,45°]。
++- 六个动作：前进 0.25 m；左右转各 15°；抬头/低头各 15°；停止。俯仰角正值向下，范围 [-30°,45°]。
+ - 碰撞、受阻、未知动作或超限后继续决策。未知/超限动作不改变位姿，但计入 100 步预算。没有规则控制器接管，也不根据深度屏蔽/替换模型动作。NavMesh 的正常运动过滤仍然生效。
+ - 只有主动 `stop` 且到**最终终点**的 NavMesh 路径距离 ≤0.30 m 才成功。进入范围不会自动结束；到达中间目标不能停止。记录提前停止、曾到达但未正确停止、预算耗尽、服务失败。
+ - API 失败最多重试 2 次；鉴权/格式错误不反复重试。失败单独记录，不生成替代动作。每步同步“观察→决策→执行”。
+@@ -23,7 +36,7 @@
+ 
+ 当前帧米制相机 Z 深度反投影后，消除俯仰角，按离机器人脚底的高度筛选障碍，按水平角度分为 9 区间。每个区间提供最近障碍、观测表面距离统计和近地面覆盖情况。
+ 
+-四个平移动作另外有 `blocked / clear / unknown` 和身体新增扫过体积的观测比例。`blocked` 来自有邻域支持的障碍像素；`clear` 要求采样的扫过体积都被深度射线观测为空闲；其余为 `unknown`。视野外、无效深度和遮挡不解释为空闲。检查不查询 NavMesh。
++前进动作另外有 `blocked / clear / unknown` 和身体新增扫过体积的观测比例。`blocked` 来自有邻域支持的障碍像素；`clear` 要求采样的扫过体积都被深度射线观测为空闲；其余为 `unknown`。视野外、无效深度和遮挡不解释为空闲。检查不查询 NavMesh。
+ 
+ 这些是离散采样、阈值化的几何估计，不能保证无碰撞。mesh 细节、地面偏差、细小物体与 NavMesh 的边界也可能不同。成功和**无碰撞成功**分别统计。`collided` 是 Habitat Agent 移动过滤反馈，不是完整的刚体接触检测。
+ 
+@@ -55,14 +68,14 @@
+   --out runs/my-smoke-01 --rgb gs
+ ```
+ 
+-默认脚本测试低头上限、四个平移、左右转、抬头和提前停止。`--actions` 可提供逗号分隔的动作序列；`--rgb mesh` 用 mesh RGB 验证，`--rgb none` 只保存深度。所有 smoke 结果明确标记 `scripted_smoke`，不代表 Jev 导航能力。
++默认脚本测试低头上限、前进、左右转、抬头和提前停止。`--actions` 可提供逗号分隔的动作序列；`--rgb mesh` 用 mesh RGB 验证，`--rgb none` 只保存深度。所有 smoke 结果明确标记 `scripted_smoke`，不代表 Jev 导航能力。
+ 
+ **真实 Jev 实验需要配置密钥，不能把 smoke 当作模型结果。**当前调用配置：
+ 
+ - 密钥只读取环境变量 `OPENROUTER_API_KEY`，无需 TypeSafe 密钥。
+ - 请求地址：`https://openrouter.ai/api/alpha/decisions`。
+ - `config.json` 默认模型：`typesafe/jev-1.13`。若需要跟随最新版本，可显式改为官方别名 `~typesafe/jev-latest`；实验日志保留服务返回的实际模型 ID。
+-- 请求为 `model + state + questions`，继续使用九选一 Choice。保留 OpenRouter 返回的概率、置信度、请求 ID 和 `usage.cost`，不使用聊天生成或 Jev Router 的模型路由功能。
++- 请求为 `model + state + questions`，使用六选一 Choice。保留 OpenRouter 返回的概率、置信度、请求 ID 和 `usage.cost`，不使用聊天生成或 Jev Router 的模型路由功能。
+ 
+ 用户在自己的终端配置密钥后，才执行：
+ 
+--- before/prepare_challenges.py
++++ after/prepare_challenges.py
+@@ -198,7 +198,7 @@
+ python visualize.py --run runs/jev-challenge-turn-000-01 --serve --port 8765
+ ```
+ 
+-替换 `--episode` 及 `--out` 即可切换任务；输出目录必须未存在。所有档位显式使用 `--max-steps 500`，与审核的成功运行保持一致；`run.py` 不会读取数据集中的 suggested_max_steps。仍用默认九动作、3 m 路径预览、0.75 m 当前目标、mesh 深度和最近 5 步自身历史。无重规划、无规则动作替换。为保持可比性，不在此任务集上同时修改提示词或深度处理。
++替换 `--episode` 及 `--out` 即可切换任务；输出目录必须未存在。所有档位显式使用 `--max-steps 500`，与审核的成功运行保持一致；`run.py` 不会读取数据集中的 suggested_max_steps。当前使用六动作（前进、左右转、上下俯仰、停止）、3 m 路径预览、0.75 m 当前目标、mesh 深度和最近 5 步自身历史。无重规划、无规则动作替换。为保持可比性，不在此任务集上同时修改提示词或深度处理。
+ 
+ 每档目前只有 3 条，适合摸底，不足以推断稳定成功率。比较无碰撞成功、总成功、碰撞、无效动作、总决策步数、SPL、首次到达后的停止延迟及请求 P50/P95；SPL 只衡量平移轨迹，不计原地转向/观察耗时。单个成功不能证明模型充分利用深度；需要对照才能确定贡献。
+ """

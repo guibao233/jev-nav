@@ -1,0 +1,315 @@
+{
+  "model": "typesafe/jev-1.13",
+  "state": {
+    "task": {
+      "kind": "reference_path_following",
+      "stop_tolerance_m": 0.3,
+      "step": 82,
+      "steps_left": 169
+    },
+    "reference": {
+      "current_target": {
+        "forward_m": 0.643,
+        "left_m": -0.26,
+        "distance_m": 0.694,
+        "bearing_deg": -22.0,
+        "is_final": false
+      },
+      "ordered_preview": [
+        {
+          "forward_m": 0.629,
+          "left_m": -0.233,
+          "distance_m": 0.67,
+          "bearing_deg": -20.31,
+          "ahead_along_path_m": 0.5
+        },
+        {
+          "forward_m": 0.643,
+          "left_m": -0.26,
+          "distance_m": 0.694,
+          "bearing_deg": -22.0,
+          "ahead_along_path_m": 0.531
+        },
+        {
+          "forward_m": 0.917,
+          "left_m": -0.641,
+          "distance_m": 1.119,
+          "bearing_deg": -34.96,
+          "ahead_along_path_m": 1.0
+        },
+        {
+          "forward_m": 1.209,
+          "left_m": -1.047,
+          "distance_m": 1.599,
+          "bearing_deg": -40.91,
+          "ahead_along_path_m": 1.5
+        },
+        {
+          "forward_m": 1.273,
+          "left_m": -1.137,
+          "distance_m": 1.706,
+          "bearing_deg": -41.76,
+          "ahead_along_path_m": 1.61
+        },
+        {
+          "forward_m": 1.62,
+          "left_m": -1.314,
+          "distance_m": 2.086,
+          "bearing_deg": -39.05,
+          "ahead_along_path_m": 2.0
+        },
+        {
+          "forward_m": 1.683,
+          "left_m": -1.347,
+          "distance_m": 2.156,
+          "bearing_deg": -38.66,
+          "ahead_along_path_m": 2.071
+        },
+        {
+          "forward_m": 1.868,
+          "left_m": -1.271,
+          "distance_m": 2.259,
+          "bearing_deg": -34.22,
+          "ahead_along_path_m": 2.271
+        },
+        {
+          "forward_m": 2.074,
+          "left_m": -1.171,
+          "distance_m": 2.382,
+          "bearing_deg": -29.44,
+          "ahead_along_path_m": 2.5
+        },
+        {
+          "forward_m": 2.524,
+          "left_m": -0.953,
+          "distance_m": 2.698,
+          "bearing_deg": -20.68,
+          "ahead_along_path_m": 3.0
+        }
+      ],
+      "final_goal": {
+        "forward_m": 4.402,
+        "left_m": -0.043,
+        "distance_m": 4.403,
+        "bearing_deg": -0.56
+      },
+      "distance_from_local_reference_m": 0.447,
+      "remaining_reference_length_m": 5.087,
+      "tracking": {
+        "mode": "reassociated",
+        "progress_m": 4.711,
+        "reassociation_jump_m": 2.15
+      }
+    },
+    "robot": {
+      "radius_m": 0.10000000149011612,
+      "height_m": 1.5,
+      "camera_pitch_deg": 0.0,
+      "pitch_limits_deg": [
+        -30,
+        45
+      ],
+      "previous_collided": false
+    },
+    "depth": {
+      "source": "current_mesh_depth_only",
+      "valid_fraction": 0.992,
+      "sectors": [
+        {
+          "bearing_interval_deg": [
+            -45.0,
+            -35.0
+          ],
+          "nearest_obstacle_m": 1.58,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 12.37,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -35.0,
+            -25.0
+          ],
+          "nearest_obstacle_m": 1.17,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 7.4,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -25.0,
+            -15.0
+          ],
+          "nearest_obstacle_m": 0.81,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 5.99,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -15.0,
+            -5.0
+          ],
+          "nearest_obstacle_m": 0.76,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.19,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            -5.0,
+            5.0
+          ],
+          "nearest_obstacle_m": 0.8,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 5.04,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            5.0,
+            15.0
+          ],
+          "nearest_obstacle_m": 0.76,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.0,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            15.0,
+            25.0
+          ],
+          "nearest_obstacle_m": 0.75,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.52,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            25.0,
+            35.0
+          ],
+          "nearest_obstacle_m": 0.77,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 6.82,
+          "near_floor_seen": false
+        },
+        {
+          "bearing_interval_deg": [
+            35.0,
+            45.0
+          ],
+          "nearest_obstacle_m": 1.3,
+          "observation": "obstacle_seen",
+          "observed_surface_range_p90_m": 7.74,
+          "near_floor_seen": false
+        }
+      ],
+      "move_checks": {
+        "move_forward": {
+          "status": "unknown",
+          "swept_volume_observed_fraction": 0.113
+        },
+        "move_backward": {
+          "status": "unknown",
+          "swept_volume_observed_fraction": 0.0
+        }
+      },
+      "note": "No obstacle seen is not confirmed free space. Clear is a sampled geometric estimate; unseen volume is unknown."
+    },
+    "recent_actions": [
+      {
+        "action": "turn_right",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.0,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": -15.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      {
+        "action": "turn_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.0,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 15.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      {
+        "action": "turn_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.0,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 15.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      {
+        "action": "move_forward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.25,
+        "actual_left_m": -0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      }
+    ],
+    "recent_motion": {
+      "source": "recent_own_action_outcomes_only",
+      "window_steps": 5,
+      "window_capacity": 5,
+      "status": "moving",
+      "net_translation_m": 0.483,
+      "travelled_m": 0.5,
+      "net_turn_deg": 15.0,
+      "absolute_turn_deg": 45.0,
+      "opposite_turn_pairs": 0,
+      "collision_count": 0,
+      "invalid_action_count": 0,
+      "execution_success_count": 5,
+      "low_net_motion": false,
+      "note": "Action success means execution succeeded, not navigation progress. No translation alone can be useful observation."
+    }
+  },
+  "questions": {
+    "action": {
+      "type": "choice",
+      "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints. recent_motion summarizes only recent_actions. Action success means the action executed, not that navigation advanced. If recent_motion.status is turn_oscillation, recent opposite turns have produced little net translation: avoid repeating that left-right pair and choose a different observation or recovery, such as inspecting farther in one turn direction or backing away when appropriate. A no_translation status alone can also mean useful observation. When reference.tracking.mode is reassociated, follow the updated current_target and ordered_preview.",
+      "criteria": {
+        "move_forward": "Translate forward 0.25 metres without changing body heading.",
+        "move_backward": "Translate backward 0.25 metres without changing body heading.",
+        "turn_left": "Rotate body left 15 degrees in place.",
+        "turn_right": "Rotate body right 15 degrees in place.",
+        "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+        "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+        "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+      }
+    }
+  }
+}

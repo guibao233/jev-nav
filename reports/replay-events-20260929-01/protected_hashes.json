@@ -1,0 +1,23 @@
+{
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/config.json": "5b5c006a891208ae59b3897ed8f9fca552f6e7893b9f0f858545014715b7708b",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/environment.py": "419bbebe2c8ab63776267521887eee81499ed1c91ff07e7deb954c51e7defb8d",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/run.py": "7828c7b64cd247ef5fd178b91083305a8a7b764a5863f1e5648dc1839114d409",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/core.py": "47be8150a69ea3ad83968c0a309738eb39b00c177ac38cccd77b4540915c01b8",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/jev.py": "c94e20fc3f24a6fa31623526014ec8d61d52d0b3db3abc0f5dbd17e939f34cd0",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/collision-check-20260928-01/steps.jsonl": "36d1c494fafcc1e915be670547cde28ecad804ed7d7658ebcb185e21f3c8a7b2",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/collision-check-20260928-01/metadata.json": "e6faa68d924ba2bb264a712615c53f3a3a72f2982e28a4777b5eb5b1824918b1",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/collision-check-20260928-01/summary.json": "fe46e748bc7725906feeeefc7b6ebe8b3e4185eb3e433ac90e75799057142573",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/collision-check-20260928-01/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-sliding-20260929-01/steps.jsonl": "da98589e4268772e3a9439f25ba680125565fb6fd6bb25459315bea5c8c00d3a",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-sliding-20260929-01/metadata.json": "b968110cc6d3f79c00531ad90f4ac0dcc2ce8751cbcaf3090d3921a9189205d0",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-sliding-20260929-01/summary.json": "48d139a8d9627b96e160660f3a93c689bcaf09be78dd68bb6226723adc517099",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/smoke-sliding-20260929-01/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-six-actions-03/steps.jsonl": "53b2eb75c8354b5d3e70725ac23b82ce8579f2b8c403f9a975ae2b3b6effd6af",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-six-actions-03/metadata.json": "184015f15c336028c8e62da8e8fdcbe2fa72fddd8c20e2293fb4164e7c8f60d2",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-six-actions-03/summary.json": "aeb8da2816f26e55ea91b807a3daf784b79f23a64f1c87a4177ff93d8fde755e",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-six-actions-03/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-first-5steps-03/steps.jsonl": "55e4342a20386b69c80a9773cbfbdb692c147e2fcc5d6501d6884d4e893a8a31",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-first-5steps-03/metadata.json": "5662b746a87530d57e8b4130fdffabce190ac5f85b13db3f3d3f314517e66761",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-first-5steps-03/summary.json": "5ca8bb00908ca3b4094419e708759dea25f7191239baa7408fd1f4c4de4f5134",
+  "/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-first-5steps-03/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4"
+}

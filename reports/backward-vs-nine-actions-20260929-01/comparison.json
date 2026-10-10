@@ -1,0 +1,529 @@
+{
+  "same_task": true,
+  "same_assets": true,
+  "first_state_equal_except_available_move_checks": true,
+  "old_first_move_checks": {
+    "move_forward": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.11
+    },
+    "move_backward": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.0
+    },
+    "move_left": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.007
+    },
+    "move_right": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.007
+    }
+  },
+  "new_first_move_checks": {
+    "move_forward": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.11
+    },
+    "move_backward": {
+      "status": "unknown",
+      "swept_volume_observed_fraction": 0.0
+    }
+  },
+  "config_differences": {
+    "allow_sliding": {
+      "old": null,
+      "new": true
+    }
+  },
+  "runs": {
+    "jev-challenge-turn-000-02": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "success",
+        "success": true,
+        "collision_free_success": false,
+        "steps": 202,
+        "collisions": 20,
+        "invalid_actions": 28,
+        "path_length_m": 15.211063522349377,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 0.03230181336402893,
+        "ever_within_goal_tolerance": true,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.6441160657270897,
+        "jev_request_latency": {
+          "p50_s": 0.6575763979926705,
+          "p95_s": 1.2873450822196901
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 0.9733417350798845,
+          "p95_s": 1.6231938061304387
+        },
+        "elapsed_s": 251.47212470322847
+      },
+      "actions": {
+        "move_backward": 9,
+        "look_down": 31,
+        "turn_left": 45,
+        "turn_right": 46,
+        "move_forward": 60,
+        "move_left": 9,
+        "move_right": 1,
+        "stop": 1
+      },
+      "first21_actions": [
+        "move_backward",
+        "move_backward",
+        "look_down",
+        "turn_left",
+        "turn_right",
+        "turn_left",
+        "move_backward",
+        "look_down",
+        "look_down",
+        "turn_right",
+        "turn_left",
+        "move_backward",
+        "turn_right",
+        "turn_right",
+        "turn_right",
+        "move_forward",
+        "turn_left",
+        "turn_left",
+        "turn_left",
+        "move_backward",
+        "turn_right"
+      ],
+      "distance_after21_m": 8.848854064941406,
+      "first_question": {
+        "type": "choice",
+        "instructions": "Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. Avoid repeatedly executing an ineffective action or alternating opposite actions without progress. Temporary movement away from the target is allowed for recovery. Use camera tilts to inspect unseen nearby floor when useful. Respect pitch limits. Stop only near the FINAL goal using the stated tolerance; otherwise continue. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.",
+        "criteria": {
+          "move_forward": "Translate forward 0.25 metres without changing body heading.",
+          "move_backward": "Translate backward 0.25 metres without changing body heading.",
+          "move_left": "Translate left 0.25 metres without turning.",
+          "move_right": "Translate right 0.25 metres without turning.",
+          "turn_left": "Rotate body left 15 degrees in place.",
+          "turn_right": "Rotate body right 15 degrees in place.",
+          "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+          "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+          "stop": "End the episode permanently. Choose only when at the final destination, not at an intermediate point."
+        }
+      },
+      "first_answer": {
+        "type": "choice",
+        "choice": "move_backward",
+        "probabilities": {
+          "move_right": 0.02,
+          "move_left": 0.03,
+          "move_backward": 0.29,
+          "stop": 0,
+          "move_forward": 0.09,
+          "turn_left": 0.15,
+          "look_down": 0.27,
+          "turn_right": 0.15,
+          "look_up": 0
+        },
+        "confidence": 0.21
+      },
+      "retry_steps": []
+    },
+    "jev-challenge-turn-000-backward-01": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "service_failure",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 21,
+        "collisions": 2,
+        "invalid_actions": 0,
+        "path_length_m": 4.98933370411396,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 13.711023330688477,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 2.2105164229869843,
+          "p95_s": 9.866610556840897
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 2.457870399579406,
+          "p95_s": 10.134190568700433
+        },
+        "elapsed_s": 152.73002400621772
+      },
+      "actions": {
+        "move_forward": 18,
+        "move_backward": 2,
+        "turn_left": 1
+      },
+      "first21_actions": [
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_backward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_backward",
+        "turn_left"
+      ],
+      "distance_after21_m": 13.711023330688477,
+      "first_question": {
+        "type": "choice",
+        "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. The complete action set is move_forward, move_backward, turn_left, turn_right, look_up, look_down, stop. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. Avoid repeating ineffective actions or oscillating between turns without progress. If forward motion is blocked, turn to inspect another direction before moving forward. Use camera tilts to inspect unseen nearby floor when useful, and respect pitch limits. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.",
+        "criteria": {
+          "move_forward": "Translate forward 0.25 metres without changing body heading.",
+          "move_backward": "Translate backward 0.25 metres without changing body heading. Can be used for recovery; current front depth does not confirm rear clearance.",
+          "turn_left": "Rotate body left 15 degrees in place.",
+          "turn_right": "Rotate body right 15 degrees in place.",
+          "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+          "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+          "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+        }
+      },
+      "first_answer": {
+        "type": "choice",
+        "choice": "move_forward",
+        "probabilities": {
+          "turn_left": 0.14,
+          "turn_right": 0.2,
+          "look_down": 0.11,
+          "stop": 0.01,
+          "look_up": 0.01,
+          "move_backward": 0.23,
+          "move_forward": 0.3
+        },
+        "confidence": 0.19
+      },
+      "retry_steps": [
+        3,
+        5,
+        10,
+        11,
+        16,
+        17
+      ]
+    },
+    "jev-challenge-turn-000-sliding-01": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 250,
+        "collisions": 13,
+        "invalid_actions": 0,
+        "path_length_m": 26.944668486597948,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 6.857901573181152,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 0.7153031527996063,
+          "p95_s": 4.233627617359158
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 0.9790928643196821,
+          "p95_s": 4.527513095084574
+        },
+        "elapsed_s": 453.5781123377383
+      },
+      "actions": {
+        "move_forward": 111,
+        "turn_left": 92,
+        "turn_right": 44,
+        "look_down": 3
+      },
+      "first21_actions": [
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "turn_left",
+        "turn_right",
+        "move_forward",
+        "move_forward",
+        "move_forward",
+        "turn_left",
+        "turn_right"
+      ],
+      "distance_after21_m": 13.96068286895752,
+      "first_question": {
+        "type": "choice",
+        "instructions": "STOP RULE (highest priority): When reference.current_target.is_final is true and reference.final_goal.distance_m <= task.stop_tolerance_m (0.3 metres, inclusive), choose stop immediately. Being inside this tolerance is arrival; do not try to reach zero distance or align body heading or camera pitch. This rule takes priority over path following, further movement, turning, observation, and recovery. Reaching an intermediate path point is not arrival at the final destination. Choose one next action to follow the supplied reference path to its final destination efficiently while avoiding collisions. The complete action set is move_forward, turn_left, turn_right, look_up, look_down, stop. All positions are relative to the CURRENT BODY: forward positive, left positive, bearing positive left; metres and degrees. The ordered path preview can bend behind an obstacle. Follow the current_target and the ordered path; do not cut straight to the farthest point. Use mesh-depth observations and recent own-action outcomes to choose movement, observation, or recovery. Blocked indicates observed obstacles in the move volume. Unknown is not clear; an unseen low obstacle may exist. Clear is only a sampled depth estimate, not a collision guarantee. Camera pitch is positive down. Avoid repeating ineffective actions or oscillating between turns without progress. If forward motion is blocked, turn to inspect another direction before moving forward. Use camera tilts to inspect unseen nearby floor when useful, and respect pitch limits. There is no automatic recovery controller and no action safety override; your selected action is executed subject to the simulator's physical constraints.",
+        "criteria": {
+          "move_forward": "Translate forward 0.25 metres without changing body heading.",
+          "turn_left": "Rotate body left 15 degrees in place.",
+          "turn_right": "Rotate body right 15 degrees in place.",
+          "look_up": "Tilt camera up 15 degrees; does not move the body or change goal bearing.",
+          "look_down": "Tilt camera down 15 degrees; does not move the body or change goal bearing.",
+          "stop": "End the episode now when the current target is final and the final-goal distance is at most 0.3 metres, including the boundary. Arrival within tolerance is sufficient; no additional movement or alignment is needed. Do not stop at an intermediate target or outside the final-goal tolerance."
+        }
+      },
+      "first_answer": {
+        "type": "choice",
+        "choice": "move_forward",
+        "probabilities": {
+          "look_down": 0.14,
+          "move_forward": 0.44,
+          "look_up": 0.01,
+          "stop": 0.01,
+          "turn_left": 0.23,
+          "turn_right": 0.17
+        },
+        "confidence": 0.32
+      },
+      "retry_steps": [
+        152,
+        161,
+        188,
+        196,
+        222,
+        230,
+        244
+      ]
+    }
+  },
+  "new_final_request_error": {
+    "error": "Jev request failed: URLError, URLError, URLError",
+    "attempts": 3,
+    "latency_s": 28.020517019554973
+  },
+  "backward_events": [
+    {
+      "step_1based": 15,
+      "outcome": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      }
+    },
+    {
+      "step_1based": 20,
+      "outcome": {
+        "action": "move_backward",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.25,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      }
+    }
+  ],
+  "return_error_between_after14_and_after16_m": 0.0,
+  "initial_actions_same_as_six_action_sliding_count": 14,
+  "called_jev": false,
+  "reran_simulator": false,
+  "old_lateral_actions": [
+    {
+      "step_1based": 24,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.294,
+      "distance_from_reference_after_m": 0.501
+    },
+    {
+      "step_1based": 25,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.501,
+      "distance_from_reference_after_m": 0.735
+    },
+    {
+      "step_1based": 26,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.735,
+      "distance_from_reference_after_m": 0.977
+    },
+    {
+      "step_1based": 27,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.977,
+      "distance_from_reference_after_m": 1.223
+    },
+    {
+      "step_1based": 28,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 1.223,
+      "distance_from_reference_after_m": 1.47
+    },
+    {
+      "step_1based": 29,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 1.47,
+      "distance_from_reference_after_m": 1.717
+    },
+    {
+      "step_1based": 31,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": false,
+        "collided": true,
+        "actual_translation_m": 0.0367,
+        "actual_forward_m": 0.0,
+        "actual_left_m": 0.037,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "collision"
+      },
+      "distance_from_reference_before_m": 1.766,
+      "distance_from_reference_after_m": 1.801
+    },
+    {
+      "step_1based": 33,
+      "outcome": {
+        "action": "move_right",
+        "valid": true,
+        "success": false,
+        "collided": true,
+        "actual_translation_m": 0.0,
+        "actual_forward_m": 0.0,
+        "actual_left_m": 0.0,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "collision"
+      },
+      "distance_from_reference_before_m": 1.801,
+      "distance_from_reference_after_m": 1.801
+    },
+    {
+      "step_1based": 192,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": -0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.316,
+      "distance_from_reference_after_m": 0.071
+    },
+    {
+      "step_1based": 199,
+      "outcome": {
+        "action": "move_left",
+        "valid": true,
+        "success": true,
+        "collided": false,
+        "actual_translation_m": 0.25,
+        "actual_forward_m": 0.0,
+        "actual_left_m": 0.25,
+        "actual_yaw_deg": 0.0,
+        "actual_pitch_deg": 0.0,
+        "result": "executed"
+      },
+      "distance_from_reference_before_m": 0.306,
+      "distance_from_reference_after_m": 0.06
+    }
+  ]
+}

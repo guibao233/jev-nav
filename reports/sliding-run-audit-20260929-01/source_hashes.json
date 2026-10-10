@@ -1,0 +1,11 @@
+{
+  "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01/metadata.json": "0e1d4cb2bb03d7dacd94b28f50f50256c684ae08eeb86ff170eecdaee583427f",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01/summary.json": "58faaeaa120d47a803aa7846faa99e95b7a9c77dd747b70fd18a2650caa55349",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01/steps.jsonl": "09d130443da0486154bfb96da05ee1767f1eeebe3343df5c0d5afd212e0c4fa2",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/runs/jev-challenge-turn-000-sliding-01/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/core.py": "47be8150a69ea3ad83968c0a309738eb39b00c177ac38cccd77b4540915c01b8",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/environment.py": "419bbebe2c8ab63776267521887eee81499ed1c91ff07e7deb954c51e7defb8d",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/run.py": "7828c7b64cd247ef5fd178b91083305a8a7b764a5863f1e5648dc1839114d409",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/jev.py": "c94e20fc3f24a6fa31623526014ec8d61d52d0b3db3abc0f5dbd17e939f34cd0",
+  "/share/guiyuanze/code/habitat-gs/jev_nav/config.json": "5b5c006a891208ae59b3897ed8f9fca552f6e7893b9f0f858545014715b7708b"
+}

@@ -1,0 +1,300 @@
+--- before/replay_events.py
++++ replay_events.py
+@@ -0,0 +1,76 @@
++"""Display saved action outcomes on the following (post-action) observation."""
++from PIL import ImageDraw, ImageFont
++
++FONT_PATH = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
++COLLISION_COLOR = "#ff4b4b"
++INVALID_COLOR = "#ffc247"
++ACTIONS = {"move_forward":"前进", "move_backward":"后退", "move_left":"左移",
++           "move_right":"右移", "turn_left":"左转", "turn_right":"右转",
++           "look_up":"抬头", "look_down":"低头", "stop":"停止"}
++EVENT_TIMING = "Previous completed action, displayed on the following observation (including terminal); never the current pending action."
++
++
++def action_event(record):
++    outcome = record.get("outcome") or {}
++    kinds = []
++    if outcome.get("collided") is True:
++        kinds.append("collision")
++    if outcome.get("valid") is False:
++        kinds.append("invalid")
++    if not kinds:
++        return None
++    action = outcome.get("action") or (record.get("decision") or {}).get("choice", "unknown")
++    step = record["step"] + 1
++    title = " + ".join("碰撞" if kind == "collision" else "无效动作" for kind in kinds)
++    return {"kinds":kinds,"action":action,"step_1based":step,
++            "label":f"{title} · 第 {step} 步 {ACTIONS.get(action, action)}后",
++            "reason":outcome.get("result"),"position":record.get("after_position"),
++            "color":COLLISION_COLOR if "collision" in kinds else INVALID_COLOR}
++
++
++def observation_event(records, index):
++    """The frame at index is before its action and after the previous action."""
++    if index <= 0:
++        return None
++    event = action_event(records[index-1])
++    if event is not None and event["position"] is None:
++        event["position"] = records[index]["pose"]["position"]
++    return event
++
++
++def completed_events(records, index):
++    # Deliberately exclude records[index].outcome: it happens after this image.
++    return [event for i in range(1,index+1) if (event := observation_event(records,i)) is not None]
++
++
++def draw_event_marker(draw, center, kinds, radius=8):
++    x,y = center
++    for kind in kinds:
++        if kind == "collision":
++            draw.ellipse((x-radius,y-radius,x+radius,y+radius),fill="#131923",outline=COLLISION_COLOR,width=3)
++            d = radius*.42
++            draw.line((x-d,y-d,x+d,y+d),fill=COLLISION_COLOR,width=2)
++            draw.line((x-d,y+d,x+d,y-d),fill=COLLISION_COLOR,width=2)
++        else:
++            # A square and exclamation mark also distinguish events without color.
++            draw.rectangle((x-radius,y-radius,x+radius,y+radius),fill="#131923",outline=INVALID_COLOR,width=3)
++            draw.line((x,y-radius*.5,x,y+radius*.1),fill=INVALID_COLOR,width=2)
++            draw.ellipse((x-1,y+radius*.4-1,x+1,y+radius*.4+1),fill=INVALID_COLOR)
++
++
++def annotate_event(image, event, *, top=12):
++    """Return a display copy; never modify the source RGB or depth image."""
++    canvas = image.convert("RGB").copy()
++    if event is None:
++        return canvas
++    draw = ImageDraw.Draw(canvas)
++    width,height = canvas.size
++    size = min(18,max(10,width//34))
++    font = ImageFont.truetype(FONT_PATH,size)
++    margin = min(10,max(2,width//64))
++    top = min(top,max(0,height-size-16))
++    draw.rectangle((2,2,width-3,height-3),outline=event["color"],width=max(2,width//160))
++    draw.rounded_rectangle((margin,top,width-margin,top+size+18),radius=5,fill="#131923",outline=event["color"],width=2)
++    draw_event_marker(draw,(margin+16,top+(size+18)/2),event["kinds"],radius=8)
++    draw.text((margin+32,top+5),event["label"],font=font,fill=event["color"])
++    return canvas
+--- before/map_view.py
++++ map_view.py
+@@ -6,6 +6,8 @@
+ import math
+ 
+ from PIL import Image, ImageDraw, ImageFont
++from replay_events import (COLLISION_COLOR, INVALID_COLOR, annotate_event,
++                           completed_events, draw_event_marker, observation_event)
+ 
+ 
+ COLORS = {"path":"#2974ee", "trajectory":"#ef9024", "start":"#0eaa50",
+@@ -45,6 +47,8 @@
+     points = [task["start"],task["goal"],*task["path"]]
+     for record in records:
+         points.append(record["pose"]["position"])
++        if record.get("after_position") is not None:
++            points.append(record["after_position"])
+         targets = recorded_targets(record)
+         if targets["current_target_world"] is not None:
+             points.append(targets["current_target_world"])
+@@ -104,6 +108,10 @@
+     for key,text in [("start","S 起点"),("goal","G 终点")]:
+         x,y = dot(metadata["task"][key],COLORS[key],8)
+         label(x+13,y+5 if key=="start" else y-24,text,COLORS[key])
++    # Only past completed actions are shown; positions are the agent's actual
++    # post-action positions, not inferred mesh contact points.
++    for event in completed_events(records,index):
++        draw_event_marker(draw,point(event["position"]),event["kinds"])
+     target = targets["current_target_world"]
+     if target is not None:
+         x,y = point(target)
+@@ -120,7 +128,12 @@
+     right = relative_to_world({"forward_m":-.10,"left_m":-.13},pose)
+     draw.polygon([point(front),point(left),point(right)],fill=COLORS["robot"],outline="#131923",width=2)
+     x,y = point(pose["position"])
+-    label(x-76,y+14,"机器人",COLORS["robot"])
++    event = observation_event(records,index)
++    if event:
++        # Ring the current body position without hiding its heading arrow.
++        color = event["color"]
++        draw.ellipse((x-20,y-20,x+20,y+20),outline=color,width=4)
++    label(x-76,y+24 if event else y+14,"机器人",COLORS["robot"])
+     draw.rounded_rectangle((18,14,400,40),radius=4,fill="#131923")
+     draw.text((24,16),caption,font=font,fill="#e4e9ef")
+     # Metric scale and explicit world axes, independent of camera orientation.
+@@ -134,4 +147,9 @@
+                ("● 1…n 前方采样","preview",390,448)]
+     for text,color,x,y in legends:
+         draw.text((x,y),text,font=font,fill=COLORS[color])
+-    return canvas
++    draw.rounded_rectangle((315,370,620,399),radius=4,fill="#131923")
++    draw_event_marker(draw,(329,384),["collision"],7)
++    draw.text((342,373),"碰撞位置",font=font,fill=COLLISION_COLOR)
++    draw_event_marker(draw,(450,384),["invalid"],7)
++    draw.text((463,373),"无效动作位置",font=font,fill=INVALID_COLOR)
++    return annotate_event(canvas,event,top=46)
+--- before/replay.py
++++ replay.py
+@@ -6,6 +6,7 @@
+ import numpy as np
+ from PIL import Image
+ from map_view import draw_map, map_view
++from replay_events import annotate_event, observation_event
+ 
+ 
+ def save_frame(root, index, depth, rgb):
+@@ -45,6 +46,16 @@
+             name = f"{map_subdir}/{i:05d}.png"
+             draw_map(navmap,metadata,records,i,view).save(root/name)
+             r["map_image"] = name
++            event = observation_event(records,i)
++            r["previous_action_event"] = event
++            r["rgb_display_image"] = r["images"].get("rgb")
++            if event and r["images"].get("rgb"):
++                folder = root/(map_subdir+"-events")
++                folder.mkdir(parents=True,exist_ok=True)
++                name = f"{map_subdir}-events/{i:05d}-rgb.png"
++                with Image.open(root/r["images"]["rgb"]) as rgb:
++                    annotate_event(rgb,event).save(root/name)
++                r["rgb_display_image"] = name
+     payload = json.dumps({"metadata":metadata,"records":records,"summary":summary},ensure_ascii=False,allow_nan=False).replace("<","\\u003c")
+     html = '''<!doctype html><html lang="zh"><meta charset="utf-8"><title>Jev 路径跟随实验回放</title>
+ <style>body{background:#131923;color:#e4e9ef;font:15px system-ui;margin:24px}h1{font-size:23px}button{padding:8px 16px}input{width:65%;vertical-align:middle} .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}img,canvas{max-width:100%;background:#202733;border-radius:6px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#202733;padding:14px;max-height:500px;overflow:auto}.tag{color:#ffd27c}.caption{color:#b8c5d6;margin:8px 0} @media(max-width:850px){.grid{grid-template-columns:1fr}}</style>
+@@ -53,8 +64,9 @@
+ <button id="prev">上一帧</button> <button id="play">播放</button> <button id="next">下一帧</button>
+ <label>展示间隔 <select id="speed"><option value="0.5">0.5 秒</option><option value="1">1 秒</option><option value="1.5" selected>1.5 秒</option><option value="3">3 秒</option></select></label>
+ <p><input id="slider" type="range" min="0" step="1"><span id="counter"></span></p>
++<p class="caption">红色圈叉：碰撞；黄色方框叹号：无效动作。标识对应上一动作完成后的当前观察；地图保留已发生事件的机器人位置，不表示精确接触点。</p><p id="event" role="status"></p>
+ <div class="grid"><div><p class="caption" id="rgbTitle"></p><img id="rgb"><p class="caption">Mesh 深度：黄色近、紫色远，显示范围 0–6 m；原始米制深度另存 NPZ。</p><img id="depth"></div>
+-<div><p class="caption">NavMesh 局部俯视图：蓝线为初始最短路径，橙线为已执行轨迹；绿色 S 起点、红色 G 终点、白色机器人朝向。粉色 T 为当前目标，青色编号点为实际交给 Jev 的前方路径点。</p><img id="map" width="640" height="480"><pre id="decision"></pre></div></div>
++<div><p class="caption">NavMesh 局部俯视图：蓝线为初始最短路径，橙线为已执行轨迹；绿色 S 起点、红色 G 终点、白色机器人朝向。粉色 T 为当前目标，青色编号点为实际交给 Jev 的前方路径点。</p><img id="map" width="640" height="480"><p class="caption">下方记录为本帧观察之后选择的动作及结果；画面标识为上一动作反馈。</p><pre id="decision"></pre></div></div>
+ <details open><summary>本帧 Jev 输入状态（执行动作之前）</summary><pre id="state"></pre></details>
+ <details><summary>配置与结果</summary><pre id="all"></pre></details>
+ <script id="data" type="application/json">__PAYLOAD__</script><script>
+@@ -67,7 +79,9 @@
+ slider.max=Math.max(0,rows.length-1);slider.value=0;
+ function draw(){let i=+slider.value,r=rows[i];if(!r)return;
+  document.querySelector('#map').src=r.map_image;
+- document.querySelector('#rgb').hidden=!r.images.rgb;if(r.images.rgb)document.querySelector('#rgb').src=r.images.rgb;
++ document.querySelector('#rgb').hidden=!r.images.rgb;if(r.images.rgb)document.querySelector('#rgb').src=r.rgb_display_image||r.images.rgb;
++ const event=r.previous_action_event,eventLabel=document.querySelector('#event');
++ eventLabel.textContent=event?event.label:'上一动作无碰撞或无效标识';eventLabel.style.color=event?event.color:'#b8c5d6';
+  document.querySelector('#depth').src=r.images.depth;document.querySelector('#counter').textContent=` ${i+1} / ${rows.length}`;
+  document.querySelector('#state').textContent=JSON.stringify(r.request?.state||{},null,2);
+  document.querySelector('#decision').textContent=JSON.stringify({step:r.step,decision:r.decision,outcome:r.outcome,metrics:r.metrics,frame:r.frame_kind},null,2)}
+--- before/export_replay.py
++++ export_replay.py
+@@ -7,6 +7,7 @@
+ 
+ from PIL import Image, ImageDraw, ImageFont, ImageSequence
+ from map_view import draw_map, map_view, recorded_targets
++from replay_events import annotate_event, observation_event, EVENT_TIMING
+ 
+ 
+ ACTIONS = {"move_forward":"前进", "move_backward":"后退", "move_left":"左移",
+@@ -49,6 +50,7 @@
+     for i, r in enumerate(records):
+         canvas = Image.new("RGB",(1920,688),(19,25,35))
+         draw = ImageDraw.Draw(canvas)
++        event = observation_event(records,i)
+         state = (r.get("request") or {}).get("state")
+         decision, outcome = r.get("decision"), r.get("outcome")
+         phase = f"第 {state['task']['step']} 步执行前" if state else "最后一次动作后的终态"
+@@ -73,7 +75,10 @@
+             name = r["images"].get(channel)
+             if name:
+                 with Image.open(run/name) as im:
+-                    canvas.paste(im.convert("RGB").resize((640,480),Image.Resampling.LANCZOS),(column*640,112))
++                    panel = im.convert("RGB").resize((640,480),Image.Resampling.LANCZOS)
++                    if channel == "rgb":
++                        panel = annotate_event(panel,event)
++                    canvas.paste(panel,(column*640,112))
+             else:
+                 draw.text((column*640+16,250),"未保存该通道",font=font,fill="white")
+         if state:
+@@ -122,15 +127,16 @@
+         assert hashlib.sha256((run/name).read_bytes()).hexdigest() == digest,name
+     (out/"export.json").write_text(json.dumps({"source_run":str(run),"source_sha256":inputs,
+         "source_observations":len(frames),"seconds_per_observation":1.5,"timing":"constant display timing, not wall clock",
+-        "interpolation":False,"reran_simulator":False,"called_jev":False,"ffprobe":probe},indent=2))
++        "interpolation":False,"reran_simulator":False,"called_jev":False,"event_timing":EVENT_TIMING,"ffprobe":probe},indent=2))
+     (out/"map-points.json").write_text(json.dumps({"view":view,"frames":[
+-        {"step":r["step"],"frame_kind":r["frame_kind"],**recorded_targets(r)} for r in records]},indent=2))
++        {"step":r["step"],"frame_kind":r["frame_kind"],"previous_action_event":observation_event(records,i),**recorded_targets(r)} for i,r in enumerate(records)]},indent=2))
+     (out/"README.md").write_text(f"# 已保存观察的离线回放\n\n来源：`{run}`。共 {len(frames)} 幅观察，每幅停留 1.5 秒，展示时长 {len(frames)*1.5:g} 秒。包含动作前的观察及最后的终态，无运动插值，展示时间不代表实验耗时。\n\n"
+         "- [MP4 视频](rgb-depth.mp4)：H.264/yuv420p，可下载后用本地播放器打开。\n"
+         "- [GIF 动图](rgb-depth.gif)：适合 VS Code 图片预览。\n"
+         "- [全部观察总览](contact-sheet.png)：静态图片。\n"
+         "- [单文件页面](view.html)：内嵌 GIF，不依赖 JavaScript 或旁侧图片路径。\n\n"
+         "三列依次为 RGB、mesh 深度、NavMesh 局部俯视图。绿色 S 为起点，红色 G 为终点；蓝线为初始最短路径，橙线为已执行轨迹；白箭头是当前机器人，粉色菱形 T 是当前目标，青色编号点是给 Jev 的前方采样。目标从当帧真实请求及身体位姿反算，水平坐标有原日志毫米级舍入误差；终态不伪造新的目标。\n\n"
++        "红色圈叉/边框表示碰撞，黄色方框叹号/边框表示无效动作；RGB 与地图高亮上一动作完成后的观察，地图保留已发生事件的机器人位置，不是精确接触点。顶部动作结果文字仍对应本帧之后的动作。\n\n"
+         "`maps/` 可单独查看地图帧，`map-points.json` 保存反算坐标和裁剪范围。动作与执行结果对应其前方显示的观察。原始日志及图像没有改写，没有重跑仿真或调用 Jev。`export.json` 保存源文件 SHA-256 及视频格式验证结果。\n",encoding="utf-8")
+     print(json.dumps({"output":str(out),"observations":len(frames),"duration_s":len(frames)*1.5,"verified":True},ensure_ascii=False))
+ 
+--- before/visualize.py
++++ visualize.py
+@@ -17,6 +17,7 @@
+ from PIL import Image
+ 
+ from replay import write_replay
++from replay_events import EVENT_TIMING
+ 
+ 
+ def read_run(run):
+@@ -109,13 +110,14 @@
+             raise RuntimeError(f"导出期间源文件发生变化：{name}；请在任务结束后重试。")
+     manifest = {"source_run":str(run),"source_sha256":sources,"observations":len(records),
+         "media_exported":bool(media),"entry":"index.html","portable":True,
+-        "reran_simulator":False,"called_jev":False,
++        "reran_simulator":False,"called_jev":False,"event_timing":EVENT_TIMING,
+         "target_source":"actual logged requests transformed by each observation's body pose"}
+     (out/"visualization.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False))
+     (out/"README.md").write_text(
+         f"# Jev 导航可视化\n\n来源：`{run}`；共 {len(records)} 幅观察。\n\n"
+         "打开 `index.html`，可播放、拖动时间轴、前后逐帧查看、调整播放间隔；键盘左右箭头也可切换。\n\n"
+         "绿色 S 起点、红色 G 终点；蓝线初始最短路径、橙线已执行轨迹、白箭头当前机器人；粉色 T 为当前目标，青色编号点为实际发送给 Jev 的前方路径点。最后终态没有新的目标。\n\n"
++        "碰撞显示红色圈叉/边框，无效动作显示黄色方框叹号/边框；RGB 和 NavMesh 同步高亮上一动作后的观察，终态也适用。地图保留已发生事件的机器人位置，并不表示精确接触点。\n\n"
+         "此目录包含页面依赖的全部图像，可以整体下载到本机。播放间隔仅控制展示，不代表实验真实耗时。`visualization.json` 保存来源和哈希；没有重跑实验或调用 Jev。\n\n"
+         +( "`media/` 中包含 MP4、GIF、总览和单独地图帧。\n" if media else "本次仅生成 HTML；使用 --media 可同时导出视频和动图。\n"),encoding="utf-8")
+     print(f"[visualize] 回放入口：{out/'index.html'}",flush=True)
+--- before/README.md
++++ README.md
+@@ -5,6 +5,21 @@
+ 模块独立于 `habitat_dynamic_search`。不使用物体标注，不修改场景资产、原 NavMesh、已有实验或 Conda 依赖。真实 Jev 调用使用 Python 标准库访问 [OpenRouter Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)。
+ 
+ 基础模块已完成离线与实际 GPU 仿真验证，并已有用户执行的真实 Jev 运行记录。详情及回放见 [验证记录](VALIDATION.md)。可视化工具只读取已有记录，不调用模型。
++
++## 2026-09-29 更新：碰撞与无效动作可视化
++
++RGB 与 NavMesh 同步显示动作反馈：**红色边框 / 圈叉表示碰撞，黄色边框 / 方框叹号表示无效动作**，同时注明动作名称和步号。地图保留已经发生事件的机器人位置；当前事件在机器人周围加框线强调。原始 RGB、深度和请求均不改写。
++
++记录中的图像位于本步执行前，因此标识对应**上一动作完成后的当前观察**，最后的终态也会显示上一动作反馈；不会提前给动作前的画面加上未来碰撞。HTML 决策详情及视频顶部文字仍明确展示本帧之后的动作。地图事件点是机器人位置，不是精确的 mesh 接触点。
++
++后续实验自动生成的回放以及 `visualize.py`、`export_replay.py` 的 HTML / MP4 / GIF 均采用此显示。已有回放需要重新导出到新目录：
++
++```bash
++python visualize.py --run runs/jev-challenge-turn-000-02 --serve --port 8765
++# 如需同时生成视频、动图和静态总览，再加 --media
++```
++
++已生成：[真实 Jev 任务新版回放](runs/jev-challenge-turn-000-02/visualizations/events-20260929-01/index.html)、[碰撞/无效动作示例](reports/replay-events-20260929-01/event-examples.png)。验证和时序说明见 [事件可视化报告](reports/replay-events-20260929-01/README.md)。
+ 
+ ## 2026-09-29 更新：允许沿边界滑动
+ 
+--- before/VALIDATION.md
++++ VALIDATION.md
+@@ -126,3 +126,14 @@
+ - 37 项回归测试通过。正常入口 `runs/smoke-sliding-20260929-01`：9 步、0 碰撞、1 次刻意俯仰超限、early_stop；两处 allow_sliding 元数据均为 true，六动作和停止提示不变。
+ - 61 个原有任务/日志/结果/受保护源码文件哈希未变，NavMesh 哈希与历史实验一致。允许滑动可能产生被动侧向位移，实验应与旧的 false 配置区分。
+ - 本次未调用 Jev，也未运行新的完整模型任务；不能将执行层回归通过等同于导航成功率改善。详细证据、限制及复测命令见 [参数验证报告](reports/sliding-config-20260929-01/README.md)。
++
++
++## 2026-09-29：碰撞与无效动作可视化
++
++新增离线 `replay_events.py`，在动作完成后的下一幅观察上标注碰撞（红色）和无效动作（黄色），终态遵循同一规则。RGB 增加边框与动作/步号提示，NavMesh 同步高亮并保留已发生事件的位置。HTML 和 MP4/GIF 共用绘制逻辑；不覆盖原始图像、日志或旧回放，不改变导航与模型输入。
++
++- 37 项已有回归通过；使用真实保存记录核查共 211 帧。8 帧脚本记录显示 2 次碰撞和 1 次无效动作，203 帧真实 Jev 记录显示 20 次碰撞和 28 次无效动作，与原始结果一致。
++- 验证第一帧、动作前不得预告碰撞、动作后对齐、终态、无执行结果、倒退查看及播放切换。实际页面 JavaScript 通过 Node 语法和 DOM 桩运行检查；本地 HTTP 返回 HTML、两类 RGB 标识、地图和视频共 5 个资源。
++- 8 帧导出的 HTML 与媒体中的 RGB/地图逐像素一致；MP4 完整解码通过，H.264/yuv420p、1920×688、30 fps、360 编码帧、12 秒；GIF 8 帧、12 秒。已目视检查两类事件的合成图片，未做真实浏览器交互验收。
++- 两份导出的源图像/日志哈希均保持不变，另外 21 个受保护导航源码、配置及历史记录哈希通过；未运行仿真或调用 Jev。
++- [验证报告](reports/replay-events-20260929-01/README.md)包含可直接查看的回放、事件示例与全部检查记录。

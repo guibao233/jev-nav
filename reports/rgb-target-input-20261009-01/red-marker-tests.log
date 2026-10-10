@@ -1,0 +1,32 @@
+test_behind_camera_is_not_fabricated_as_a_visible_target (test_rgb_input.ProjectionTests.test_behind_camera_is_not_fabricated_as_a_visible_target) ... ok
+test_center_and_left_target_follow_pinhole_geometry (test_rgb_input.ProjectionTests.test_center_and_left_target_follow_pinhole_geometry) ... ok
+test_height_difference_and_route_target_are_retained (test_rgb_input.ProjectionTests.test_height_difference_and_route_target_are_retained) ... ok
+test_marker_changes_copy_only_and_arrow_is_distinct (test_rgb_input.ProjectionTests.test_marker_changes_copy_only_and_arrow_is_distinct) ... ok
+test_near_ground_target_is_outside_frame_until_camera_looks_down (test_rgb_input.ProjectionTests.test_near_ground_target_is_outside_frame_until_camera_looks_down) ... ok
+test_target_at_feet_is_not_mislabelled_as_behind_camera (test_rgb_input.ProjectionTests.test_target_at_feet_is_not_mislabelled_as_behind_camera) ... FAIL
+test_upward_offscreen_arrow_is_not_hidden_by_the_caption (test_rgb_input.ProjectionTests.test_upward_offscreen_arrow_is_not_hidden_by_the_caption) ... ok
+test_visible_marker_takes_priority_over_caption_background (test_rgb_input.ProjectionTests.test_visible_marker_takes_priority_over_caption_background) ... FAIL
+
+======================================================================
+FAIL: test_target_at_feet_is_not_mislabelled_as_behind_camera (test_rgb_input.ProjectionTests.test_target_at_feet_is_not_mislabelled_as_behind_camera)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 85, in test_target_at_feet_is_not_mislabelled_as_behind_camera
+    self.assertEqual(info['projection_status'], 'camera_plane')
+AssertionError: 'behind_camera' != 'camera_plane'
+- behind_camera
++ camera_plane
+
+
+======================================================================
+FAIL: test_visible_marker_takes_priority_over_caption_background (test_rgb_input.ProjectionTests.test_visible_marker_takes_priority_over_caption_background)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/jev-nav-rgb-target-20261009/test_rgb_input.py", line 91, in test_visible_marker_takes_priority_over_caption_background
+    self.assertTrue(np.any(np.all(np.asarray(image)[25:38, 315:325] == [255, 70, 215], axis=-1)))
+AssertionError: np.False_ is not true
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.040s
+
+FAILED (failures=2)

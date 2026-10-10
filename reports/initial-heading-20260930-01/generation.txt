@@ -1,0 +1,2 @@
+{"episode": "turn-000", "source_yaw_deg": 112.70431037687769, "aligned_yaw_deg": -90.39, "target_bearing_before_deg": 156.9, "target_bearing_after_deg": -0.0}
+OUTPUT tasks/challenge-clearance-aligned-20260930-01

@@ -1,0 +1,14 @@
+{
+  "purpose": "Visibility ceiling due to camera frustum for the existing sampled swept volume; no physical scene or model used",
+  "depth_value_m": 19.799999237060547,
+  "pitch_deg_to_observed_fraction": {
+    "-30": 0.0275,
+    "-15": 0.085,
+    "0": 0.1125,
+    "15": 0.1925,
+    "30": 0.33,
+    "45": 0.735
+  },
+  "clear_requires_fraction": 1.0,
+  "all_reachable_discrete_pitches_below_clear_threshold": true
+}

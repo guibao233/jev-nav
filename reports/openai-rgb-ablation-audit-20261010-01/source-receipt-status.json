@@ -1,0 +1,5 @@
+{
+  "rendered": false,
+  "reason": "Available Node v21.7.3 does not satisfy receipt renderer Node 20.19+ or 22.12+ requirement. No compatible bundled-node tool is available.",
+  "data_and_reports_verified": true
+}

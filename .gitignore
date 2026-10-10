@@ -1,0 +1,12 @@
+# Runtime assets and local deployment (kept on disk)
+/runs/
+/local_models/
+/.superpowers/
+/.worktrees/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+*.key
+*.pem

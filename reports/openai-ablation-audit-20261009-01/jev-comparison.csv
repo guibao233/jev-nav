@@ -1,0 +1,10 @@
+route,input,jev_successes,jev_runs,openai_successes,openai_runs
+simple,numeric,2,2,0,2
+simple,semantic,2,2,0,2
+simple,none,2,2,0,2
+complex,numeric,1,3,2,2
+complex,semantic,1,2,2,2
+complex,none,1,2,0,2
+extended,numeric,1,2,0,2
+extended,semantic,0,2,2,2
+extended,none,0,2,2,2

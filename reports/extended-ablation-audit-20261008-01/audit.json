@@ -1,0 +1,763 @@
+{
+  "scope": "one fixed extended-000 route, two repetitions per input; six completed real Jev evaluations",
+  "runs": [
+    {
+      "run": "jev-extended-rgbgs-numeric-20261008-01",
+      "mode": "numeric",
+      "repeat": "01",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "success",
+        "depth_input": "mesh",
+        "depth_provided_to_model": true,
+        "depth_format": "numeric",
+        "success": true,
+        "collision_free_success": true,
+        "steps": 252,
+        "collisions": 0,
+        "invalid_actions": 4,
+        "path_length_m": 30.00000824034214,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 0.1615745574235916,
+        "ever_within_goal_tolerance": true,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.5440864340067914,
+        "jev_request_latency": {
+          "p50_s": 1.4195232689380646,
+          "p95_s": 2.5206152204424144
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.6540198978036642,
+          "p95_s": 2.7630218677222724
+        },
+        "elapsed_s": 486.82653315737844
+      },
+      "minimum_goal_distance_m": 0.1615745574235916,
+      "minimum_distance_step": 251,
+      "first_under_2m_step": 233,
+      "action_counts": {
+        "move_forward": 72,
+        "turn_right": 60,
+        "turn_left": 64,
+        "look_down": 7,
+        "move_backward": 48,
+        "stop": 1
+      },
+      "move_attempts": 120,
+      "invalid_action_types": {
+        "look_down": 4
+      },
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 228,
+        "turn_oscillation": 10,
+        "no_translation": 9
+      },
+      "last_80_net_translation_m": 5.28244929723077,
+      "last_80_travel_m": 10.5,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": -0.16,
+          "left_m": -0.019,
+          "distance_m": 0.162,
+          "bearing_deg": -173.3,
+          "is_final": true
+        },
+        "ordered_preview": [
+          {
+            "forward_m": -0.16,
+            "left_m": -0.019,
+            "distance_m": 0.162,
+            "bearing_deg": -173.3,
+            "ahead_along_path_m": 0.061
+          }
+        ],
+        "final_goal": {
+          "forward_m": -0.16,
+          "left_m": -0.019,
+          "distance_m": 0.162,
+          "bearing_deg": -173.3
+        },
+        "distance_from_local_reference_m": 0.149,
+        "remaining_reference_length_m": 0.061,
+        "tracking": {
+          "mode": "local",
+          "progress_m": 19.551,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        -2.3533244132995605,
+        -0.125,
+        3.662440299987793
+      ]
+    },
+    {
+      "run": "jev-extended-rgbgs-numeric-20261008-02",
+      "mode": "numeric",
+      "repeat": "02",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "depth_input": "mesh",
+        "depth_provided_to_model": true,
+        "depth_format": "numeric",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 1,
+        "invalid_actions": 78,
+        "path_length_m": 30.721210792660713,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 9.730199813842773,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 1.2939219092950225,
+          "p95_s": 1.4880565759725863
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.5036711264401674,
+          "p95_s": 1.7055818418040865
+        },
+        "elapsed_s": 804.435763368383
+      },
+      "minimum_goal_distance_m": 9.730199813842773,
+      "minimum_distance_step": 175,
+      "first_under_2m_step": null,
+      "action_counts": {
+        "move_forward": 62,
+        "turn_right": 123,
+        "turn_left": 131,
+        "look_down": 102,
+        "move_backward": 61,
+        "look_up": 21
+      },
+      "move_attempts": 123,
+      "invalid_action_types": {
+        "look_down": 78
+      },
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 189,
+        "turn_oscillation": 74,
+        "no_translation": 149,
+        "low_net_motion": 83
+      },
+      "last_80_net_translation_m": 9.5367431640625e-07,
+      "last_80_travel_m": 4.5,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": -0.012,
+          "left_m": 1.262,
+          "distance_m": 1.262,
+          "bearing_deg": 90.55,
+          "is_final": false
+        },
+        "ordered_preview": [
+          {
+            "forward_m": -0.028,
+            "left_m": 1.24,
+            "distance_m": 1.24,
+            "bearing_deg": 91.31,
+            "ahead_along_path_m": 0.5
+          },
+          {
+            "forward_m": -0.012,
+            "left_m": 1.262,
+            "distance_m": 1.262,
+            "bearing_deg": 90.55,
+            "ahead_along_path_m": 0.528
+          },
+          {
+            "forward_m": 0.454,
+            "left_m": 1.34,
+            "distance_m": 1.414,
+            "bearing_deg": 71.29,
+            "ahead_along_path_m": 1.0
+          },
+          {
+            "forward_m": 0.947,
+            "left_m": 1.421,
+            "distance_m": 1.708,
+            "bearing_deg": 56.33,
+            "ahead_along_path_m": 1.5
+          },
+          {
+            "forward_m": 1.44,
+            "left_m": 1.503,
+            "distance_m": 2.082,
+            "bearing_deg": 46.23,
+            "ahead_along_path_m": 2.0
+          },
+          {
+            "forward_m": 1.662,
+            "left_m": 1.54,
+            "distance_m": 2.266,
+            "bearing_deg": 42.82,
+            "ahead_along_path_m": 2.225
+          },
+          {
+            "forward_m": 1.901,
+            "left_m": 1.404,
+            "distance_m": 2.363,
+            "bearing_deg": 36.44,
+            "ahead_along_path_m": 2.5
+          },
+          {
+            "forward_m": 2.336,
+            "left_m": 1.156,
+            "distance_m": 2.606,
+            "bearing_deg": 26.34,
+            "ahead_along_path_m": 3.0
+          }
+        ],
+        "final_goal": {
+          "forward_m": 8.845,
+          "left_m": 0.093,
+          "distance_m": 8.845,
+          "bearing_deg": 0.6
+        },
+        "distance_from_local_reference_m": 0.892,
+        "remaining_reference_length_m": 10.978,
+        "tracking": {
+          "mode": "off_path",
+          "progress_m": 8.635,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        2.8195297718048096,
+        -0.125,
+        10.955698013305664
+      ]
+    },
+    {
+      "run": "jev-extended-rgbgs-semantic-20261008-01",
+      "mode": "semantic",
+      "repeat": "01",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "depth_input": "mesh",
+        "depth_provided_to_model": true,
+        "depth_format": "semantic",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 0,
+        "invalid_actions": 18,
+        "path_length_m": 57.50000582635403,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 1.7766155004501343,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 1.4003346310928464,
+          "p95_s": 2.484066498465835
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.668542387895286,
+          "p95_s": 2.751986858900636
+        },
+        "elapsed_s": 924.8743153773248
+      },
+      "minimum_goal_distance_m": 0.45555076003074646,
+      "minimum_distance_step": 333,
+      "first_under_2m_step": 143,
+      "action_counts": {
+        "move_forward": 201,
+        "turn_right": 57,
+        "turn_left": 182,
+        "look_down": 26,
+        "look_up": 5,
+        "move_backward": 29
+      },
+      "move_attempts": 230,
+      "invalid_action_types": {
+        "look_down": 18
+      },
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 432,
+        "turn_oscillation": 20,
+        "no_translation": 37,
+        "low_net_motion": 6
+      },
+      "last_80_net_translation_m": 1.5837143292111606,
+      "last_80_travel_m": 8.0,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": 1.243,
+          "left_m": 1.269,
+          "distance_m": 1.777,
+          "bearing_deg": 45.59,
+          "is_final": true
+        },
+        "ordered_preview": [
+          {
+            "forward_m": 1.243,
+            "left_m": 1.269,
+            "distance_m": 1.777,
+            "bearing_deg": 45.59,
+            "ahead_along_path_m": 0.042
+          }
+        ],
+        "final_goal": {
+          "forward_m": 1.243,
+          "left_m": 1.269,
+          "distance_m": 1.777,
+          "bearing_deg": 45.59
+        },
+        "distance_from_local_reference_m": 1.755,
+        "remaining_reference_length_m": 0.042,
+        "tracking": {
+          "mode": "off_path",
+          "progress_m": 19.571,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        -1.3538825511932373,
+        -0.125,
+        5.25050163269043
+      ]
+    },
+    {
+      "run": "jev-extended-rgbgs-semantic-20261008-02",
+      "mode": "semantic",
+      "repeat": "02",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "depth_input": "mesh",
+        "depth_provided_to_model": true,
+        "depth_format": "semantic",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 0,
+        "invalid_actions": 16,
+        "path_length_m": 55.00000657141209,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 1.20957350730896,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 1.289563505910337,
+          "p95_s": 1.4608879533596333
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.5514343287795782,
+          "p95_s": 1.7200238404795527
+        },
+        "elapsed_s": 820.0246301740408
+      },
+      "minimum_goal_distance_m": 0.7500223517417908,
+      "minimum_distance_step": 170,
+      "first_under_2m_step": 151,
+      "action_counts": {
+        "move_forward": 203,
+        "turn_left": 186,
+        "look_down": 21,
+        "move_backward": 17,
+        "turn_right": 71,
+        "look_up": 2
+      },
+      "move_attempts": 220,
+      "invalid_action_types": {
+        "look_down": 16
+      },
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 448,
+        "no_translation": 12,
+        "low_net_motion": 9,
+        "turn_oscillation": 26
+      },
+      "last_80_net_translation_m": 0.4506252487774547,
+      "last_80_travel_m": 6.25,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": 0.148,
+          "left_m": 1.401,
+          "distance_m": 1.409,
+          "bearing_deg": 83.99,
+          "is_final": false
+        },
+        "ordered_preview": [
+          {
+            "forward_m": 0.211,
+            "left_m": 1.571,
+            "distance_m": 1.585,
+            "bearing_deg": 82.34,
+            "ahead_along_path_m": 0.5
+          },
+          {
+            "forward_m": 0.148,
+            "left_m": 1.401,
+            "distance_m": 1.409,
+            "bearing_deg": 83.99,
+            "ahead_along_path_m": 0.681
+          },
+          {
+            "forward_m": 0.092,
+            "left_m": 1.206,
+            "distance_m": 1.21,
+            "bearing_deg": 85.65,
+            "ahead_along_path_m": 0.884
+          }
+        ],
+        "final_goal": {
+          "forward_m": 0.092,
+          "left_m": 1.206,
+          "distance_m": 1.21,
+          "bearing_deg": 85.65
+        },
+        "distance_from_local_reference_m": 1.683,
+        "remaining_reference_length_m": 0.884,
+        "tracking": {
+          "mode": "off_path",
+          "progress_m": 18.729,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        -3.5638539791107178,
+        -0.125,
+        4.154440879821777
+      ]
+    },
+    {
+      "run": "jev-extended-rgbgs-none-20261008-01",
+      "mode": "none",
+      "repeat": "01",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "depth_input": "none",
+        "depth_provided_to_model": false,
+        "depth_format": "none",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 46,
+        "invalid_actions": 0,
+        "path_length_m": 84.05776776466519,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 1.4978001117706299,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 1.298867085017264,
+          "p95_s": 1.6330150767229492
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.5140953762456775,
+          "p95_s": 1.8522135153412815
+        },
+        "elapsed_s": 818.2048035524786
+      },
+      "minimum_goal_distance_m": 0.39703649282455444,
+      "minimum_distance_step": 430,
+      "first_under_2m_step": 318,
+      "action_counts": {
+        "move_forward": 248,
+        "turn_right": 47,
+        "turn_left": 101,
+        "move_backward": 104
+      },
+      "move_attempts": 352,
+      "invalid_action_types": {},
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 471,
+        "low_net_motion": 24
+      },
+      "last_80_net_translation_m": 1.789013282075755,
+      "last_80_travel_m": 13.8002,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": -0.122,
+          "left_m": 1.451,
+          "distance_m": 1.456,
+          "bearing_deg": 94.79,
+          "is_final": true
+        },
+        "ordered_preview": [
+          {
+            "forward_m": -0.122,
+            "left_m": 1.451,
+            "distance_m": 1.456,
+            "bearing_deg": 94.79,
+            "ahead_along_path_m": 0.113
+          }
+        ],
+        "final_goal": {
+          "forward_m": -0.122,
+          "left_m": 1.451,
+          "distance_m": 1.456,
+          "bearing_deg": 94.79
+        },
+        "distance_from_local_reference_m": 1.344,
+        "remaining_reference_length_m": 0.113,
+        "tracking": {
+          "mode": "off_path",
+          "progress_m": 19.5,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        -0.9945566654205322,
+        -0.125,
+        3.305347204208374
+      ]
+    },
+    {
+      "run": "jev-extended-rgbgs-none-20261008-02",
+      "mode": "none",
+      "repeat": "02",
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "depth_input": "none",
+        "depth_provided_to_model": false,
+        "depth_format": "none",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 112,
+        "invalid_actions": 0,
+        "path_length_m": 84.54462108155712,
+        "initial_geodesic_m": 16.32259750366211,
+        "final_geodesic_m": 15.817625045776367,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 1.2715413980185986,
+          "p95_s": 1.4021510799415404
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 1.4823406031355262,
+          "p95_s": 1.6045729665085673
+        },
+        "elapsed_s": 784.0617131143808
+      },
+      "minimum_goal_distance_m": 13.095512390136719,
+      "minimum_distance_step": 126,
+      "first_under_2m_step": null,
+      "action_counts": {
+        "move_forward": 197,
+        "turn_right": 33,
+        "turn_left": 39,
+        "move_backward": 231
+      },
+      "move_attempts": 428,
+      "invalid_action_types": {},
+      "motion_status_counts": {
+        "insufficient_history": 5,
+        "moving": 394,
+        "no_translation": 6,
+        "low_net_motion": 92,
+        "turn_oscillation": 3
+      },
+      "last_80_net_translation_m": 0.250000166397912,
+      "last_80_travel_m": 14.7993,
+      "retries": 0,
+      "final_reference": {
+        "current_target": {
+          "forward_m": -2.812,
+          "left_m": 0.094,
+          "distance_m": 2.813,
+          "bearing_deg": 178.09,
+          "is_final": false
+        },
+        "ordered_preview": [
+          {
+            "forward_m": -2.822,
+            "left_m": -0.156,
+            "distance_m": 2.826,
+            "bearing_deg": -176.83,
+            "ahead_along_path_m": 0.5
+          },
+          {
+            "forward_m": -2.802,
+            "left_m": 0.343,
+            "distance_m": 2.823,
+            "bearing_deg": 173.01,
+            "ahead_along_path_m": 1.0
+          },
+          {
+            "forward_m": -2.783,
+            "left_m": 0.843,
+            "distance_m": 2.908,
+            "bearing_deg": 163.15,
+            "ahead_along_path_m": 1.5
+          },
+          {
+            "forward_m": -2.777,
+            "left_m": 0.998,
+            "distance_m": 2.951,
+            "bearing_deg": 160.24,
+            "ahead_along_path_m": 1.655
+          },
+          {
+            "forward_m": -2.743,
+            "left_m": 1.341,
+            "distance_m": 3.054,
+            "bearing_deg": 153.94,
+            "ahead_along_path_m": 2.0
+          },
+          {
+            "forward_m": -2.695,
+            "left_m": 1.839,
+            "distance_m": 3.262,
+            "bearing_deg": 145.69,
+            "ahead_along_path_m": 2.5
+          },
+          {
+            "forward_m": -2.646,
+            "left_m": 2.337,
+            "distance_m": 3.53,
+            "bearing_deg": 138.55,
+            "ahead_along_path_m": 3.0
+          }
+        ],
+        "final_goal": {
+          "forward_m": 5.741,
+          "left_m": 7.101,
+          "distance_m": 9.131,
+          "bearing_deg": 51.05
+        },
+        "distance_from_local_reference_m": 2.837,
+        "remaining_reference_length_m": 14.805,
+        "tracking": {
+          "mode": "off_path",
+          "progress_m": 4.808,
+          "reassociation_jump_m": 0.0
+        }
+      },
+      "last_position": [
+        5.2471923828125,
+        -0.125,
+        9.088050842285156
+      ]
+    }
+  ],
+  "aggregate": {
+    "numeric": {
+      "runs": 2,
+      "successes": 1,
+      "collision_free_successes": 1,
+      "collisions": 1,
+      "invalid_actions": 82,
+      "actions": 752,
+      "move_attempts": 243,
+      "mean_spl": 0.2720432170033957,
+      "collision_fraction_of_move_attempts": 0.00411522633744856
+    },
+    "semantic": {
+      "runs": 2,
+      "successes": 0,
+      "collision_free_successes": 0,
+      "collisions": 0,
+      "invalid_actions": 34,
+      "actions": 1000,
+      "move_attempts": 450,
+      "mean_spl": 0.0,
+      "collision_fraction_of_move_attempts": 0.0
+    },
+    "none": {
+      "runs": 2,
+      "successes": 0,
+      "collision_free_successes": 0,
+      "collisions": 158,
+      "invalid_actions": 0,
+      "actions": 1000,
+      "move_attempts": 780,
+      "mean_spl": 0.0,
+      "collision_fraction_of_move_attempts": 0.20256410256410257
+    }
+  },
+  "repeat_divergence": {
+    "numeric": {
+      "first_different_action_step": 12,
+      "identical_requests_at_divergence": true,
+      "choices": [
+        "turn_right",
+        "move_forward"
+      ]
+    },
+    "semantic": {
+      "first_different_action_step": 7,
+      "identical_requests_at_divergence": true,
+      "choices": [
+        "move_forward",
+        "turn_left"
+      ]
+    },
+    "none": {
+      "first_different_action_step": 17,
+      "identical_requests_at_divergence": true,
+      "choices": [
+        "move_forward",
+        "turn_left"
+      ]
+    }
+  },
+  "verification": {
+    "actions": 2752,
+    "all_geodesic_distances_recomputed": true,
+    "all_reference_states_recomputed": true,
+    "all_recent_history_recomputed": true,
+    "all_semantic_encodings_checked": true,
+    "raw_depth_sample_frames_checked": 27,
+    "protected_files": {
+      "run.py": "9c32845408ab5d99c782dfcf2365196d826c0cf1e1d2fc3113663408a9e47489",
+      "core.py": "4a04aed1238c2d674d348475bd2608b608c2641f940d40f3e91b3a05f8ee5fd1",
+      "environment.py": "7ac78c461ca26c4580a66c0d7a009494af1368f6a4031cf58189783986354426",
+      "jev.py": "193ae5eaa77ae6a64582a29423b06ad696b5a5eec9ecfefc735774cef0767bd5",
+      "depth_language.py": "c50e808734cf10e914c3d92cc2d650fd1161d97f5cba6e85f467f09b74396131",
+      "config.json": "97ce26960aa44582aa4ca3dc11beef9ee1306e1f74dee5fc76ab3c8b4687d2bf",
+      "config.single-gpu.json": "f7ba3ef72dec626e883b9f15a58bc8d6c541b044632449bd67891d471dd2b2f5",
+      "tasks/extended-clearance-aligned-20261008-01/tasks.json": "13bf10a071bccde7287b3ef75c6114080638072decf3c809aef7dd167bca4aad",
+      "runs/jev-extended-rgbgs-numeric-20261008-01/metadata.json": "3e23f34275c8483350aac9bc07e0558d8c5af50bb7133635a64eb74813877342",
+      "runs/jev-extended-rgbgs-numeric-20261008-01/summary.json": "f722275c91b39639c5675101e02117261f6657348029fc05a81cedd16003413f",
+      "runs/jev-extended-rgbgs-numeric-20261008-01/steps.jsonl": "facd5f5c28a4389897aa0d9aae8dcab29a8cddabb0feb236ea05770964f09917",
+      "runs/jev-extended-rgbgs-numeric-20261008-02/metadata.json": "8cb7fc05e6ff7dcaa2a3d4f757db5afa99ffe33dcc238a70e3d48ed0c422da0d",
+      "runs/jev-extended-rgbgs-numeric-20261008-02/summary.json": "b53e72d2490ddd0f82fd9ea23d61bf6d81bbdb634ea0dc8563b9b703c7f2a164",
+      "runs/jev-extended-rgbgs-numeric-20261008-02/steps.jsonl": "28cded49b22f7f8d5a96703d39bce4e8d9b4c6c3fc8a9d00b912d9800948599d",
+      "runs/jev-extended-rgbgs-semantic-20261008-01/metadata.json": "c5c57328506baa9d65a13c1a9ded9e00de112f88e1879ab78f98debf1111d77a",
+      "runs/jev-extended-rgbgs-semantic-20261008-01/summary.json": "d63012cae545ac6d07d0571c46f392fc5294584c58c04974ee4de9e93402bdb6",
+      "runs/jev-extended-rgbgs-semantic-20261008-01/steps.jsonl": "22d3022590ed6f7f296290b8bdc5a6ad07d11a55a40cf4a6fafcf1c62bdc032d",
+      "runs/jev-extended-rgbgs-semantic-20261008-02/metadata.json": "1b6e78300a419f5ab492516aa3e96df373477f919685ab1216bdbaf94ba075aa",
+      "runs/jev-extended-rgbgs-semantic-20261008-02/summary.json": "1200d825f2fddac3a66db79f30ad027a6f9f7ff746085e93b29ec88169b36b89",
+      "runs/jev-extended-rgbgs-semantic-20261008-02/steps.jsonl": "f8daf50c06019dbb43b733d29a6261eaa23646ba1f9c58299b9198cd8d03c19c",
+      "runs/jev-extended-rgbgs-none-20261008-01/metadata.json": "fe51bba2320353b7398ba17e382ae7d6d0bb8afee71f7b5a2c3a2524d9d3232e",
+      "runs/jev-extended-rgbgs-none-20261008-01/summary.json": "e3e11fcf0df62928486f060e940f87d24cfb4b8d1d238060f4be303238154a5d",
+      "runs/jev-extended-rgbgs-none-20261008-01/steps.jsonl": "f54baf96a9da422659541a43aed5ccc71951dd5bdfcd36ec8c496c192698996a",
+      "runs/jev-extended-rgbgs-none-20261008-02/metadata.json": "5f80c5ce4c53b462bd7a4d3f36f72e48baaadaac0083cc1b310c4cb3c95ceca8",
+      "runs/jev-extended-rgbgs-none-20261008-02/summary.json": "69f586c3a654520372ba8f41c3970ac2c7f9e4a304abf4131aa30616340b3ace",
+      "runs/jev-extended-rgbgs-none-20261008-02/steps.jsonl": "47825175eec03fed367d9569add8e5f0818d64fbaf75fc18595820d6d6004788"
+    },
+    "source_files_unchanged": true,
+    "api_calls": 0,
+    "used_gpu": false
+  }
+}

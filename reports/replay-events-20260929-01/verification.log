@@ -1,0 +1,30 @@
+127.0.0.1 - - [29/Sep/2026 15:02:18] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [29/Sep/2026 15:02:18] "GET /navmap-frames-events/00003-rgb.png HTTP/1.1" 200 -
+127.0.0.1 - - [29/Sep/2026 15:02:18] "GET /navmap-frames-events/00006-rgb.png HTTP/1.1" 200 -
+127.0.0.1 - - [29/Sep/2026 15:02:18] "GET /navmap-frames/00003.png HTTP/1.1" 200 -
+127.0.0.1 - - [29/Sep/2026 15:02:18] "GET /media/rgb-depth.mp4 HTTP/1.1" 200 -
+{
+  "passed": true,
+  "runs": [
+    {
+      "run": "collision-check-20260928-01",
+      "frames": 8,
+      "collision_frames": 2,
+      "invalid_frames": 1,
+      "original_fields_and_sources_preserved": true
+    },
+    {
+      "run": "jev-challenge-turn-000-02",
+      "frames": 203,
+      "collision_frames": 20,
+      "invalid_frames": 28,
+      "original_fields_and_sources_preserved": true
+    }
+  ],
+  "terminal_event_alignment": true,
+  "no_future_events": true,
+  "html_video_panels_match": true,
+  "http_assets_checked": 5,
+  "protected_files": 21,
+  "original_browser_manual_test": false
+}

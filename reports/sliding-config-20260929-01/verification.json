@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "protected_files_checked": 61,
+  "protected_files_changed": [],
+  "asset_manifest_matches_historical_run": true,
+  "allow_sliding_recorded_correctly": true,
+  "prompt_and_action_set_unchanged": true,
+  "native_step_checks": 12,
+  "smoke_summary": {
+    "provider": "scripted_smoke",
+    "is_jev_evaluation": false,
+    "status": "early_stop",
+    "success": false,
+    "collision_free_success": false,
+    "steps": 9,
+    "collisions": 0,
+    "invalid_actions": 1,
+    "path_length_m": 0.2500002682209015,
+    "initial_geodesic_m": 4.196040153503418,
+    "final_geodesic_m": 3.9524292945861816,
+    "ever_within_goal_tolerance": false,
+    "reached_but_not_successful_stop": false,
+    "spl": 0.0,
+    "jev_request_latency": null,
+    "cycle_including_render_and_logging": {
+      "p50_s": 0.15079363621771336,
+      "p95_s": 0.2383772429078817
+    },
+    "elapsed_s": 2.465086178854108
+  },
+  "new_jev_evaluation_performed": false
+}

@@ -1,0 +1,42 @@
+{
+  "original_task_fields_changed": [
+    "yaw_deg"
+  ],
+  "source_yaw_deg": 112.70431037687769,
+  "aligned_yaw_deg": -90.39,
+  "initial_target_before": {
+    "forward_m": -0.652,
+    "left_m": 0.278,
+    "distance_m": 0.708,
+    "bearing_deg": 156.9,
+    "is_final": false
+  },
+  "initial_target_after": {
+    "forward_m": 0.708,
+    "left_m": -0.0,
+    "distance_m": 0.708,
+    "bearing_deg": -0.0,
+    "is_final": false
+  },
+  "mesh_loaded_yaw_deg": -90.3900016835671,
+  "scripted_first_action_outcome": {
+    "action": "move_forward",
+    "valid": true,
+    "success": true,
+    "collided": false,
+    "actual_translation_m": 0.25,
+    "actual_forward_m": 0.25,
+    "actual_left_m": -0.0,
+    "actual_yaw_deg": 0.0,
+    "actual_pitch_deg": 0.0,
+    "result": "executed"
+  },
+  "smoke_status": "early_stop",
+  "original_shortest_m": 9.797690391540527,
+  "reference_length_m": 11.710969541083603,
+  "all_original_challenge_tasks_align": 12,
+  "protected_files_unchanged": 113,
+  "source_and_generator_hashes_match": true,
+  "deterministic_regeneration_identical": true,
+  "api_calls": 0
+}

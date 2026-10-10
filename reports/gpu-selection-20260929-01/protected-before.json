@@ -1,0 +1,10 @@
+{
+  "config.json": "5b5c006a891208ae59b3897ed8f9fca552f6e7893b9f0f858545014715b7708b",
+  "jev.py": "25ee9cec0cfbb07f21204982283f278d25b3ef3cd0d2f48bb2e0f55adbd14b67",
+  "environment.py": "82be8831d058e8214b0b00715ea22b50b4b5e9fc6a43f68bdccfeb830e690ee4",
+  "run.py": "7828c7b64cd247ef5fd178b91083305a8a7b764a5863f1e5648dc1839114d409",
+  "runs/jev-challenge-turn-000-neutral-01/mesh.stage_config.json": "856ee42f803c9cb1917b80de3881d31723f1edd697b29b1aa9ce70e52c5e12b7",
+  "runs/jev-challenge-turn-000-neutral-01/navmap.png": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+  "runs/jev-challenge-turn-000-neutral-01/metadata.json": "c88784e8baead980a22c9c1f424556fef506c159d5c8b6f3f66fa6164557b459",
+  "runs/jev-challenge-turn-000-neutral-01/steps.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

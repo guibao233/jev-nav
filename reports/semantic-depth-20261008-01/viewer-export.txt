@@ -1,0 +1,4 @@
+[visualize] 已读取 5 幅观察，正在生成：/share/guiyuanze/code/habitat-gs/jev_nav/reports/semantic-depth-20261008-01/viewer-complex
+[visualize] 正在导出 MP4 / GIF / 静态总览（不调用 Jev）...
+{"output": "/share/guiyuanze/code/habitat-gs/jev_nav/reports/semantic-depth-20261008-01/viewer-complex/media", "observations": 5, "duration_s": 7.5, "verified": true}
+[visualize] 回放入口：/share/guiyuanze/code/habitat-gs/jev_nav/reports/semantic-depth-20261008-01/viewer-complex/index.html

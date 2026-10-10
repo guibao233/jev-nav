@@ -1,0 +1,847 @@
+{
+  "path_clearance": {
+    "definition": "extra clearance to NavMesh boundary; NavMesh already eroded for agent radius",
+    "sample_spacing_m": 0.05,
+    "count": 196,
+    "min_m": 0.0,
+    "median_m": 0.17566155642271042,
+    "fraction_below_0_10_m": 0.41836734693877553,
+    "fraction_below_0_20_m": 0.5306122448979592,
+    "vertex_clearance_m": [
+      0.5272865295410156,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.4104572832584381
+    ]
+  },
+  "runs": {
+    "01": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 33,
+        "invalid_actions": 0,
+        "path_length_m": 23.875981151961582,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 13.614176750183105,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 0.6294951420277357,
+          "p95_s": 1.4673125995323046
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 0.9184519676491618,
+          "p95_s": 1.795864134933799
+        },
+        "elapsed_s": 575.0992343388498
+      },
+      "max_recomputed_pose_error_m": 9.5367431640625e-07,
+      "max_recomputed_yaw_error_deg": 8.082811116095794e-06,
+      "non_navigable_after_positions": 0,
+      "first_collision_step_1based": 14,
+      "first_collision_full_route_offset_before_m": 3.2499968531922834,
+      "first_collision_full_route_offset_after_m": 3.492113213096544,
+      "progress_end_m": 0.0,
+      "collision_unknown_depth_count": 33,
+      "collision_without_collision_in_last5_count": 32,
+      "collision_steps_with_last5_all_turns": [
+        23,
+        30,
+        36,
+        42,
+        48,
+        72,
+        78,
+        95,
+        144,
+        187,
+        241,
+        247,
+        253,
+        259,
+        265,
+        271,
+        277,
+        283,
+        289,
+        295,
+        301,
+        307,
+        313,
+        319,
+        326,
+        354,
+        486
+      ],
+      "first_collision_extra_navmesh_clearance_m": 0.0,
+      "models": [
+        "typesafe/jev-1.13-20260917"
+      ],
+      "offline_navmesh_escape_probes": [
+        {
+          "step_1based": 14,
+          "position": [
+            -11.106483459472656,
+            -0.125,
+            -4.850424289703369
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.2444,
+          "extra_navmesh_clearance_m": 0.07330682128667831,
+          "backward_0_25m_query": {
+            "actual_m": 0.24999975793786794,
+            "endpoint_error_m": 2.502363690894138e-07
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [
+            -180,
+            -165,
+            -150,
+            -135,
+            -120,
+            -105,
+            -90,
+            -75,
+            -60,
+            -45,
+            -30,
+            -15,
+            120,
+            135,
+            150,
+            165,
+            180
+          ],
+          "nearest_escape_turn_abs_deg": 15,
+          "recent_actions": [
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        },
+        {
+          "step_1based": 247,
+          "position": [
+            -11.49555492401123,
+            -0.125,
+            -4.763156414031982
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.0,
+          "extra_navmesh_clearance_m": 0.0,
+          "backward_0_25m_query": {
+            "actual_m": 0.18690657300813684,
+            "endpoint_error_m": 0.0810297952710444
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [],
+          "nearest_escape_turn_abs_deg": null,
+          "recent_actions": [
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        }
+      ]
+    },
+    "02": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 500,
+        "collisions": 37,
+        "invalid_actions": 0,
+        "path_length_m": 7.970485147088766,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 9.62429428100586,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 0.6814072746783495,
+          "p95_s": 1.3798049259930847
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 0.9715834408998489,
+          "p95_s": 1.6616960427723821
+        },
+        "elapsed_s": 563.355363432318
+      },
+      "max_recomputed_pose_error_m": 4.76837158203125e-07,
+      "max_recomputed_yaw_error_deg": 8.082811116095794e-06,
+      "non_navigable_after_positions": 0,
+      "first_collision_step_1based": 14,
+      "first_collision_full_route_offset_before_m": 3.2499968531922834,
+      "first_collision_full_route_offset_after_m": 3.492113213096544,
+      "progress_end_m": 0.4654629487428905,
+      "collision_unknown_depth_count": 37,
+      "collision_without_collision_in_last5_count": 36,
+      "collision_steps_with_last5_all_turns": [
+        23,
+        30,
+        36,
+        42,
+        48,
+        74,
+        80,
+        86,
+        92,
+        104,
+        111,
+        117,
+        129,
+        141,
+        150,
+        167,
+        182,
+        197,
+        212,
+        221,
+        234,
+        247,
+        260,
+        277,
+        292,
+        309,
+        326,
+        343,
+        372,
+        401,
+        430,
+        459,
+        484
+      ],
+      "first_collision_extra_navmesh_clearance_m": 0.0,
+      "models": [
+        "typesafe/jev-1.13-20260917"
+      ],
+      "offline_navmesh_escape_probes": [
+        {
+          "step_1based": 14,
+          "position": [
+            -11.106483459472656,
+            -0.125,
+            -4.850424289703369
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.2444,
+          "extra_navmesh_clearance_m": 0.07330682128667831,
+          "backward_0_25m_query": {
+            "actual_m": 0.24999975793786794,
+            "endpoint_error_m": 2.502363690894138e-07
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [
+            -180,
+            -165,
+            -150,
+            -135,
+            -120,
+            -105,
+            -90,
+            -75,
+            -60,
+            -45,
+            -30,
+            -15,
+            120,
+            135,
+            150,
+            165,
+            180
+          ],
+          "nearest_escape_turn_abs_deg": 15,
+          "recent_actions": [
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        },
+        {
+          "step_1based": 150,
+          "position": [
+            -8.152807235717773,
+            -0.125,
+            -6.76194953918457
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.0,
+          "extra_navmesh_clearance_m": 0.0,
+          "backward_0_25m_query": {
+            "actual_m": 0.0,
+            "endpoint_error_m": 0.25000000000000033
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [],
+          "nearest_escape_turn_abs_deg": null,
+          "recent_actions": [
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": -0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": -0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": -0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        }
+      ]
+    },
+    "03": {
+      "summary": {
+        "provider": "jev",
+        "is_jev_evaluation": true,
+        "status": "action_budget",
+        "success": false,
+        "collision_free_success": false,
+        "steps": 250,
+        "collisions": 30,
+        "invalid_actions": 0,
+        "path_length_m": 4.973600014916883,
+        "initial_geodesic_m": 9.797690391540527,
+        "final_geodesic_m": 14.192851066589355,
+        "ever_within_goal_tolerance": false,
+        "reached_but_not_successful_stop": false,
+        "spl": 0.0,
+        "jev_request_latency": {
+          "p50_s": 0.6545720715075731,
+          "p95_s": 1.2427395884878922
+        },
+        "cycle_including_render_and_logging": {
+          "p50_s": 0.9757538763806224,
+          "p95_s": 1.5609642622061068
+        },
+        "elapsed_s": 307.74588988907635
+      },
+      "max_recomputed_pose_error_m": 1.066240299940009e-06,
+      "max_recomputed_yaw_error_deg": 8.082811116095794e-06,
+      "non_navigable_after_positions": 0,
+      "first_collision_step_1based": 14,
+      "first_collision_full_route_offset_before_m": 3.2499968531922834,
+      "first_collision_full_route_offset_after_m": 3.492113213096544,
+      "progress_end_m": 0.0,
+      "collision_unknown_depth_count": 30,
+      "collision_without_collision_in_last5_count": 28,
+      "collision_steps_with_last5_all_turns": [
+        46,
+        58,
+        70,
+        87,
+        93,
+        99,
+        105,
+        111,
+        117,
+        123,
+        129,
+        174,
+        180,
+        186,
+        192,
+        198,
+        204,
+        210,
+        216,
+        222,
+        228,
+        234,
+        240,
+        246
+      ],
+      "first_collision_extra_navmesh_clearance_m": 0.0,
+      "models": [
+        "typesafe/jev-1.13-20260917"
+      ],
+      "offline_navmesh_escape_probes": [
+        {
+          "step_1based": 14,
+          "position": [
+            -11.106483459472656,
+            -0.125,
+            -4.850424289703369
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.2444,
+          "extra_navmesh_clearance_m": 0.07330682128667831,
+          "backward_0_25m_query": {
+            "actual_m": 0.24999975793786794,
+            "endpoint_error_m": 2.502363690894138e-07
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [
+            -180,
+            -165,
+            -150,
+            -135,
+            -120,
+            -105,
+            -90,
+            -75,
+            -60,
+            -45,
+            -30,
+            -15,
+            120,
+            135,
+            150,
+            165,
+            180
+          ],
+          "nearest_escape_turn_abs_deg": 15,
+          "recent_actions": [
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "move_forward",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.25,
+              "actual_forward_m": 0.25,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 0.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        },
+        {
+          "step_1based": 174,
+          "position": [
+            -12.295798301696777,
+            -0.125,
+            -4.529821872711182
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.0,
+          "extra_navmesh_clearance_m": 0.0,
+          "backward_0_25m_query": {
+            "actual_m": 0.24167341953503893,
+            "endpoint_error_m": 0.06398552197754416
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [],
+          "nearest_escape_turn_abs_deg": null,
+          "recent_actions": [
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": 0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        },
+        {
+          "step_1based": 240,
+          "position": [
+            -12.295798301696777,
+            -0.125,
+            -4.529821872711182
+          ],
+          "logged_action": "move_forward",
+          "logged_moved_m": 0.0,
+          "extra_navmesh_clearance_m": 0.0,
+          "backward_0_25m_query": {
+            "actual_m": 0.12564411205129705,
+            "endpoint_error_m": 0.21613321936150154
+          },
+          "forward_0_25m_full_step_possible_yaw_offsets_deg": [],
+          "nearest_escape_turn_abs_deg": null,
+          "recent_actions": [
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_left",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": 15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            },
+            {
+              "action": "turn_right",
+              "valid": true,
+              "success": true,
+              "collided": false,
+              "actual_translation_m": 0.0,
+              "actual_forward_m": 0.0,
+              "actual_left_m": -0.0,
+              "actual_yaw_deg": -15.0,
+              "actual_pitch_deg": 0.0,
+              "result": "executed"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,459 @@
+{
+  "included": [
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "numeric",
+      "run": "jev-challenge-turn-000-clearance-aligned-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "none",
+      "run": "jev-challenge-turn-000-clearance-aligned-no-depth-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "numeric",
+      "run": "jev-complex-numeric-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "none",
+      "run": "jev-complex-rgbgs-none-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "numeric",
+      "run": "jev-complex-rgbgs-numeric-20261008-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "semantic",
+      "run": "jev-complex-rgbgs-semantic-20261008-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "complex",
+      "input": "semantic",
+      "run": "jev-complex-semantic-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "none",
+      "run": "jev-extended-rgbgs-none-20261008-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "none",
+      "run": "jev-extended-rgbgs-none-20261008-02",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "numeric",
+      "run": "jev-extended-rgbgs-numeric-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "numeric",
+      "run": "jev-extended-rgbgs-numeric-20261008-02",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "semantic",
+      "run": "jev-extended-rgbgs-semantic-20261008-01",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "extended",
+      "input": "semantic",
+      "run": "jev-extended-rgbgs-semantic-20261008-02",
+      "success": false
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "numeric",
+      "run": "jev-simple-numeric-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "none",
+      "run": "jev-simple-rgbgs-none-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "none",
+      "run": "jev-simple-rgbgs-none-20261008-02",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "numeric",
+      "run": "jev-simple-rgbgs-numeric-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "semantic",
+      "run": "jev-simple-rgbgs-semantic-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "jev",
+      "route": "simple",
+      "input": "semantic",
+      "run": "jev-simple-semantic-20261008-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "none",
+      "run": "openai-decisions-complex-rgbgs-none-20261009-01",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "none",
+      "run": "openai-decisions-complex-rgbgs-none-20261009-02",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "numeric",
+      "run": "openai-decisions-complex-rgbgs-numeric-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "numeric",
+      "run": "openai-decisions-complex-rgbgs-numeric-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "semantic",
+      "run": "openai-decisions-complex-rgbgs-semantic-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "complex",
+      "input": "semantic",
+      "run": "openai-decisions-complex-rgbgs-semantic-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "none",
+      "run": "openai-decisions-extended-rgbgs-none-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "none",
+      "run": "openai-decisions-extended-rgbgs-none-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "numeric",
+      "run": "openai-decisions-extended-rgbgs-numeric-20261009-01",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "numeric",
+      "run": "openai-decisions-extended-rgbgs-numeric-20261009-02",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "semantic",
+      "run": "openai-decisions-extended-rgbgs-semantic-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "extended",
+      "input": "semantic",
+      "run": "openai-decisions-extended-rgbgs-semantic-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-none-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-numeric-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "complex",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-complex-rgbgs-semantic-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-none-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-none-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-numeric-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "extended",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-extended-rgbgs-semantic-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-none-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "none",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-none-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "numeric",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-numeric-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-semantic-20261009-01",
+      "success": true
+    },
+    {
+      "scheme": "openai_rgb",
+      "route": "simple",
+      "input": "semantic",
+      "run": "openai-decisions-rgbtarget-simple-rgbgs-semantic-20261009-02",
+      "success": true
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "none",
+      "run": "openai-decisions-simple-rgbgs-none-20261009-01",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "none",
+      "run": "openai-decisions-simple-rgbgs-none-20261009-02",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "numeric",
+      "run": "openai-decisions-simple-rgbgs-numeric-20261009-01",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "numeric",
+      "run": "openai-decisions-simple-rgbgs-numeric-20261009-02",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "semantic",
+      "run": "openai-decisions-simple-rgbgs-semantic-20261009-01",
+      "success": false
+    },
+    {
+      "scheme": "openai_text",
+      "route": "simple",
+      "input": "semantic",
+      "run": "openai-decisions-simple-rgbgs-semantic-20261009-02",
+      "success": false
+    }
+  ],
+  "excluded": [
+    {
+      "run": "jev-challenge-turn-000-01",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-02",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-backward-01",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-clearance-01",
+      "reason": "different_task_pose_or_path"
+    },
+    {
+      "run": "jev-challenge-turn-000-clearance-02",
+      "reason": "different_task_pose_or_path"
+    },
+    {
+      "run": "jev-challenge-turn-000-neutral-02",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-reassociate-motion-01",
+      "reason": "different_task_pose_or_path"
+    },
+    {
+      "run": "jev-challenge-turn-000-six-actions-01",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-six-actions-02",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-six-actions-03",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-challenge-turn-000-sliding-01",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-first-5steps-01",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-first-5steps-02",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-first-5steps-03",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-first-5steps-05",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "jev-first-5steps-06",
+      "reason": "different_policy_generation"
+    },
+    {
+      "run": "openai-decisions-rgbtarget-connectivity-20261009-01",
+      "reason": "different_budget"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "runs": 55,
+  "conditions": 27,
+  "actions_recomputed_by_audit": 10160,
+  "representative_trajectories": 27,
+  "plotted_observations": 4812,
+  "source_hashes_checked": 197,
+  "prior_source_hashes_checked": 3455,
+  "report_links_checked": 110,
+  "identical_openai_pairs_verified": 18,
+  "visual_marker_projection_counts": {
+    "outside_frame": 2062,
+    "behind_camera": 796,
+    "in_frame": 406,
+    "camera_plane": 16
+  },
+  "png_dimensions": {
+    "trajectories.png": [
+      3420,
+      3420
+    ],
+    "trajectories-simple.png": [
+      3230,
+      3800
+    ],
+    "trajectories-complex.png": [
+      3230,
+      3800
+    ],
+    "trajectories-extended.png": [
+      3230,
+      3800
+    ]
+  },
+  "visual_inspection": "All four figures inspected; dedicated panels have no label overlaps.",
+  "source_runs_modified": false,
+  "api_calls": 0,
+  "gpu_used": false
+}

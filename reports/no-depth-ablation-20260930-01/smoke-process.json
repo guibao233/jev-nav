@@ -1,0 +1,61 @@
+[
+  {
+    "mode": "mesh",
+    "command": [
+      "/data/guiyuanze/miniconda3/envs/habitat-gs/bin/python",
+      "-B",
+      "run.py",
+      "--config",
+      "config.single-gpu.json",
+      "smoke",
+      "--tasks",
+      "tasks/challenge-clearance-aligned-20260930-01/tasks.json",
+      "--episode",
+      "turn-000",
+      "--out",
+      "runs/smoke-depth-ablation-mesh-20260930-01",
+      "--rgb",
+      "mesh",
+      "--max-steps",
+      "6",
+      "--depth-input",
+      "mesh",
+      "--actions",
+      "move_forward,look_down,turn_left,move_forward,move_backward,stop"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 6.825153112411499,
+    "cuda_visible_devices": "7",
+    "api_keys_removed": true
+  },
+  {
+    "mode": "none",
+    "command": [
+      "/data/guiyuanze/miniconda3/envs/habitat-gs/bin/python",
+      "-B",
+      "-c",
+      "import run\nfrom unittest.mock import patch\nwith patch('run.depth_facts', side_effect=AssertionError('depth facts must not be computed in ablation')) as facts:\n    result=run.main()\n    facts.assert_not_called()\nraise SystemExit(result)",
+      "--config",
+      "config.single-gpu.json",
+      "smoke",
+      "--tasks",
+      "tasks/challenge-clearance-aligned-20260930-01/tasks.json",
+      "--episode",
+      "turn-000",
+      "--out",
+      "runs/smoke-depth-ablation-none-20260930-01",
+      "--rgb",
+      "mesh",
+      "--max-steps",
+      "6",
+      "--depth-input",
+      "none",
+      "--actions",
+      "move_forward,look_down,turn_left,move_forward,move_backward,stop"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 6.576995611190796,
+    "cuda_visible_devices": "7",
+    "api_keys_removed": true
+  }
+]

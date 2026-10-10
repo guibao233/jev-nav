@@ -1,0 +1,21 @@
+{
+  "smoke": {
+    "smoke-semantic-simple-semantic-20261008-01": {
+      "requests": 4,
+      "raw_depth_recomputed_equal": true,
+      "numeric_depth_absent_from_request": true
+    },
+    "smoke-semantic-complex-semantic-20261008-01": {
+      "requests": 4,
+      "raw_depth_recomputed_equal": true,
+      "numeric_depth_absent_from_request": true
+    }
+  },
+  "simple_paired_motion_and_other_state_equal": true,
+  "protected_files_unchanged": 133,
+  "viewer_requests_equal": true,
+  "javascript_syntax_checked": true,
+  "video_frames": 225,
+  "video_seconds": 7.5,
+  "api_calls": 0
+}

@@ -1,0 +1,4 @@
+[visualize] 已读取 5 幅观察，正在生成：/tmp/jev-nav-rgb-target-20261009/smoke-rgb-target-verified/visualizations/portable
+[visualize] 正在导出 MP4 / GIF / 静态总览（不调用模型）...
+{"output": "/tmp/jev-nav-rgb-target-20261009/smoke-rgb-target-verified/visualizations/portable/media", "observations": 5, "duration_s": 7.5, "verified": true}
+[visualize] 回放入口：/tmp/jev-nav-rgb-target-20261009/smoke-rgb-target-verified/visualizations/portable/index.html

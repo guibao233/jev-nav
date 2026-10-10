@@ -1,0 +1,9 @@
+{
+  "config_only_difference": "gpu_id: 2 -> 0",
+  "rgb_frames_verified": 2,
+  "depth_frames_verified": 2,
+  "protected_files_unchanged": 8,
+  "exit_code": 0,
+  "api_calls": 0,
+  "navigation_evaluation": false
+}

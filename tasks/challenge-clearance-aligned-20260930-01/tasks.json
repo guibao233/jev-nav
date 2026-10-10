@@ -1,0 +1,328 @@
+{
+  "schema": 1,
+  "seed": 20260930,
+  "sampling_attempts": 159,
+  "sampling_policy": "first qualifying unique pairs per tier; random initial yaw; no model-based selection",
+  "category_definition": "original polyline X/Z bends >=30 deg plus geodesic length and detour ratio",
+  "tiers": {
+    "control": {
+      "label": "长直线对照",
+      "min_m": 6.0,
+      "max_m": 10.0,
+      "min_turns": 0,
+      "max_turns": 0,
+      "min_ratio": 1.0,
+      "max_ratio": 1.02
+    },
+    "turn": {
+      "label": "中距离转弯",
+      "min_m": 6.0,
+      "max_m": 10.0,
+      "min_turns": 1,
+      "max_turns": 2,
+      "min_ratio": 1.1
+    },
+    "long": {
+      "label": "长距离多转弯",
+      "min_m": 10.0,
+      "max_m": 15.0,
+      "min_turns": 2,
+      "min_ratio": 1.15
+    },
+    "extended": {
+      "label": "更长绕行",
+      "min_m": 15.0,
+      "max_m": 20.0,
+      "min_turns": 3,
+      "min_ratio": 1.2
+    }
+  },
+  "per_tier": 3,
+  "suggested_max_steps": 500,
+  "budget_note": "run.py does not read suggested_max_steps; pass --max-steps 500 explicitly",
+  "scene_dir": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+  "agent_radius_m": 0.10000000149011612,
+  "agent_height_m": 1.5,
+  "config_at_generation": {
+    "scene_dir": "/share/guiyuanze/code/habitat-gs/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan",
+    "gpu_id": 2,
+    "resolution": [
+      480,
+      640
+    ],
+    "hfov_deg": 90,
+    "camera_height_m": 1.5,
+    "near_m": 0.05,
+    "far_m": 20.0,
+    "move_m": 0.25,
+    "turn_deg": 15,
+    "pitch_deg": 15,
+    "pitch_min_deg": -30,
+    "pitch_max_deg": 45,
+    "preview_m": 3.0,
+    "sample_spacing_m": 0.5,
+    "target_lookahead_m": 0.75,
+    "success_m": 0.3,
+    "max_steps": 100,
+    "history_steps": 5,
+    "sectors": 9,
+    "obstacle_min_height_m": 0.08,
+    "geometry_margin_m": 0.03,
+    "task_min_m": 2.0,
+    "task_max_m": 5.0,
+    "model": "typesafe/jev-1.13",
+    "api_timeout_s": 15,
+    "api_retries": 2,
+    "agent_radius_m": 0.10000000149011612,
+    "agent_height_m": 1.5
+  },
+  "assets": {
+    "shuyuan.navmesh": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.navmesh",
+      "bytes": 129388,
+      "mtime_ns": 1788163942085373455,
+      "sha256": "4c21f2de21173be05e19bb592f967393ac95baabc20f303ad27cda9249294c49"
+    },
+    "shuyuan.mesh.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.mesh.ply",
+      "bytes": 93062608,
+      "mtime_ns": 1788163075561382114
+    },
+    "shuyuan.gs.ply": {
+      "path": "/share/datasets/zhanglidan/work/vln_proj/habitat-gs-eval/habitat-gs/data/scene_datasets/gs_scenes/train/shuyuan/shuyuan.gs.ply",
+      "bytes": 996739998,
+      "mtime_ns": 1788833822105634981
+    }
+  },
+  "generator_sha256": "e269ced3c052bac904659b782776a4a43eac92e15d3b8d72c28fde9de92b7cc9",
+  "tasks": [
+    {
+      "id": "turn-000",
+      "category": "turn",
+      "start": [
+        -8.108331680297852,
+        -0.125,
+        -6.104842662811279
+      ],
+      "goal": [
+        -11.263331413269043,
+        -0.125,
+        -12.287206649780273
+      ],
+      "yaw_deg": -90.39,
+      "pitch_deg": 0,
+      "geodesic_m": 9.797690391540527,
+      "path": [
+        [
+          -8.108331680297852,
+          -0.125,
+          -6.104842662811279
+        ],
+        [
+          -7.4,
+          -0.125,
+          -6.1
+        ],
+        [
+          -6.7,
+          -0.125,
+          -6.8
+        ],
+        [
+          -7.300000000000001,
+          -0.125,
+          -12.3
+        ],
+        [
+          -8.0,
+          -0.125,
+          -13.0
+        ],
+        [
+          -9.8,
+          -0.125,
+          -13.0
+        ],
+        [
+          -10.9,
+          -0.125,
+          -12.7
+        ],
+        [
+          -11.263331413269043,
+          -0.125,
+          -12.287206649780273
+        ]
+      ],
+      "geodesic_to_euclidean_ratio": 1.411594410671588,
+      "geometry": {
+        "euclidean_m": 6.940867941577584,
+        "geodesic_to_euclidean_ratio": 1.411594410671588,
+        "significant_turns": 2,
+        "turn_threshold_deg": 30.0,
+        "turn_angles_deg": [
+          34.81793554702885,
+          10.738726199300471,
+          1.218926720653559,
+          7.7749158915172485,
+          27.20888810280177,
+          49.3986282142086,
+          3.557770384744309
+        ],
+        "total_abs_turn_deg": 134.71579106025482,
+        "path_vertices": 9,
+        "path_height_span_m": 0.0
+      },
+      "endpoint_extra_navmesh_clearance_m_capped_at_0_25": [
+        0.25,
+        0.25
+      ],
+      "shortest_path": [
+        [
+          -8.108331680297852,
+          -0.125,
+          -6.104842662811279
+        ],
+        [
+          -7.402807235717773,
+          -0.125,
+          -6.911949157714844
+        ],
+        [
+          -7.352807998657227,
+          -0.125,
+          -7.361949920654297
+        ],
+        [
+          -7.402807235717773,
+          -0.125,
+          -8.01194953918457
+        ],
+        [
+          -7.70280647277832,
+          -0.125,
+          -11.061948776245117
+        ],
+        [
+          -7.95280647277832,
+          -0.125,
+          -12.111949920654297
+        ],
+        [
+          -8.2528076171875,
+          -0.125,
+          -12.461950302124023
+        ],
+        [
+          -8.45280647277832,
+          -0.125,
+          -12.461950302124023
+        ],
+        [
+          -11.263331413269043,
+          -0.125,
+          -12.287206649780273
+        ]
+      ],
+      "reference_path_kind": "clearance_weighted",
+      "reference_planner": {
+        "version": "clearance_grid_v1",
+        "grid_m": 0.1,
+        "clearance_scale_m": 0.2,
+        "weight": 4.0,
+        "padding_m": 2.0,
+        "height_span_limit_m": 0.02,
+        "edge_validation_spacing_m": 0.05,
+        "clearance_query_cap_m": 2.0,
+        "cost": "integral(1 + weight * exp(-extra_navmesh_clearance / clearance_scale_m)) ds",
+        "clearance_is_soft_preference": true,
+        "search": {
+          "grid_shape": [
+            81,
+            105
+          ],
+          "navigable_grid_points": 4648,
+          "expanded_nodes": 3273,
+          "raw_vertices": 110,
+          "reference_vertices": 8,
+          "raw_grid_weighted_cost": 13.983623775512486,
+          "reference_weighted_cost": 13.932465691346257
+        }
+      },
+      "reference_statistics": {
+        "original_shortest": {
+          "length_m": 9.797690150339527,
+          "vertices": 9,
+          "sample_spacing_m": 0.025,
+          "samples": 393,
+          "clearance_query_cap_m": 2.0,
+          "extra_navmesh_clearance_min_m": 0.0,
+          "extra_navmesh_clearance_p10_m": 0.006598780397325756,
+          "extra_navmesh_clearance_median_m": 0.17694056034088135,
+          "fraction_below_0_10_m": 0.4223918575063613,
+          "fraction_below_0_20_m": 0.5292620865139949
+        },
+        "clearance_weighted": {
+          "length_m": 11.710969541083603,
+          "vertices": 8,
+          "sample_spacing_m": 0.025,
+          "samples": 470,
+          "clearance_query_cap_m": 2.0,
+          "extra_navmesh_clearance_min_m": 0.4104572832584381,
+          "extra_navmesh_clearance_p10_m": 0.539580225944519,
+          "extra_navmesh_clearance_median_m": 0.5986602306365967,
+          "fraction_below_0_10_m": 0.0,
+          "fraction_below_0_20_m": 0.0
+        }
+      },
+      "reference_path_length_m": 11.710969541083603,
+      "initial_heading": {
+        "policy": "face_first_local_target_v1",
+        "source_yaw_deg": 112.70431037687769,
+        "aligned_yaw_deg": -90.39,
+        "target_before": {
+          "forward_m": -0.652,
+          "left_m": 0.278,
+          "distance_m": 0.708,
+          "bearing_deg": 156.9,
+          "is_final": false
+        },
+        "target_after": {
+          "forward_m": 0.708,
+          "left_m": -0.0,
+          "distance_m": 0.708,
+          "bearing_deg": -0.0,
+          "is_final": false
+        },
+        "selection_config": {
+          "move_m": 0.25,
+          "preview_m": 3.0,
+          "sample_spacing_m": 0.5,
+          "target_lookahead_m": 0.75
+        },
+        "bearing_resolution_deg": 0.01,
+        "scope": "initial horizontal heading only; pitch and runtime target selection unchanged"
+      }
+    }
+  ],
+  "reference_path_kind": "clearance_weighted",
+  "reference_planner_version": "clearance_grid_v1",
+  "evaluation_baseline": "geodesic_m and shortest_path remain the original NavMesh shortest path; path is the supplied reference",
+  "source_tasks": {
+    "path": "/share/guiyuanze/code/habitat-gs/jev_nav/tasks/challenge-v1-20260928/tasks.json",
+    "sha256": "0742ca0a5a7ee501ae81e7dd2f2fae0a113becb46e500728e3159a428430de1c"
+  },
+  "reference_generator_sha256": {
+    "clearance.py": "a6a01efb42352883282e35c5708088e0e90a3cd11451fbf186c6ebd911f73b93",
+    "prepare_clearance.py": "0113cff13556bd03379034ffd1e229343f9eb5deacf910f364410dc3100a4794"
+  },
+  "initial_heading_policy": "face_first_local_target_v1",
+  "initial_heading_source_tasks": {
+    "path": "/share/guiyuanze/code/habitat-gs/jev_nav/tasks/challenge-clearance-20260929-01/tasks.json",
+    "sha256": "1542372c34bd4f497b3a75c43beb1750ff6db56af5977c6f4b0a8b37803b12a7"
+  },
+  "initial_heading_generator_sha256": {
+    "prepare_initial_heading.py": "36d62724ab4d67ac24bd8641659849fd651160bdffb3680fb1f9dacb12c8bbaa",
+    "core.py": "4a04aed1238c2d674d348475bd2608b608c2641f940d40f3e91b3a05f8ee5fd1"
+  }
+}
