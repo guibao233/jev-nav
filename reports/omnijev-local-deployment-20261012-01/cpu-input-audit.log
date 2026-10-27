@@ -1,0 +1,30 @@
+/data/guiyuanze/share/guiyuanze/code/habitat-gs/jev_nav/local_models/omnijev-4b/env/lib/python3.12/site-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+{"route": "simple", "mode": "numeric", "step": 0, "input_tokens_packed_sequence": 2513, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "numeric", "step": 39, "input_tokens_packed_sequence": 2647, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "numeric", "step": 5, "input_tokens_packed_sequence": 2938, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "semantic", "step": 0, "input_tokens_packed_sequence": 2666, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "semantic", "step": 66, "input_tokens_packed_sequence": 2799, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "semantic", "step": 25, "input_tokens_packed_sequence": 3095, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "none", "step": 0, "input_tokens_packed_sequence": 1852, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "none", "step": 39, "input_tokens_packed_sequence": 1994, "image_grid_thw": [[1, 30, 40]]}
+{"route": "simple", "mode": "none", "step": 5, "input_tokens_packed_sequence": 2289, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "numeric", "step": 0, "input_tokens_packed_sequence": 2605, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "numeric", "step": 165, "input_tokens_packed_sequence": 2672, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "numeric", "step": 100, "input_tokens_packed_sequence": 3139, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "semantic", "step": 0, "input_tokens_packed_sequence": 2728, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "semantic", "step": 93, "input_tokens_packed_sequence": 2799, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "semantic", "step": 66, "input_tokens_packed_sequence": 3222, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "none", "step": 0, "input_tokens_packed_sequence": 1943, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "none", "step": 157, "input_tokens_packed_sequence": 1999, "image_grid_thw": [[1, 30, 40]]}
+{"route": "complex", "mode": "none", "step": 115, "input_tokens_packed_sequence": 2388, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "numeric", "step": 0, "input_tokens_packed_sequence": 2587, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "numeric", "step": 333, "input_tokens_packed_sequence": 2672, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "numeric", "step": 57, "input_tokens_packed_sequence": 3176, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "semantic", "step": 0, "input_tokens_packed_sequence": 2717, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "semantic", "step": 312, "input_tokens_packed_sequence": 2794, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "semantic", "step": 34, "input_tokens_packed_sequence": 3304, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "none", "step": 0, "input_tokens_packed_sequence": 1929, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "none", "step": 427, "input_tokens_packed_sequence": 2000, "image_grid_thw": [[1, 30, 40]]}
+{"route": "extended", "mode": "none", "step": 7, "input_tokens_packed_sequence": 2511, "image_grid_thw": [[1, 30, 40]]}
+PASS 27 real archived RGB+state inputs; no model forward

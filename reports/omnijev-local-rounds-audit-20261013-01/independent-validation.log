@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "independent_raw_metric_runs": 18,
+  "independent_wire_and_native_question_checks": 5100,
+  "global_actions": {
+    "move_forward": 2576,
+    "move_backward": 872,
+    "turn_left": 858,
+    "turn_right": 788,
+    "look_down": 6
+  },
+  "global_markers": {
+    "offscreen_arrow": 4046,
+    "projected_point": 1054
+  },
+  "global_projections": {
+    "outside_frame": 1280,
+    "behind_camera": 2766,
+    "in_frame": 1054
+  },
+  "total_collisions": 1530,
+  "total_invalid_actions": 0,
+  "total_path_length_m": 604.5170669367467,
+  "GPU_used": false,
+  "API_calls": 0
+}

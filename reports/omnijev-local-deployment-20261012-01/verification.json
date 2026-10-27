@@ -1,0 +1,20 @@
+{
+  "code_installed": true,
+  "tests_passed": 135,
+  "test_log": "user-weights-tests.log",
+  "legacy_request_parity_cases": 15,
+  "archived_processor_inputs": 27,
+  "max_packed_sequence_tokens": 3304,
+  "historical_files_unchanged": 355,
+  "weights_verified": true,
+  "weights_status": "passed_official_revision_hash_verification",
+  "gpu_model_forward_executed": false,
+  "simulator_smoke_executed": false,
+  "new_scored_navigation_runs": 0,
+  "pending": "User will run allocated-GPU service, one-image probe and five-step GS navigation before full ablations.",
+  "weights_files_verified": 23,
+  "weight_structure_verified": true,
+  "weight_structure_report": "user-weight-structure.json",
+  "offline_preflight_passed": true,
+  "gpu_validation_owner": "user"
+}

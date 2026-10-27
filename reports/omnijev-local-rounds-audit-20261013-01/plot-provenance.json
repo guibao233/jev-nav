@@ -1,0 +1,494 @@
+{
+  "representatives": {
+    "omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-01": {
+      "positions": 101,
+      "position_sha256": "46c868bbcfa4c52bf5409f4feea90607870ce5cfb165ccb3d66922c61fb2acbf",
+      "map_source": "runs/omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -3.205312490463257,
+          -0.125,
+          -21.250774383544922
+        ],
+        [
+          -3.084859848022461,
+          -0.125,
+          -25.445085525512695
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-simple-rgbgs-semantic-local-round-01": {
+      "positions": 101,
+      "position_sha256": "785b17741eac42e8f2875450a21889617961eb90677185297be9e51f1e44ec78",
+      "map_source": "runs/omnijev-local-rgbtarget-simple-rgbgs-semantic-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -3.205312490463257,
+          -0.125,
+          -21.250774383544922
+        ],
+        [
+          -3.084859848022461,
+          -0.125,
+          -25.445085525512695
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-simple-rgbgs-none-local-round-01": {
+      "positions": 101,
+      "position_sha256": "d8880227afdce5a69024c39f96d88fb719595d3c61ac9b81a8b3ddf85f5e3b18",
+      "map_source": "runs/omnijev-local-rgbtarget-simple-rgbgs-none-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -3.205312490463257,
+          -0.125,
+          -21.250774383544922
+        ],
+        [
+          -3.084859848022461,
+          -0.125,
+          -25.445085525512695
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-complex-rgbgs-numeric-local-round-01": {
+      "positions": 251,
+      "position_sha256": "2fdfcda18872a7c8e89744cf9cd9060c5886dc9af40ac5ae70c53ee7e9302ccd",
+      "map_source": "runs/omnijev-local-rgbtarget-complex-rgbgs-numeric-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -8.108331680297852,
+          -0.125,
+          -6.104842662811279
+        ],
+        [
+          -7.4,
+          -0.125,
+          -6.1
+        ],
+        [
+          -6.7,
+          -0.125,
+          -6.8
+        ],
+        [
+          -7.300000000000001,
+          -0.125,
+          -12.3
+        ],
+        [
+          -8.0,
+          -0.125,
+          -13.0
+        ],
+        [
+          -9.8,
+          -0.125,
+          -13.0
+        ],
+        [
+          -10.9,
+          -0.125,
+          -12.7
+        ],
+        [
+          -11.263331413269043,
+          -0.125,
+          -12.287206649780273
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-complex-rgbgs-semantic-local-round-01": {
+      "positions": 251,
+      "position_sha256": "eb929ebb20a65bba371b3bccdbfdb5dd24fd0337d1f3430d3ba92b6ffe796be4",
+      "map_source": "runs/omnijev-local-rgbtarget-complex-rgbgs-semantic-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -8.108331680297852,
+          -0.125,
+          -6.104842662811279
+        ],
+        [
+          -7.4,
+          -0.125,
+          -6.1
+        ],
+        [
+          -6.7,
+          -0.125,
+          -6.8
+        ],
+        [
+          -7.300000000000001,
+          -0.125,
+          -12.3
+        ],
+        [
+          -8.0,
+          -0.125,
+          -13.0
+        ],
+        [
+          -9.8,
+          -0.125,
+          -13.0
+        ],
+        [
+          -10.9,
+          -0.125,
+          -12.7
+        ],
+        [
+          -11.263331413269043,
+          -0.125,
+          -12.287206649780273
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-complex-rgbgs-none-local-round-01": {
+      "positions": 251,
+      "position_sha256": "60c102badec394443f42fa9e62845465c5fe430e773ba0de71870e2226971ad9",
+      "map_source": "runs/omnijev-local-rgbtarget-complex-rgbgs-none-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          -8.108331680297852,
+          -0.125,
+          -6.104842662811279
+        ],
+        [
+          -7.4,
+          -0.125,
+          -6.1
+        ],
+        [
+          -6.7,
+          -0.125,
+          -6.8
+        ],
+        [
+          -7.300000000000001,
+          -0.125,
+          -12.3
+        ],
+        [
+          -8.0,
+          -0.125,
+          -13.0
+        ],
+        [
+          -9.8,
+          -0.125,
+          -13.0
+        ],
+        [
+          -10.9,
+          -0.125,
+          -12.7
+        ],
+        [
+          -11.263331413269043,
+          -0.125,
+          -12.287206649780273
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-extended-rgbgs-numeric-local-round-01": {
+      "positions": 501,
+      "position_sha256": "4e52caa5289c853f23353fc8797e50e9dd23e6331e859e4d4e7aaae8ef5dd286",
+      "map_source": "runs/omnijev-local-rgbtarget-extended-rgbgs-numeric-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          4.764145374298096,
+          -0.125,
+          8.730498313903809
+        ],
+        [
+          6.100000000000001,
+          -0.125,
+          8.600000000000001
+        ],
+        [
+          6.600000000000001,
+          -0.125,
+          9.100000000000001
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          10.8
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          11.100000000000001
+        ],
+        [
+          6.200000000000001,
+          -0.125,
+          11.600000000000001
+        ],
+        [
+          4.5,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          1.8000000000000007,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          0.6000000000000005,
+          -0.125,
+          10.500000000000002
+        ],
+        [
+          0.0,
+          -0.125,
+          4.7
+        ],
+        [
+          -0.09999999999999964,
+          -0.125,
+          4.3
+        ],
+        [
+          -0.5999999999999996,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.1999999999999997,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.4024908542633057,
+          -0.125,
+          3.816352605819702
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-extended-rgbgs-semantic-local-round-01": {
+      "positions": 501,
+      "position_sha256": "6ca16f1e7424a74665f867d10eacb152324d9a4d061544e2b151c399b8356f21",
+      "map_source": "runs/omnijev-local-rgbtarget-extended-rgbgs-semantic-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          4.764145374298096,
+          -0.125,
+          8.730498313903809
+        ],
+        [
+          6.100000000000001,
+          -0.125,
+          8.600000000000001
+        ],
+        [
+          6.600000000000001,
+          -0.125,
+          9.100000000000001
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          10.8
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          11.100000000000001
+        ],
+        [
+          6.200000000000001,
+          -0.125,
+          11.600000000000001
+        ],
+        [
+          4.5,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          1.8000000000000007,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          0.6000000000000005,
+          -0.125,
+          10.500000000000002
+        ],
+        [
+          0.0,
+          -0.125,
+          4.7
+        ],
+        [
+          -0.09999999999999964,
+          -0.125,
+          4.3
+        ],
+        [
+          -0.5999999999999996,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.1999999999999997,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.4024908542633057,
+          -0.125,
+          3.816352605819702
+        ]
+      ]
+    },
+    "omnijev-local-rgbtarget-extended-rgbgs-none-local-round-01": {
+      "positions": 501,
+      "position_sha256": "d331a204527c0ed9c5b261bc785f1bbcffdb211ce31a488745e92e7fd4a7cabb",
+      "map_source": "runs/omnijev-local-rgbtarget-extended-rgbgs-none-local-round-01/navmap.png",
+      "map_sha256": "d6e43c41423fa246d00cc5c7163c52bbdb87bfd02fb29f8c34e72bd110356ef4",
+      "reference_path": [
+        [
+          4.764145374298096,
+          -0.125,
+          8.730498313903809
+        ],
+        [
+          6.100000000000001,
+          -0.125,
+          8.600000000000001
+        ],
+        [
+          6.600000000000001,
+          -0.125,
+          9.100000000000001
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          10.8
+        ],
+        [
+          6.700000000000001,
+          -0.125,
+          11.100000000000001
+        ],
+        [
+          6.200000000000001,
+          -0.125,
+          11.600000000000001
+        ],
+        [
+          4.5,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          1.8000000000000007,
+          -0.125,
+          11.700000000000001
+        ],
+        [
+          0.6000000000000005,
+          -0.125,
+          10.500000000000002
+        ],
+        [
+          0.0,
+          -0.125,
+          4.7
+        ],
+        [
+          -0.09999999999999964,
+          -0.125,
+          4.3
+        ],
+        [
+          -0.5999999999999996,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.1999999999999997,
+          -0.125,
+          3.8
+        ],
+        [
+          -2.4024908542633057,
+          -0.125,
+          3.816352605819702
+        ]
+      ]
+    }
+  },
+  "bounds_by_route": {
+    "simple": [
+      [
+        -4.9028064727783205,
+        -29.91194839477539
+      ],
+      [
+        -2.3848598480224608,
+        -20.550774383544923
+      ]
+    ],
+    "complex": [
+      [
+        -14.417622756958007,
+        -13.7
+      ],
+      [
+        -1.9028079986572266,
+        -5.231490421295166
+      ]
+    ],
+    "extended": [
+      [
+        -3.102490854263306,
+        3.0999999999999996
+      ],
+      [
+        8.247191619873046,
+        19.40053482055664
+      ]
+    ]
+  },
+  "sample_images": [
+    {
+      "run": "omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-01",
+      "record_index": 13,
+      "image_path": "runs/omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-01/frames/00013-model-rgb.jpg",
+      "image_sha256": "b7490f4f578a8915c1501d98901e1f6c8ac0497e8a5fd22ac935e55336698620"
+    },
+    {
+      "run": "omnijev-local-rgbtarget-complex-rgbgs-none-local-round-01",
+      "record_index": 248,
+      "image_path": "runs/omnijev-local-rgbtarget-complex-rgbgs-none-local-round-01/frames/00248-model-rgb.jpg",
+      "image_sha256": "e14caa86dfe7045be49ee5693fe1d94dccccd09b89ff24f0b16c831cc0da9ea3"
+    },
+    {
+      "run": "omnijev-local-rgbtarget-extended-rgbgs-none-local-round-01",
+      "record_index": 497,
+      "image_path": "runs/omnijev-local-rgbtarget-extended-rgbgs-none-local-round-01/frames/00497-model-rgb.jpg",
+      "image_sha256": "25518a54414383a9cf6b95b24a39db85ee2bd5f79401b135c6dc945d335b2ace"
+    }
+  ],
+  "representative_rule": "always local-round-01; all paired round-02 sequences identical",
+  "coordinate_frame": "recorded world X/Z; Z increases downward",
+  "interpolated": false,
+  "smoothed": false,
+  "GPU_used": false,
+  "API_calls": 0
+}

@@ -131,5 +131,23 @@ class AblationScriptTests(unittest.TestCase):
         legacy=self.run_script('openai','legacy-gpu','--dry-run')
         self.assertEqual(legacy.returncode,0,legacy.stderr)
 
+    def test_omnijev_nine_multimodal_conditions_without_cloud_key(self):
+        self.env.pop('OPENROUTER_API_KEY',None)
+        self.env['OMNIJEV_BASE_URL']='http://127.0.0.1:9012'
+        dry=self.run_script('omnijev','omni-test','--dry-run')
+        self.assertEqual(dry.returncode,0,dry.stderr)
+        self.assertEqual(len(dry.stdout.splitlines()),9)
+        self.assertFalse(self.calls.exists())
+        live=self.run_script('omnijev','omni-test')
+        self.assertEqual(live.returncode,0,live.stderr)
+        calls=[json.loads(line) for line in self.calls.read_text().splitlines()]
+        self.assertEqual(len(calls),9)
+        for argv in calls:
+            flags=dict(zip(argv[4::2],argv[5::2]))
+            self.assertEqual(flags['--decision-model'],'omnijev')
+            self.assertEqual(flags['--rgb-input'],'target_marked')
+            self.assertEqual(flags['--omnijev-url'],'http://127.0.0.1:9012')
+            self.assertTrue(flags['--out'].startswith('runs/omnijev-local-rgbtarget-'))
+
 
 if __name__ == "__main__":unittest.main()

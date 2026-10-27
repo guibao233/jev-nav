@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "runs": 73,
+  "conditions": 36,
+  "actions_recomputed": 15260,
+  "representative_trajectories": 36,
+  "plotted_observations": 7371,
+  "source_hashes_checked": 8648,
+  "prior_source_hashes_checked": 8640,
+  "identical_pairs_verified": 27,
+  "verified_image_requests": {
+    "openai_rgb": 3280,
+    "onejev_rgb": 5100
+  },
+  "projection_counts": {
+    "openai_rgb": {
+      "outside_frame": 2062,
+      "behind_camera": 796,
+      "in_frame": 406,
+      "camera_plane": 16
+    },
+    "onejev_rgb": {
+      "outside_frame": 2156,
+      "behind_camera": 2940,
+      "in_frame": 4
+    }
+  },
+  "png_dimensions": {
+    "trajectories.png": [
+      3420,
+      3420
+    ],
+    "trajectories-simple.png": [
+      3230,
+      4750
+    ],
+    "trajectories-complex.png": [
+      3230,
+      4750
+    ],
+    "trajectories-extended.png": [
+      3230,
+      4750
+    ]
+  },
+  "links_checked": 140,
+  "api_calls": 0,
+  "used_gpu": false,
+  "source_runs_modified": false,
+  "visual_inspection": "Main overlay and all three route figures inspected; final long-route figure rechecked after shortening panel titles. Legends, labels and marks remain visible."
+}

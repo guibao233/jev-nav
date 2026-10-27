@@ -20,24 +20,27 @@ ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
 PROMPT_VERSION = "seven_actions_reassociate_motion_v5"
 NO_DEPTH_PROMPT_VERSION = PROMPT_VERSION + "_no_depth"
 DEPTH_INPUT_MODES = ("mesh", "none")
-DECISION_MODELS = {"jev": "typesafe/jev-1.13", "openai": "openai/gpt-6-luna-decisions", "onejev": "OmniJev/OneJev-4B"}
+DECISION_MODELS = {"jev": "typesafe/jev-1.13", "openai": "openai/gpt-6-luna-decisions", "onejev": "OmniJev/OneJev-4B", "omnijev": "tinnel123/OmniJev"}
 
 
 def evaluation_identity(cfg, live=True):
     model = cfg["model"]
-    if model == DECISION_MODELS["onejev"]:
+    if model == DECISION_MODELS["omnijev"]:
+        family, label = "omnijev_local", "OmniJev-4B"
+    elif model == DECISION_MODELS["onejev"]:
         family, label = "onejev_local", "OneJev-4B"
     elif model == DECISION_MODELS["openai"]:
         family, label = "openai_decisions", "GPT-6 Luna Decisions"
     elif isinstance(model,str) and model.lstrip("~").startswith("typesafe/jev-"):
         family, label = "jev", "Jev"
     else:
-        raise ValueError("unsupported decision model; select --decision-model jev, openai or onejev")
+        raise ValueError("unsupported decision model; select --decision-model jev, openai, onejev or omnijev")
     return {"provider":family if live else "scripted_smoke", "requested_model":model,
             "model_label":label, "is_model_evaluation":bool(live),
             "is_jev_evaluation":bool(live and family == "jev"),
             "is_openai_decisions_evaluation":bool(live and family == "openai_decisions"),
-            **({"is_onejev_evaluation":bool(live)} if family == "onejev_local" else {})}
+            **({"is_onejev_evaluation":bool(live)} if family == "onejev_local" else {}),
+            **({"is_omnijev_evaluation":bool(live)} if family == "omnijev_local" else {})}
 
 
 def depth_input_mode(cfg):
@@ -134,6 +137,9 @@ class ServiceFailure(RuntimeError):
 
 def encode_request(payload, image_bytes=None):
     """Wire representation only; callers keep readable text states in logs."""
+    if payload.get("model") == DECISION_MODELS["omnijev"]:
+        from omnijev import encode_local_request
+        return encode_local_request(payload, image_bytes)
     if payload.get("model") == DECISION_MODELS["onejev"]:
         from onejev import encode_local_request
         return encode_local_request(payload, image_bytes)
@@ -149,8 +155,8 @@ def encode_request(payload, image_bytes=None):
 
 class DecisionsClient:
     def __init__(self, cfg):
-        if cfg["model"] == DECISION_MODELS["onejev"]:
-            raise ValueError("OneJev requires create_decision_client and local transport")
+        if cfg["model"] in (DECISION_MODELS["onejev"], DECISION_MODELS["omnijev"]):
+            raise ValueError("OneJev/OmniJev require create_decision_client and local transport")
         self.cfg = cfg
         self.identity = evaluation_identity(cfg)
         self.key = os.environ.get("OPENROUTER_API_KEY")
@@ -204,6 +210,9 @@ JevClient = DecisionsClient
 
 def create_decision_client(cfg):
     """Keep local decisions independent of OpenRouter keys and SDKs."""
+    if cfg["model"] == DECISION_MODELS["omnijev"]:
+        from omnijev import OmniJevClient
+        return OmniJevClient(cfg)
     if cfg["model"] == DECISION_MODELS["onejev"]:
         from onejev import OneJevClient
         return OneJevClient(cfg)

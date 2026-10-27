@@ -9,14 +9,15 @@ nav_batch="${2:-$(date +%Y%m%d-%H%M%S)}"
 nav_dry_run=false
 if [[ "${3:-}" == --dry-run ]]; then nav_dry_run=true; fi
 if (( $# > 3 )) || [[ -n "${3:-}" && "${3:-}" != --dry-run ]]; then
-  echo 'Usage: bash scripts/run_model_ablation.sh {openai|jev|onejev} [batch-id] [--dry-run]' >&2
+  echo 'Usage: bash scripts/run_model_ablation.sh {openai|jev|onejev|omnijev} [batch-id] [--dry-run]' >&2
   exit 2
 fi
 case "$nav_model" in
   openai) nav_prefix=openai-decisions ;;
   jev) nav_prefix=jev ;;
   onejev) nav_prefix=onejev-local ;;
-  *) echo 'Model must be openai, jev or onejev.' >&2; exit 2 ;;
+  omnijev) nav_prefix=omnijev-local ;;
+  *) echo 'Model must be openai, jev, onejev or omnijev.' >&2; exit 2 ;;
 esac
 if [[ ! "$nav_batch" =~ ^[[:alnum:]][[:alnum:]_.-]*$ ]]; then
   echo 'Batch ID must contain only letters, digits, dot, dash, or underscore.' >&2; exit 2
@@ -25,7 +26,8 @@ nav_python="${NAV_PYTHON:-python}"
 nav_config="${NAV_CONFIG:-config.single-gpu.json}"
 nav_rgb="${NAV_RGB:-gs}"
 nav_rgb_input="${NAV_RGB_INPUT:-none}"
-if [[ "$nav_model" == onejev && -z "${CUDA_VISIBLE_DEVICES:-}" ]]; then
+if [[ "$nav_model" == omnijev ]]; then nav_rgb_input="${NAV_RGB_INPUT:-target_marked}"; fi
+if [[ ( "$nav_model" == onejev || "$nav_model" == omnijev ) && -z "${CUDA_VISIBLE_DEVICES:-}" ]]; then
   echo "Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU." >&2; exit 2
 fi
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-7}"
@@ -33,10 +35,13 @@ case "$nav_rgb" in gs|mesh|none) ;; *) echo 'NAV_RGB must be gs, mesh, or none.'
 case "$nav_rgb_input" in
   none) ;;
   target_marked)
-    [[ ( "$nav_model" == openai || "$nav_model" == onejev ) && "$nav_rgb" != none ]] || { echo 'RGB input requires openai/onejev and NAV_RGB=gs or mesh.' >&2; exit 2; }
+    [[ ( "$nav_model" == openai || "$nav_model" == onejev || "$nav_model" == omnijev ) && "$nav_rgb" != none ]] || { echo 'RGB input requires openai/onejev/omnijev and NAV_RGB=gs or mesh.' >&2; exit 2; }
     nav_prefix="${nav_prefix}-rgbtarget" ;;
   *) echo 'NAV_RGB_INPUT must be none or target_marked.' >&2; exit 2 ;;
 esac
+if [[ "$nav_model" == omnijev && "$nav_rgb_input" != target_marked ]]; then
+  echo 'OmniJev v1.1 requires target_marked RGB input.' >&2; exit 2
+fi
 read -r -a nav_routes <<< "${ROUTES:-simple complex extended}"
 read -r -a nav_modes <<< "${MODES:-numeric semantic none}"
 [[ -f "$nav_config" ]] || { echo "Missing config: $nav_config" >&2; exit 2; }
@@ -64,6 +69,9 @@ build_command() {
   if [[ "$nav_model" == onejev ]]; then
     nav_cmd+=(--onejev-url "${ONEJEV_BASE_URL:-http://127.0.0.1:8011}" --onejev-timeout-s "${ONEJEV_TIMEOUT_S:-30}")
   fi
+  if [[ "$nav_model" == omnijev ]]; then
+    nav_cmd+=(--omnijev-url "${OMNIJEV_BASE_URL:-http://127.0.0.1:8012}" --omnijev-timeout-s "${OMNIJEV_TIMEOUT_S:-60}")
+  fi
 }
 
 # Check every output before starting the first paid request.
@@ -76,7 +84,7 @@ for nav_route in "${nav_routes[@]}"; do
   done
 done
 if ! "$nav_dry_run"; then
-  [[ "$nav_model" == onejev || -n "${OPENROUTER_API_KEY:-}" ]] || { echo 'Configure OPENROUTER_API_KEY first.' >&2; exit 2; }
+  [[ "$nav_model" == onejev || "$nav_model" == omnijev || -n "${OPENROUTER_API_KEY:-}" ]] || { echo 'Configure OPENROUTER_API_KEY first.' >&2; exit 2; }
   mkdir -p runs
 fi
 for nav_route in "${nav_routes[@]}"; do

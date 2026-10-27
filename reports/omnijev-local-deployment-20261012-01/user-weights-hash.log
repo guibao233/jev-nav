@@ -1,0 +1,24 @@
+PASS adapter/LICENSE 11720
+PASS adapter/adapter_config.json 1269
+PASS adapter/adapter_model.safetensors 243854336
+PASS adapter/chat_template.jinja 7756
+PASS adapter/head.pt 29418795
+PASS adapter/head_meta.json 1061
+PASS adapter/new_tok_emb.pt 22085
+PASS adapter/ord.pt 10497109
+PASS adapter/processor_config.json 1189
+PASS adapter/tokenizer.json 19989712
+PASS adapter/tokenizer_config.json 1226
+PASS base/LICENSE 11544
+PASS base/chat_template.jinja 7756
+PASS base/config.json 3161
+PASS base/merges.txt 3353259
+PASS base/model.safetensors-00001-of-00002.safetensors 5329398688
+PASS base/model.safetensors-00002-of-00002.safetensors 3990429408
+PASS base/model.safetensors.index.json 76196
+PASS base/preprocessor_config.json 390
+PASS base/tokenizer.json 12807982
+PASS base/tokenizer_config.json 16710
+PASS base/video_preprocessor_config.json 385
+PASS base/vocab.json 6722759
+PASS 23 pinned runtime files; no model forward

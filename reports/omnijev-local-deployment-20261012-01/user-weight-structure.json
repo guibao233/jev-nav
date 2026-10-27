@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "base_shards": [
+    "model.safetensors-00001-of-00002.safetensors",
+    "model.safetensors-00002-of-00002.safetensors"
+  ],
+  "base_tensors": 738,
+  "adapter_tensors": 400,
+  "adapter_rank": 32,
+  "hidden_size": 2560,
+  "decision_heads": {
+    "head.pt": {
+      "keys": 17,
+      "strict_load": "PASS"
+    },
+    "ord.pt": {
+      "keys": 8,
+      "strict_load": "PASS"
+    }
+  },
+  "option_token_ids": [
+    248077,
+    248078
+  ],
+  "new_token_embedding_shape": [
+    2,
+    2560
+  ],
+  "historical_files_unchanged": 355,
+  "GPU_used": false,
+  "model_forward_executed": false,
+  "verified_unix": 1791868566.195857
+}

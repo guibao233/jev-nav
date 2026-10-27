@@ -1,0 +1,6 @@
+usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: --omnijev-url/--omnijev-timeout-s require --decision-model omnijev
+----------------------------------------------------------------------
+Ran 17 tests in 1.943s
+
+OK

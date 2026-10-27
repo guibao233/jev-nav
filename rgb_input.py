@@ -20,10 +20,12 @@ def rgb_input_mode(cfg):
 
 
 def validate_rgb_input(cfg, renderer):
+    if cfg['model'] == 'tinnel123/OmniJev' and rgb_input_mode(cfg) == 'none':
+        raise ValueError('OmniJev v1.1 requires --rgb-input target_marked; no synthetic image fallback')
     if rgb_input_mode(cfg) == 'none':
         return
-    if cfg['model'] not in ('openai/gpt-6-luna-decisions', 'OmniJev/OneJev-4B'):
-        raise ValueError('RGB input currently requires --decision-model openai or onejev')
+    if cfg['model'] not in ('openai/gpt-6-luna-decisions', 'OmniJev/OneJev-4B', 'tinnel123/OmniJev'):
+        raise ValueError('RGB input currently requires --decision-model openai, onejev or omnijev')
     if renderer not in ('gs', 'mesh'):
         raise ValueError('RGB input requires --rgb gs or mesh')
 

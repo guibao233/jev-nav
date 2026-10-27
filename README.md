@@ -500,3 +500,6 @@ P50/P95 分别统计 Jev 请求耗时（包括重试）与循环耗时（包括�
 `core.py`：坐标、路径预览与单帧深度几何；`environment.py`：任务采样和 Habitat 适配；`jev.py`：请求与有限重试；`run.py`：执行/记录/度量；`visualize.py`：可复用可视化工具与浏览服务；`replay.py`：HTML 回放；`map_view.py`：日志目标反算与 NavMesh 图层；`export_replay.py`：离线视频/动图导出；`test_core.py` / `test_map_view.py` / `test_visualize.py` / `test_recovery.py`：几何、接口、可视化及重新关联/动作摘要回归。
 
 不依赖其他 Jev 导航方案的代码或控制器。本版没有自动批量调参、复杂地图记忆和自动重规划。
+# OmniJev 本地图文后端
+
+新增 `--decision-model omnijev`，使用本地 OmniJev-4B v1.1。启动、单步验证和三路线 × 三深度模式的命令见 [部署说明](docs/OMNIJEV_LOCAL.md)。该模型要求 `--rgb-input target_marked`，默认服务 `http://127.0.0.1:8012`，不需要 OpenRouter key。

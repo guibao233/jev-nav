@@ -1,0 +1,13 @@
+..................................................................usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: --omnijev-url/--omnijev-timeout-s require --decision-model omnijev
+.......................usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: --onejev-url/--onejev-timeout-s require --decision-model onejev
+.usage: run.py [-h] [--config CONFIG] {sample,smoke,run} ...
+run.py: error: Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU for OneJev
+............................................[visualize] 已读取 1 幅观察，正在生成：/tmp/tmp68ioav3z/viewer
+[visualize] 回放入口：/tmp/tmp68ioav3z/viewer/index.html
+.
+----------------------------------------------------------------------
+Ran 135 tests in 6.117s
+
+OK

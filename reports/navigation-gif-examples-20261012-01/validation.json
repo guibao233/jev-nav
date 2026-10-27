@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "gif_count": 8,
+  "frames_checked": 493,
+  "source_files_checked": 525,
+  "dimensions": [
+    960,
+    558
+  ],
+  "all_frame_durations_checked": true,
+  "previous_action_event_alignment_checked": true,
+  "recorded_targets_and_poses_checked": true,
+  "source_hashes_unchanged": true,
+  "stationary_turn_excerpt_verified": true,
+  "pink_ring_observation_306_included": true,
+  "manual_visual_inspection": [
+    "contact-sheet.png",
+    "posters/04-openai-rgb-marker-and-stop.png",
+    "posters/03-openai-rgb-complex-success-final.png",
+    "posters/08-jev-long-route-failure-final.png"
+  ],
+  "export_script_sha256": "b0c5643ddfc0bc8527582c85fe3702c1244fd38427c0ed19e56fc484ba0bbf58"
+}

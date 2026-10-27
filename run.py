@@ -111,6 +111,7 @@ def run_episode(args, cfg):
         "api_provider":getattr(client,"api_provider","openrouter") if client else None,
         "api_endpoint":getattr(client,"endpoint",ENDPOINT) if client else None,
         **({"onejev_service_health":client.health,"onejev_deployment":client.deployment} if client and provider == "onejev_local" else {}),
+        **({"omnijev_service_health":client.health,"omnijev_deployment":client.deployment} if client and provider == "omnijev_local" else {}),
         "created_unix":time.time(),"depth_source":"shuyuan.mesh.ply", "allow_sliding":cfg["allow_sliding"],
         "collision_semantics":"Habitat Agent NavMesh movement-filter collision, not Bullet contact",
         "route_policy":"fixed supplied reference polyline; checked reassociation to nearby later segments; no replanning or controller substitution",
@@ -158,7 +159,10 @@ def run_episode(args, cfg):
             if use_rgb:
                 record.update(image_input=image_input,
                     wire_request_sha256=hashlib.sha256(encode_request(request,image_bytes)).hexdigest(),
-                    wire_state_encoding='object_plus_media_image_placeholder' if cfg['model']==DECISION_MODELS['onejev'] else 'array_of_text_string_and_image_url')
+                    wire_state_encoding=getattr(client,'wire_state_encoding',
+                        'object_plus_inline_image' if cfg['model']==DECISION_MODELS['omnijev'] else
+                        'object_plus_media_image_placeholder' if cfg['model']==DECISION_MODELS['onejev'] else
+                        'array_of_text_string_and_image_url'))
             if representation == "semantic":
                 record["depth_numeric_debug"] = state["depth"]
             try:
@@ -257,12 +261,14 @@ def main():
         sub.add_argument("--out",required=True)
         sub.add_argument("--rgb",choices=["gs","mesh","none"],default="gs")
         sub.add_argument("--rgb-input",choices=RGB_INPUT_MODES,
-                         help="none (default): replay RGB only; target_marked: send waypoint-marked RGB to OpenAI or local OneJev")
+                         help="none (default): replay RGB only; target_marked: send waypoint-marked RGB to OpenAI, local OneJev or OmniJev")
         sub.add_argument("--max-steps",type=int)
         sub.add_argument("--decision-model",choices=DECISION_MODELS,
-                         help="jev/openai via OpenRouter or onejev locally; default uses config.model")
+                         help="jev/openai via OpenRouter or onejev/omnijev locally; default uses config.model")
         sub.add_argument("--onejev-url",help="local qev HTTP origin (onejev only; default localhost:8011)")
         sub.add_argument("--onejev-timeout-s",type=float,help="local request timeout, default 30 seconds")
+        sub.add_argument("--omnijev-url",help="local MSO1 HTTP origin (omnijev only; default localhost:8012)")
+        sub.add_argument("--omnijev-timeout-s",type=float,help="local OmniJev request timeout, default 60 seconds")
         sub.add_argument("--depth-format",choices=DEPTH_FORMATS,
                          help="numeric (default) or nine-sector semantic depth facts; depth-input none takes precedence")
         sub.add_argument("--depth-input",choices=DEPTH_INPUT_MODES,
@@ -294,6 +300,13 @@ def main():
         if args.onejev_timeout_s is not None: cfg["onejev_timeout_s"] = args.onejev_timeout_s
     if cfg["model"] == DECISION_MODELS["onejev"] and args.command == "run" and not os.environ.get("CUDA_VISIBLE_DEVICES"):
         p.error("Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU for OneJev")
+    if args.omnijev_url is not None or args.omnijev_timeout_s is not None:
+        if cfg['model'] != DECISION_MODELS['omnijev']:
+            p.error('--omnijev-url/--omnijev-timeout-s require --decision-model omnijev')
+        if args.omnijev_url is not None: cfg['omnijev_url'] = args.omnijev_url
+        if args.omnijev_timeout_s is not None: cfg['omnijev_timeout_s'] = args.omnijev_timeout_s
+    if cfg['model'] == DECISION_MODELS['omnijev'] and args.command == 'run' and not os.environ.get('CUDA_VISIBLE_DEVICES'):
+        p.error('Set CUDA_VISIBLE_DEVICES explicitly to your allocated rendering GPU for OmniJev')
     if args.depth_input is not None:
         cfg["depth_input"] = args.depth_input
     if args.max_steps is not None:

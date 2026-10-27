@@ -1,0 +1,125 @@
+omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-01 verified 100 requests
+omnijev-local-rgbtarget-simple-rgbgs-numeric-local-round-02 verified 100 requests
+omnijev-local-rgbtarget-simple-rgbgs-semantic-local-round-01 verified 100 requests
+omnijev-local-rgbtarget-simple-rgbgs-semantic-local-round-02 verified 100 requests
+omnijev-local-rgbtarget-simple-rgbgs-none-local-round-01 verified 100 requests
+omnijev-local-rgbtarget-simple-rgbgs-none-local-round-02 verified 100 requests
+omnijev-local-rgbtarget-complex-rgbgs-numeric-local-round-01 verified 250 requests
+omnijev-local-rgbtarget-complex-rgbgs-numeric-local-round-02 verified 250 requests
+omnijev-local-rgbtarget-complex-rgbgs-semantic-local-round-01 verified 250 requests
+omnijev-local-rgbtarget-complex-rgbgs-semantic-local-round-02 verified 250 requests
+omnijev-local-rgbtarget-complex-rgbgs-none-local-round-01 verified 250 requests
+omnijev-local-rgbtarget-complex-rgbgs-none-local-round-02 verified 250 requests
+omnijev-local-rgbtarget-extended-rgbgs-numeric-local-round-01 verified 500 requests
+omnijev-local-rgbtarget-extended-rgbgs-numeric-local-round-02 verified 500 requests
+omnijev-local-rgbtarget-extended-rgbgs-semantic-local-round-01 verified 500 requests
+omnijev-local-rgbtarget-extended-rgbgs-semantic-local-round-02 verified 500 requests
+omnijev-local-rgbtarget-extended-rgbgs-none-local-round-01 verified 500 requests
+omnijev-local-rgbtarget-extended-rgbgs-none-local-round-02 verified 500 requests
+{
+  "verified_runs": 18,
+  "verified_multimodal_requests": 5100,
+  "successes": 0,
+  "total_collisions": 1530,
+  "round_pair_identity": {
+    "simple/numeric": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "simple/semantic": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "simple/none": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "complex/numeric": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "complex/semantic": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "complex/none": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "extended/numeric": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "extended/semantic": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    },
+    "extended/none": {
+      "actions": true,
+      "poses": true,
+      "image_sha256": true,
+      "wire_sha256": true,
+      "prompt_sha256": true,
+      "probabilities": true,
+      "abstain": true,
+      "native_valid": true,
+      "confidence": true
+    }
+  }
+}

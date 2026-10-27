@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "metric_rows": 18,
+  "aggregate_conditions": 9,
+  "comparison_conditions": 45,
+  "representative_trajectories": 9,
+  "source_files_unchanged": 5199,
+  "report_table_matches_raw_audit": true,
+  "plot_positions_and_maps_match": true,
+  "PNG_and_PDF_integrity": true,
+  "visual_inspection": "nine trajectory panels, nine distance panels and three raw model images inspected",
+  "GPU_used": false,
+  "API_calls": 0
+}

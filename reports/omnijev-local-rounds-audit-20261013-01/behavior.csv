@@ -1,0 +1,10 @@
+route,depth_mode,round,forward,backward,left,right,look_up,look_down,stop,max_stationary_actions,stationary_first_action,stationary_last_action,opposite_turn_transitions,forward_with_target_behind,repeat_after_collision,blocked_move_chosen,projected_point,offscreen_arrow
+simple,numeric,01 (02 identical),78,22,0,0,0,0,0,4,49,52,0,63,45,56,0,100
+simple,semantic,01 (02 identical),62,20,14,3,0,1,0,8,75,82,1,40,33,41,6,94
+simple,none,01 (02 identical),37,0,39,23,0,1,0,67,34,100,24,23,32,0,28,72
+complex,numeric,01 (02 identical),181,60,7,2,0,0,0,4,14,17,2,173,84,60,0,250
+complex,semantic,01 (02 identical),168,59,17,6,0,0,0,7,123,129,4,147,58,72,0,250
+complex,none,01 (02 identical),13,0,120,117,0,0,0,237,14,250,230,7,4,0,0,250
+extended,numeric,01 (02 identical),346,146,2,6,0,0,0,8,28,35,2,278,230,232,0,500
+extended,semantic,01 (02 identical),348,129,13,10,0,0,0,11,168,178,2,92,125,162,88,412
+extended,none,01 (02 identical),55,0,217,227,0,1,0,416,85,500,404,27,17,0,405,95
